@@ -10,8 +10,7 @@ interface GlobeToolbarProps {
 
 const MODES: { value: GlobeMode; label: string; icon: string }[] = [
   { value: "pins", label: "Pins", icon: "pin" },
-  { value: "heatmap", label: "Heat Map", icon: "flame" },
-  { value: "blankspots", label: "Blank Spots", icon: "map" },
+  { value: "friends", label: "Friends' Map", icon: "users" },
 ];
 
 export function GlobeToolbar({ mode, onModeChange }: GlobeToolbarProps) {

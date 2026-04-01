@@ -1,14 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { GlobePin, GlobeMode } from "@/types";
+import type { GlobePin, GlobeMode, FriendData } from "@/types";
 import { GlobeToolbar } from "./GlobeToolbar";
+import { getAllFriendPins } from "@/data/demoFriends";
 
 interface GlobeProps {
   pastPins: GlobePin[];
   futurePins: GlobePin[];
   wishlistPins: GlobePin[];
   visitedCountries: string[];
+  friends?: FriendData[];
+  selectedFriendIds?: string[];
+  mode: GlobeMode;
+  onModeChange: (mode: GlobeMode) => void;
   onPinClick?: (pin: GlobePin) => void;
 }
 
@@ -21,15 +26,19 @@ export function Globe({
   futurePins,
   wishlistPins,
   visitedCountries,
+  friends = [],
+  selectedFriendIds = [],
+  mode,
+  onModeChange,
   onPinClick,
 }: GlobeProps) {
   const globeRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const threeRef = useRef<any>(null);
-  const [mode, setMode] = useState<GlobeMode>("pins");
   const [geoData, setGeoData] = useState<any>(null);
   const [hoverPin, setHoverPin] = useState<GlobePin | null>(null);
   const [GlobeComponent, setGlobeComponent] = useState<any>(null);
+  const [oceanMaterial, setOceanMaterial] = useState<any>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
   // Manually import react-globe.gl + three on client only
@@ -37,6 +46,10 @@ export function Globe({
     Promise.all([import("react-globe.gl"), import("three")])
       .then(([globeMod, threeMod]) => {
         threeRef.current = threeMod;
+        // Create bright blue ocean material (unlit — ignores scene lighting)
+        setOceanMaterial(
+          new threeMod.MeshBasicMaterial({ color: "#4A7FA5" })
+        );
         setGlobeComponent(() => globeMod.default);
       })
       .catch((err) => {
@@ -90,14 +103,29 @@ export function Globe({
     return () => clearInterval(interval);
   }, [GlobeComponent]);
 
+  // All user pins (for pins mode)
   const allPins = useMemo(
     () => [...pastPins, ...futurePins, ...wishlistPins],
     [pastPins, futurePins, wishlistPins]
   );
 
-  const heatmapData = useMemo(
-    () => pastPins.map((p) => ({ lat: p.lat, lng: p.lng, weight: 1 })),
-    [pastPins]
+  // Friend pins filtered by selection
+  const filteredFriendPins = useMemo(() => {
+    const selectedSet = new Set(selectedFriendIds);
+    const selectedFriends = friends.filter((f) => selectedSet.has(f.id));
+    return getAllFriendPins(selectedFriends);
+  }, [friends, selectedFriendIds]);
+
+  // Combined pins for friends mode: user's past + friend pins
+  const friendsModePins = useMemo(
+    () => [...pastPins, ...filteredFriendPins],
+    [pastPins, filteredFriendPins]
+  );
+
+  // Points to show based on mode
+  const visiblePins = useMemo(
+    () => (mode === "pins" ? allPins : friendsModePins),
+    [mode, allPins, friendsModePins]
   );
 
   const visitedSet = useMemo(
@@ -105,20 +133,44 @@ export function Globe({
     [visitedCountries]
   );
 
-  // Pin colors
-  const getPinColor = useCallback((pin: GlobePin) => {
-    switch (pin.type) {
-      case "past":
-        return "#c4623a";
-      case "future":
-        return "#4a90d9";
-      case "wishlist":
-        return "#5c8a6e";
-    }
-  }, []);
+  // Countries visited by selected friends
+  const friendCountrySet = useMemo(() => {
+    const selectedSet = new Set(selectedFriendIds);
+    const countries = new Set<string>();
+    friends
+      .filter((f) => selectedSet.has(f.id))
+      .forEach((f) => f.visitedCountries.forEach((c) => countries.add(c.toUpperCase())));
+    return countries;
+  }, [friends, selectedFriendIds]);
 
-  // 3D raised pin altitudes — tall enough to visibly stick out
+  // Friend color lookup
+  const friendColorMap = useMemo(() => {
+    const map = new Map<string, string>();
+    friends.forEach((f) => map.set(f.id, f.color));
+    return map;
+  }, [friends]);
+
+  // Pin colors — friend pins use friend color
+  const getPinColor = useCallback(
+    (pin: GlobePin) => {
+      if (pin.friendId) {
+        return friendColorMap.get(pin.friendId) ?? "#999";
+      }
+      switch (pin.type) {
+        case "past":
+          return "#c4623a";
+        case "future":
+          return "#4a90d9";
+        case "wishlist":
+          return "#5c8a6e";
+      }
+    },
+    [friendColorMap]
+  );
+
+  // Pin altitudes — friend pins slightly shorter
   const getPinAltitude = useCallback((pin: GlobePin) => {
+    if (pin.friendId) return 0.08;
     switch (pin.type) {
       case "past":
         return 0.12;
@@ -129,8 +181,9 @@ export function Globe({
     }
   }, []);
 
-  // Pin thickness
+  // Pin thickness — friend pins slightly smaller
   const getPinRadius = useCallback((pin: GlobePin) => {
+    if (pin.friendId) return 0.3;
     switch (pin.type) {
       case "past":
         return 0.4;
@@ -141,35 +194,36 @@ export function Globe({
     }
   }, []);
 
-  // Parchment land + bright blue ocean (ocean = globe texture showing through)
-  // Visited countries get a warm terracotta tint over parchment
+  // Country polygon colors
   const getPolygonColor = useCallback(
     (feat: any) => {
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
       const iso = feat.properties?.ISO_A3 || "";
-      const isVisited =
-        visitedSet.has(name.toUpperCase()) || visitedSet.has(iso.toUpperCase());
+      const nameUp = name.toUpperCase();
+      const isoUp = iso.toUpperCase();
+      const isVisited = visitedSet.has(nameUp) || visitedSet.has(isoUp);
+      const isFriendVisited = friendCountrySet.has(nameUp) || friendCountrySet.has(isoUp);
 
-      if (mode === "blankspots") {
-        // Visited = warm tan, unvisited = muted gray to highlight gaps
-        return isVisited
-          ? "rgba(210, 190, 155, 0.95)"
-          : "rgba(180, 175, 165, 0.95)";
+      if (mode === "friends") {
+        // Both you and friends visited
+        if (isVisited && isFriendVisited)
+          return "rgba(180, 150, 210, 0.85)";
+        // Only friends visited — soft lavender tint
+        if (isFriendVisited) return "rgba(160, 140, 200, 0.7)";
+        // Only you visited — warm tan
+        if (isVisited) return "rgba(220, 185, 140, 0.92)";
+        // Neither
+        return "rgba(215, 200, 175, 0.88)";
       }
-      if (mode === "heatmap") {
-        return isVisited
-          ? "rgba(196, 98, 58, 0.6)"
-          : "rgba(215, 200, 170, 0.85)";
-      }
-      // Pins mode — parchment land, terracotta tint for visited
+      // Pins mode
       return isVisited
         ? "rgba(220, 185, 140, 0.92)"
         : "rgba(215, 200, 175, 0.88)";
     },
-    [mode, visitedSet]
+    [mode, visitedSet, friendCountrySet]
   );
 
-  // Side colors for 3D depth on raised countries
+  // Side colors for 3D depth
   const getPolygonSideColor = useCallback(
     (feat: any) => {
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
@@ -184,53 +238,38 @@ export function Globe({
     [visitedSet]
   );
 
-  // Visited countries slightly raised for 3D effect
+  // Visited countries slightly raised
   const getPolygonAltitude = useCallback(
     (feat: any) => {
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
       const iso = feat.properties?.ISO_A3 || "";
-      const isVisited =
-        visitedSet.has(name.toUpperCase()) || visitedSet.has(iso.toUpperCase());
+      const nameUp = name.toUpperCase();
+      const isoUp = iso.toUpperCase();
+      const isVisited = visitedSet.has(nameUp) || visitedSet.has(isoUp);
+      const isFriendVisited = friendCountrySet.has(nameUp) || friendCountrySet.has(isoUp);
 
-      if (mode === "blankspots") {
-        return isVisited ? 0.012 : 0.003;
+      if (mode === "friends" && isFriendVisited) {
+        return isVisited ? 0.012 : 0.008;
       }
       return isVisited ? 0.01 : 0.003;
     },
-    [mode, visitedSet]
+    [mode, visitedSet, friendCountrySet]
   );
 
   const ReactGlobe = GlobeComponent;
 
   return (
     <div ref={containerRef} className="globe-container relative">
-      <GlobeToolbar mode={mode} onModeChange={setMode} />
+      <GlobeToolbar mode={mode} onModeChange={onModeChange} />
 
       {ReactGlobe && (
         <ReactGlobe
           ref={globeRef}
           globeImageUrl=""
+          globeMaterial={oceanMaterial}
           backgroundColor="#0d1a30"
           onGlobeReady={() => {
             if (globeRef.current) {
-              // Replace globe sphere material with unlit MeshBasicMaterial
-              // so ocean color renders exactly as specified, unaffected by lighting
-              const scene = globeRef.current.scene();
-              const THREE = threeRef.current;
-              if (scene && THREE) {
-                scene.traverse((obj: any) => {
-                  if (
-                    obj.type === "Mesh" &&
-                    obj.geometry?.parameters?.radius &&
-                    !obj.__oceanFixed
-                  ) {
-                    obj.material = new THREE.MeshBasicMaterial({
-                      color: "#6BB8E8",
-                    });
-                    obj.__oceanFixed = true;
-                  }
-                });
-              }
               const controls = globeRef.current.controls();
               if (controls) {
                 controls.autoRotate = true;
@@ -238,14 +277,14 @@ export function Globe({
               }
             }
           }}
-          // High-contrast political boundaries
+          // Political boundaries
           polygonsData={geoData ? geoData.features : []}
           polygonCapColor={getPolygonColor}
           polygonSideColor={getPolygonSideColor}
           polygonStrokeColor={() => "rgba(140, 125, 100, 0.5)"}
           polygonAltitude={getPolygonAltitude}
           // 3D raised pins
-          pointsData={mode === "pins" ? allPins : []}
+          pointsData={visiblePins}
           pointLat={(d: any) => d.lat}
           pointLng={(d: any) => d.lng}
           pointColor={(d: any) => getPinColor(d as GlobePin)}
@@ -254,23 +293,27 @@ export function Globe({
           pointsMerge={false}
           pointLabel={(d: any) => {
             const pin = d as GlobePin;
+            const friendLine = pin.friendName
+              ? `<div style="font-size:11px;margin-bottom:2px;color:${getPinColor(pin)};font-weight:600">${pin.friendName}</div>`
+              : "";
+            const statusLabel = pin.friendName
+              ? "Friend's trip"
+              : pin.type === "past"
+                ? "Visited"
+                : pin.type === "future"
+                  ? "Upcoming"
+                  : "Bucket List";
             return `<div style="background:rgba(250,247,242,0.96);padding:8px 12px;border-radius:8px;font-size:13px;border:1px solid rgba(44,31,15,0.15);box-shadow:0 4px 12px rgba(42,31,15,0.15);color:#2a1f0f">
+              ${friendLine}
               <div style="font-weight:600">${pin.city}</div>
               <div style="color:#6b5740;font-size:11px">${pin.country}</div>
-              <div style="font-size:11px;margin-top:4px;color:${getPinColor(pin)};font-weight:500">${pin.type === "past" ? "Visited" : pin.type === "future" ? "Upcoming" : "Bucket List"}</div>
+              <div style="font-size:11px;margin-top:4px;color:${getPinColor(pin)};font-weight:500">${statusLabel}</div>
             </div>`;
           }}
           onPointClick={(point: any) => onPinClick?.(point as GlobePin)}
           onPointHover={(point: any) => setHoverPin(point as GlobePin | null)}
           // No arcs
           arcsData={[]}
-          // Heatmap overlay
-          hexBinPointsData={mode === "heatmap" ? heatmapData : []}
-          hexBinPointWeight="weight"
-          hexBinResolution={3}
-          hexTopColor={() => "rgba(196, 98, 58, 0.7)"}
-          hexSideColor={() => "rgba(232, 184, 74, 0.4)"}
-          hexAltitude={(d: any) => d.sumWeight * 0.02}
           // Atmosphere
           animateIn={true}
           atmosphereColor="#4a8abf"
@@ -294,7 +337,10 @@ export function Globe({
               className="w-2.5 h-2.5 rounded-full"
               style={{ backgroundColor: getPinColor(hoverPin) }}
             />
-            <span className="font-medium text-brand-text">{hoverPin.city}</span>
+            <span className="font-medium text-brand-text">
+              {hoverPin.friendName ? `${hoverPin.friendName} — ` : ""}
+              {hoverPin.city}
+            </span>
           </div>
           <div className="text-brand-text-secondary text-sm">{hoverPin.country}</div>
         </div>

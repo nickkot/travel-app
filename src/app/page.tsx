@@ -2,7 +2,11 @@
 
 import { useState, useCallback } from "react";
 import { Globe } from "@/components/Globe";
-import type { GlobePin } from "@/types";
+import { FriendLegend } from "@/components/FriendLegend";
+import { CompassClub } from "@/components/CompassClub";
+import { BadgeStrip } from "@/components/BadgeStrip";
+import { DEMO_FRIENDS } from "@/data/demoFriends";
+import type { GlobePin, GlobeMode } from "@/types";
 
 // Demo data for the globe
 const DEMO_PAST_PINS: GlobePin[] = [
@@ -36,11 +40,27 @@ const DEMO_VISITED_COUNTRIES = [
   "Thailand", "Peru", "India", "Russia", "Kenya",
 ];
 
+const USER_COMPASS_MILES = 3200;
+const USER_TIER = 2;
+const USER_BADGES = ["return_flight", "culinary_explorer", "time_traveler"];
+
 export default function HomePage() {
   const [selectedPin, setSelectedPin] = useState<GlobePin | null>(null);
+  const [mode, setMode] = useState<GlobeMode>("pins");
+  const [selectedFriendIds, setSelectedFriendIds] = useState<string[]>(
+    () => DEMO_FRIENDS.map((f) => f.id)
+  );
 
   const handlePinClick = useCallback((pin: GlobePin) => {
     setSelectedPin(pin);
+  }, []);
+
+  const handleToggleFriend = useCallback((friendId: string) => {
+    setSelectedFriendIds((prev) =>
+      prev.includes(friendId)
+        ? prev.filter((id) => id !== friendId)
+        : [...prev, friendId]
+    );
   }, []);
 
   return (
@@ -50,6 +70,10 @@ export default function HomePage() {
         futurePins={DEMO_FUTURE_PINS}
         wishlistPins={DEMO_WISHLIST_PINS}
         visitedCountries={DEMO_VISITED_COUNTRIES}
+        friends={DEMO_FRIENDS}
+        selectedFriendIds={selectedFriendIds}
+        mode={mode}
+        onModeChange={setMode}
         onPinClick={handlePinClick}
       />
 
@@ -69,8 +93,9 @@ export default function HomePage() {
             <div
               className="w-3 h-3 rounded-full"
               style={{
-                backgroundColor:
-                  selectedPin.type === "past"
+                backgroundColor: selectedPin.friendId
+                  ? DEMO_FRIENDS.find((f) => f.id === selectedPin.friendId)?.color ?? "#999"
+                  : selectedPin.type === "past"
                     ? "#c4623a"
                     : selectedPin.type === "future"
                       ? "#1c2b4a"
@@ -78,45 +103,72 @@ export default function HomePage() {
               }}
             />
             <span className="text-xs uppercase tracking-wider text-brand-text-muted">
-              {selectedPin.type === "past"
-                ? "Visited"
-                : selectedPin.type === "future"
-                  ? "Upcoming"
-                  : "Bucket List"}
+              {selectedPin.friendName
+                ? `${selectedPin.friendName}'s trip`
+                : selectedPin.type === "past"
+                  ? "Visited"
+                  : selectedPin.type === "future"
+                    ? "Upcoming"
+                    : "Bucket List"}
             </span>
           </div>
 
           <h2 className="text-xl font-bold font-serif text-brand-text mb-1">{selectedPin.city}</h2>
           <p className="text-brand-text-secondary">{selectedPin.country}</p>
 
-          {selectedPin.type !== "wishlist" && (
-            <button className="mt-4 w-full py-2 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors">
-              View Trip Details
-            </button>
+          {selectedPin.friendName ? (
+            <a
+              href={`/profile/${DEMO_FRIENDS.find((f) => f.id === selectedPin.friendId)?.username}`}
+              className="mt-4 w-full py-2 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors block text-center"
+            >
+              View {selectedPin.friendName}&apos;s Profile
+            </a>
+          ) : (
+            selectedPin.type !== "wishlist" && (
+              <button className="mt-4 w-full py-2 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors">
+                View Trip Details
+              </button>
+            )
           )}
         </div>
       )}
 
-      {/* Stats overlay */}
-      <div className="absolute top-20 md:top-24 left-4 bg-brand-bg/80 backdrop-blur-md rounded-xl border border-brand-border p-4 shadow-lg hidden md:block">
-        <div className="text-xs text-brand-text-muted mb-2">Your Journey</div>
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-brand-pin-past" />
-            <span className="text-sm text-brand-text">{DEMO_PAST_PINS.length} places visited</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-brand-navy" />
-            <span className="text-sm text-brand-text">{DEMO_FUTURE_PINS.length} upcoming</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-brand-pin-wishlist" />
-            <span className="text-sm text-brand-text">{DEMO_WISHLIST_PINS.length} bucket list</span>
-          </div>
-        </div>
-        <div className="mt-3 pt-3 border-t border-brand-border text-xs text-brand-text-muted">
-          {DEMO_VISITED_COUNTRIES.length} countries
-        </div>
+      {/* Side panel — stats overlay or friend legend */}
+      <div className="absolute top-20 md:top-24 left-4 bg-brand-bg/80 backdrop-blur-md rounded-xl border border-brand-border p-4 shadow-lg hidden md:block min-w-[180px]">
+        {mode === "friends" ? (
+          <FriendLegend
+            friends={DEMO_FRIENDS}
+            selectedFriendIds={selectedFriendIds}
+            onToggleFriend={handleToggleFriend}
+          />
+        ) : (
+          <>
+            <div className="text-xs text-brand-text-muted mb-2">Your Journey</div>
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-brand-pin-past" />
+                <span className="text-sm text-brand-text">{DEMO_PAST_PINS.length} places visited</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-brand-navy" />
+                <span className="text-sm text-brand-text">{DEMO_FUTURE_PINS.length} upcoming</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-brand-pin-wishlist" />
+                <span className="text-sm text-brand-text">{DEMO_WISHLIST_PINS.length} bucket list</span>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-brand-border text-xs text-brand-text-muted">
+              {DEMO_VISITED_COUNTRIES.length} countries
+            </div>
+            <div className="mt-3 pt-3 border-t border-brand-border">
+              <CompassClub compact compassMiles={USER_COMPASS_MILES} tier={USER_TIER} />
+            </div>
+            <div className="mt-2">
+              <BadgeStrip earnedBadges={USER_BADGES} />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
