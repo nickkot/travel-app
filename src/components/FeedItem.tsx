@@ -12,7 +12,7 @@ export interface TimelineDay {
 }
 
 export interface FeedItemProps {
-  type: "trip" | "review" | "journal";
+  type: "trip" | "review" | "journal" | "rating";
   id: string;
   tripId?: string;
   authorName: string;
@@ -20,7 +20,6 @@ export interface FeedItemProps {
   coAuthorName?: string;
   coAuthorUsername?: string;
   caption: string;
-  heroPhoto: string;
   photos?: string[];
   location?: string;
   countryFlag?: string;
@@ -28,7 +27,6 @@ export interface FeedItemProps {
   route?: string[];
   stats?: { days: number; cities: number; photos: number; km: number };
   timeline?: TimelineDay[];
-  rating?: number;
   destinationRating?: { overall: number; aspects: RatingStripAspect[] };
   likeCount: number;
   comments: { username: string; text: string }[];
@@ -44,7 +42,6 @@ export function FeedItem({
   coAuthorName,
   coAuthorUsername,
   caption,
-  heroPhoto,
   photos = [],
   location,
   countryFlag,
@@ -52,29 +49,29 @@ export function FeedItem({
   route = [],
   stats,
   timeline = [],
-  rating,
   destinationRating,
   likeCount,
   comments,
   createdAt,
 }: FeedItemProps) {
-  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [likes, setLikes] = useState(likeCount);
+  const [upvoted, setUpvoted] = useState(false);
   const [showAllComments, setShowAllComments] = useState(false);
   const [showTimeline, setShowTimeline] = useState(false);
-  const [showGallery, setShowGallery] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
 
   const href = type === "trip" ? `/trips/${id}` : `/trips/${tripId || id}`;
   const visibleComments = showAllComments ? comments : comments.slice(0, 2);
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikes((prev) => (liked ? prev - 1 : prev + 1));
+  const handleUpvote = () => {
+    setUpvoted(!upvoted);
+    setLikes((prev) => (upvoted ? prev - 1 : prev + 1));
   };
 
   return (
     <div className="bg-brand-card rounded-[14px] border border-brand-border overflow-hidden">
-      {/* Header — author + co-author */}
+      {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="w-8 h-8 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy font-bold text-xs">
           {authorName.charAt(0)}
@@ -99,45 +96,70 @@ export function FeedItem({
               </>
             )}
           </div>
-          <span className="text-[10px] text-brand-text-muted">
-            {formatDate(createdAt)}
-          </span>
+          {location && (
+            <span className="text-[10px] text-brand-text-muted">{location}</span>
+          )}
         </div>
+        <span className="text-[10px] text-brand-text-muted shrink-0">
+          {formatDate(createdAt)}
+        </span>
       </div>
 
-      {/* Hero photo with passport stamp overlay */}
-      <div className="relative">
-        <Link href={href} className="block">
-          <img
-            src={heroPhoto}
-            alt={caption}
-            className="w-full aspect-[4/3] object-cover"
-            loading="lazy"
-          />
-        </Link>
+      {/* Photo carousel (optional) */}
+      {photos.length > 0 && (
+        <div className="relative">
+          <Link href={href} className="block">
+            <img
+              src={photos[photoIndex]}
+              alt={caption}
+              className="w-full aspect-[4/3] object-cover"
+              loading="lazy"
+            />
+          </Link>
 
-        {/* Country flag tag */}
-        {countryFlag && countryCode && (
-          <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1.5">
-            <span className="text-sm leading-none">{countryFlag}</span>
-            <span className="text-[11px] font-medium text-white/90">{countryCode}</span>
-          </div>
-        )}
+          {/* Country flag tag */}
+          {countryFlag && countryCode && (
+            <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1.5">
+              <span className="text-sm leading-none">{countryFlag}</span>
+              <span className="text-[11px] font-medium text-white/90">{countryCode}</span>
+            </div>
+          )}
 
-        {/* Rating overlay for reviews */}
-        {type === "review" && rating && (
-          <div className="absolute bottom-3 left-3 bg-brand-bg/90 backdrop-blur-sm rounded-full px-2.5 py-1 flex gap-0.5">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span
-                key={star}
-                className={`text-sm ${star <= rating ? "text-brand-pin-past" : "text-brand-text-muted/30"}`}
+          {/* Carousel dots + arrows */}
+          {photos.length > 1 && (
+            <>
+              <button
+                onClick={() => setPhotoIndex((prev) => Math.max(0, prev - 1))}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white/80 hover:bg-black/50 transition-colors"
+                style={{ display: photoIndex === 0 ? "none" : "flex" }}
               >
-                {"\u{2605}"}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+              <button
+                onClick={() => setPhotoIndex((prev) => Math.min(photos.length - 1, prev + 1))}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white/80 hover:bg-black/50 transition-colors"
+                style={{ display: photoIndex === photos.length - 1 ? "none" : "flex" }}
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
+                {photos.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                      i === photoIndex ? "bg-white" : "bg-white/40"
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Route strip */}
       {route.length > 0 && (
@@ -168,60 +190,10 @@ export function FeedItem({
         </div>
       )}
 
-      {/* Destination rating strip */}
+      {/* Destination rating */}
       {destinationRating && (
         <div className="px-4 mt-2.5">
           <RatingStrip overall={destinationRating.overall} aspects={destinationRating.aspects} />
-        </div>
-      )}
-
-      {/* Photo mosaic gallery */}
-      {photos.length > 0 && (
-        <div className="px-4 mt-2.5">
-          <div
-            className={`grid gap-1.5 rounded-lg overflow-hidden ${
-              photos.length === 1
-                ? "grid-cols-1"
-                : photos.length === 2
-                  ? "grid-cols-2"
-                  : photos.length === 3
-                    ? "grid-cols-3"
-                    : "grid-cols-2"
-            }`}
-          >
-            {(showGallery ? photos : photos.slice(0, 4)).map((url, i) => (
-              <div
-                key={i}
-                className={`relative ${photos.length === 3 && i === 0 ? "row-span-2" : ""}`}
-              >
-                <img
-                  src={url}
-                  alt={`Photo ${i + 1}`}
-                  className={`w-full object-cover rounded-sm ${
-                    photos.length === 3 && i === 0 ? "h-full" : "aspect-square"
-                  }`}
-                  loading="lazy"
-                />
-                {/* +N overlay on last visible photo */}
-                {!showGallery && i === 3 && photos.length > 4 && (
-                  <button
-                    onClick={() => setShowGallery(true)}
-                    className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-sm"
-                  >
-                    <span className="text-white font-bold text-lg">+{photos.length - 4}</span>
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-          {photos.length > 4 && showGallery && (
-            <button
-              onClick={() => setShowGallery(false)}
-              className="text-xs text-brand-text-muted mt-1.5 hover:text-brand-text"
-            >
-              Show less
-            </button>
-          )}
         </div>
       )}
 
@@ -266,32 +238,42 @@ export function FeedItem({
         </p>
       </div>
 
-      {/* Action bar */}
+      {/* Action bar — upvote, reply, bookmark */}
       <div className="flex items-center gap-4 px-4 pt-2.5">
-        <button onClick={handleLike} className="transition-transform active:scale-125">
+        {/* Upvote (compass arrow) */}
+        <button onClick={handleUpvote} className="flex items-center gap-1 transition-transform active:scale-110">
           <svg
-            className={`w-5.5 h-5.5 ${liked ? "text-red-500 fill-red-500" : "text-brand-text"}`}
+            className={`w-5 h-5 ${upvoted ? "text-brand-pin-past" : "text-brand-text"}`}
+            fill={upvoted ? "currentColor" : "none"}
             viewBox="0 0 24 24"
             stroke="currentColor"
-            strokeWidth={liked ? 0 : 1.5}
-            fill={liked ? "currentColor" : "none"}
+            strokeWidth={upvoted ? 0 : 1.5}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75" />
           </svg>
+          <span className={`text-xs font-semibold ${upvoted ? "text-brand-pin-past" : "text-brand-text"}`}>
+            {likes}
+          </span>
         </button>
-        <span className="text-xs font-semibold text-brand-text">{likes.toLocaleString()}</span>
-        <button>
-          <svg className="w-5.5 h-5.5 text-brand-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
+
+        {/* Reply */}
+        <button className="flex items-center gap-1">
+          <svg className="w-5 h-5 text-brand-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
           </svg>
+          <span className="text-xs text-brand-text-muted">{comments.length}</span>
         </button>
-        <button className="ml-auto">
-          <svg className="w-5.5 h-5.5 text-brand-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+
+        {/* Bookmark */}
+        <button onClick={() => setSaved(!saved)} className="ml-auto transition-transform active:scale-110">
+          <svg
+            className={`w-5 h-5 ${saved ? "text-brand-navy fill-brand-navy" : "text-brand-text"}`}
+            fill={saved ? "currentColor" : "none"}
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
           </svg>
         </button>
       </div>
