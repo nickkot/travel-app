@@ -25,17 +25,19 @@ export function Globe({
 }: GlobeProps) {
   const globeRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const threeRef = useRef<any>(null);
   const [mode, setMode] = useState<GlobeMode>("pins");
   const [geoData, setGeoData] = useState<any>(null);
   const [hoverPin, setHoverPin] = useState<GlobePin | null>(null);
   const [GlobeComponent, setGlobeComponent] = useState<any>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
-  // Manually import react-globe.gl on client only
+  // Manually import react-globe.gl + three on client only
   useEffect(() => {
-    import("react-globe.gl")
-      .then((mod) => {
-        setGlobeComponent(() => mod.default);
+    Promise.all([import("react-globe.gl"), import("three")])
+      .then(([globeMod, threeMod]) => {
+        threeRef.current = threeMod;
+        setGlobeComponent(() => globeMod.default);
       })
       .catch((err) => {
         console.error("Failed to load globe:", err);
@@ -208,27 +210,24 @@ export function Globe({
         <ReactGlobe
           ref={globeRef}
           globeImageUrl=""
-          backgroundColor="#0a1628"
+          backgroundColor="#0d1a30"
           onGlobeReady={() => {
             if (globeRef.current) {
-              // Solid bright blue ocean
+              // Replace globe sphere material with unlit MeshBasicMaterial
+              // so ocean color renders exactly as specified, unaffected by lighting
               const scene = globeRef.current.scene();
-              if (scene) {
-                // Boost lighting so colors aren't darkened
+              const THREE = threeRef.current;
+              if (scene && THREE) {
                 scene.traverse((obj: any) => {
-                  if (obj.isAmbientLight) {
-                    obj.intensity = 1.8;
-                  }
-                  if (obj.isDirectionalLight) {
-                    obj.intensity = 1.2;
-                  }
-                  if (obj.type === "Mesh" && obj.material && !obj.__customized) {
-                    if (obj.geometry?.type === "SphereGeometry" || obj.geometry?.parameters?.radius) {
-                      obj.material.color?.set("#5BA3D9");
-                      obj.material.emissive?.set("#1a4060");
-                      obj.material.emissiveIntensity = 0.3;
-                      obj.__customized = true;
-                    }
+                  if (
+                    obj.type === "Mesh" &&
+                    obj.geometry?.parameters?.radius &&
+                    !obj.__oceanFixed
+                  ) {
+                    obj.material = new THREE.MeshBasicMaterial({
+                      color: "#6BB8E8",
+                    });
+                    obj.__oceanFixed = true;
                   }
                 });
               }
