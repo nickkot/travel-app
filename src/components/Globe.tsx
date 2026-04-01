@@ -139,7 +139,8 @@ export function Globe({
     }
   }, []);
 
-  // High-contrast country fills
+  // Parchment land + bright blue ocean (ocean = globe texture showing through)
+  // Visited countries get a warm terracotta tint over parchment
   const getPolygonColor = useCallback(
     (feat: any) => {
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
@@ -148,24 +149,25 @@ export function Globe({
         visitedSet.has(name.toUpperCase()) || visitedSet.has(iso.toUpperCase());
 
       if (mode === "blankspots") {
+        // Visited = warm tan, unvisited = muted gray to highlight gaps
         return isVisited
-          ? "rgba(196, 98, 58, 0.5)"
-          : "rgba(200, 191, 170, 0.7)";
+          ? "rgba(210, 190, 155, 0.95)"
+          : "rgba(180, 175, 165, 0.95)";
       }
       if (mode === "heatmap") {
         return isVisited
-          ? "rgba(196, 98, 58, 0.5)"
-          : "rgba(25, 40, 65, 0.6)";
+          ? "rgba(196, 98, 58, 0.6)"
+          : "rgba(215, 200, 170, 0.85)";
       }
-      // Pins mode — high contrast
+      // Pins mode — parchment land, terracotta tint for visited
       return isVisited
-        ? "rgba(196, 98, 58, 0.35)"
-        : "rgba(35, 55, 85, 0.75)";
+        ? "rgba(220, 185, 140, 0.92)"
+        : "rgba(215, 200, 175, 0.88)";
     },
     [mode, visitedSet]
   );
 
-  // High-contrast polygon side color (gives 3D depth to raised countries)
+  // Side colors for 3D depth on raised countries
   const getPolygonSideColor = useCallback(
     (feat: any) => {
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
@@ -173,17 +175,14 @@ export function Globe({
       const isVisited =
         visitedSet.has(name.toUpperCase()) || visitedSet.has(iso.toUpperCase());
 
-      if (mode === "blankspots") {
-        return isVisited ? "rgba(160, 70, 35, 0.6)" : "rgba(160, 150, 130, 0.4)";
-      }
       return isVisited
-        ? "rgba(160, 70, 35, 0.5)"
-        : "rgba(20, 35, 60, 0.5)";
+        ? "rgba(180, 140, 90, 0.8)"
+        : "rgba(170, 160, 140, 0.6)";
     },
-    [mode, visitedSet]
+    [visitedSet]
   );
 
-  // Slightly raise visited countries for 3D effect
+  // Visited countries slightly raised for 3D effect
   const getPolygonAltitude = useCallback(
     (feat: any) => {
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
@@ -192,9 +191,9 @@ export function Globe({
         visitedSet.has(name.toUpperCase()) || visitedSet.has(iso.toUpperCase());
 
       if (mode === "blankspots") {
-        return isVisited ? 0.01 : 0.002;
+        return isVisited ? 0.012 : 0.003;
       }
-      return isVisited ? 0.008 : 0.002;
+      return isVisited ? 0.01 : 0.003;
     },
     [mode, visitedSet]
   );
@@ -208,8 +207,8 @@ export function Globe({
       {ReactGlobe && (
         <ReactGlobe
           ref={globeRef}
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
-          backgroundColor="#0d1a2e"
+          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+          backgroundColor="#0a1628"
           onGlobeReady={() => {
             if (globeRef.current) {
               const controls = globeRef.current.controls();
@@ -223,7 +222,7 @@ export function Globe({
           polygonsData={geoData ? geoData.features : []}
           polygonCapColor={getPolygonColor}
           polygonSideColor={getPolygonSideColor}
-          polygonStrokeColor={() => "rgba(200, 210, 230, 0.5)"}
+          polygonStrokeColor={() => "rgba(140, 125, 100, 0.5)"}
           polygonAltitude={getPolygonAltitude}
           // 3D raised pins
           pointsData={mode === "pins" ? allPins : []}
@@ -254,8 +253,8 @@ export function Globe({
           hexAltitude={(d: any) => d.sumWeight * 0.02}
           // Atmosphere
           animateIn={true}
-          atmosphereColor="#2a4a7a"
-          atmosphereAltitude={0.15}
+          atmosphereColor="#4a8abf"
+          atmosphereAltitude={0.18}
           showGraticules={true}
           width={dimensions.width}
           height={dimensions.height}
