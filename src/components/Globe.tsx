@@ -207,10 +207,23 @@ export function Globe({
       {ReactGlobe && (
         <ReactGlobe
           ref={globeRef}
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+          globeImageUrl=""
           backgroundColor="#0a1628"
           onGlobeReady={() => {
             if (globeRef.current) {
+              // Solid blue ocean
+              const scene = globeRef.current.scene();
+              if (scene) {
+                scene.traverse((obj: any) => {
+                  if (obj.type === "Mesh" && obj.material && !obj.__customized) {
+                    // The globe sphere mesh
+                    if (obj.geometry?.type === "SphereGeometry" || obj.geometry?.parameters?.radius) {
+                      obj.material.color?.set("#4a90c4");
+                      obj.__customized = true;
+                    }
+                  }
+                });
+              }
               const controls = globeRef.current.controls();
               if (controls) {
                 controls.autoRotate = true;
