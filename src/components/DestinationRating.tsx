@@ -91,8 +91,6 @@ export function DestinationRating({
 }: DestinationRatingProps) {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(likeCount);
-  const [expanded, setExpanded] = useState(false);
-
   const handleLike = () => {
     setLiked(!liked);
     setLikes((prev) => (liked ? prev - 1 : prev + 1));
@@ -117,19 +115,11 @@ export function DestinationRating({
         </div>
       </div>
 
-      {/* Aspect ratings — show top 3, expand for all */}
+      {/* Aspect ratings */}
       <div className="space-y-2 mb-3">
-        {(expanded ? aspects : aspects.slice(0, 3)).map((a) => (
+        {aspects.map((a) => (
           <AspectBar key={a.aspect} aspect={a} />
         ))}
-        {aspects.length > 3 && (
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="text-xs text-brand-navy font-medium"
-          >
-            {expanded ? "Show less" : `Show all ${aspects.length} aspects`}
-          </button>
-        )}
       </div>
 
       {/* Review text */}
