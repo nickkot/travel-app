@@ -11,9 +11,20 @@ export interface GlobePin {
   type: "past" | "future" | "wishlist";
   label?: string;
   tripId?: string;
+  friendId?: string;
+  friendName?: string;
 }
 
-export type GlobeMode = "pins" | "heatmap" | "blankspots";
+export type GlobeMode = "pins" | "friends" | "blankspots";
+
+export interface FriendData {
+  id: string;
+  name: string;
+  username: string;
+  color: string;
+  pins: GlobePin[];
+  visitedCountries: string[];
+}
 
 export interface TravelStats {
   countriesVisited: number;
