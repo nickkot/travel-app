@@ -1,0 +1,241 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Visibility {
+  PUBLIC
+  FRIENDS
+  PRIVATE
+}
+
+enum TripStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+}
+
+enum ParentType {
+  TRIP
+  REVIEW
+  JOURNAL_ENTRY
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  username      String   @unique
+  avatarUrl     String?  @map("avatar_url")
+  bio           String?
+  compassMiles  Int      @default(0) @map("compass_miles")
+  tier          Int      @default(1)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  trips              Trip[]
+  photos             Photo[]
+  reviews            Review[]
+  journalEntries     JournalEntry[]
+  comments           Comment[]
+  badges             Badge[]
+  wishlistDestinations WishlistDestination[]
+  flights            Flight[]
+  stravaActivities   StravaActivity[]
+
+  followers Follow[] @relation("following")
+  following Follow[] @relation("follower")
+
+  @@map("users")
+}
+
+model Trip {
+  id            String     @id @default(cuid())
+  userId        String     @map("user_id")
+  title         String
+  description   String?
+  coverPhotoUrl String?    @map("cover_photo_url")
+  startDate     DateTime?  @map("start_date")
+  endDate       DateTime?  @map("end_date")
+  isFuture      Boolean    @default(false) @map("is_future")
+  visibility    Visibility @default(PUBLIC)
+  status        TripStatus @default(PLANNED)
+  upvoteCount   Int        @default(0) @map("upvote_count")
+  createdAt     DateTime   @default(now()) @map("created_at")
+
+  user          User              @relation(fields: [userId], references: [id])
+  destinations  TripDestination[]
+  photos        Photo[]
+  reviews       Review[]
+  journalEntries JournalEntry[]
+  flights       Flight[]
+  stravaActivities StravaActivity[]
+
+  @@map("trips")
+}
+
+model TripDestination {
+  id            String    @id @default(cuid())
+  tripId        String    @map("trip_id")
+  city          String
+  country       String
+  lat           Float
+  lng           Float
+  arrivalDate   DateTime? @map("arrival_date")
+  departureDate DateTime? @map("departure_date")
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@map("trip_destinations")
+}
+
+model WishlistDestination {
+  id      String   @id @default(cuid())
+  userId  String   @map("user_id")
+  city    String
+  country String
+  lat     Float
+  lng     Float
+  notes   String?
+  addedAt DateTime @default(now()) @map("added_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("wishlist_destinations")
+}
+
+model Photo {
+  id      String    @id @default(cuid())
+  tripId  String    @map("trip_id")
+  userId  String    @map("user_id")
+  url     String
+  caption String?
+  lat     Float?
+  lng     Float?
+  takenAt DateTime? @map("taken_at")
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("photos")
+}
+
+model Review {
+  id          String     @id @default(cuid())
+  userId      String     @map("user_id")
+  tripId      String?    @map("trip_id")
+  placeName   String     @map("place_name")
+  placeType   String     @map("place_type")
+  lat         Float
+  lng         Float
+  city        String
+  country     String
+  rating      Int
+  content     String
+  upvoteCount Int        @default(0) @map("upvote_count")
+  visibility  Visibility @default(PUBLIC)
+  createdAt   DateTime   @default(now()) @map("created_at")
+
+  user User  @relation(fields: [userId], references: [id])
+  trip Trip? @relation(fields: [tripId], references: [id])
+
+  @@map("reviews")
+}
+
+model JournalEntry {
+  id           String     @id @default(cuid())
+  tripId       String     @map("trip_id")
+  userId       String     @map("user_id")
+  content      String
+  date         DateTime
+  locationCity String?    @map("location_city")
+  locationLat  Float?     @map("location_lat")
+  locationLng  Float?     @map("location_lng")
+  visibility   Visibility @default(PUBLIC)
+  upvoteCount  Int        @default(0) @map("upvote_count")
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("journal_entries")
+}
+
+model Comment {
+  id         String     @id @default(cuid())
+  userId     String     @map("user_id")
+  content    String
+  parentType ParentType @map("parent_type")
+  parentId   String     @map("parent_id")
+  createdAt  DateTime   @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([parentType, parentId])
+  @@map("comments")
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  follower  User @relation("follower", fields: [followerId], references: [id])
+  following User @relation("following", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model Badge {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  badgeType String   @map("badge_type")
+  earnedAt  DateTime @default(now()) @map("earned_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, badgeType])
+  @@map("badges")
+}
+
+model Flight {
+  id            String    @id @default(cuid())
+  tripId        String    @map("trip_id")
+  userId        String    @map("user_id")
+  airline       String
+  flightNumber  String    @map("flight_number")
+  origin        String
+  destination   String
+  departureTime DateTime  @map("departure_time")
+  arrivalTime   DateTime? @map("arrival_time")
+  status        String?
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("flights")
+}
+
+model StravaActivity {
+  id           String  @id @default(cuid())
+  tripId       String  @map("trip_id")
+  userId       String  @map("user_id")
+  activityType String  @map("activity_type")
+  name         String
+  distance     Float
+  duration     Int
+  lat          Float?
+  lng          Float?
+  polyline     String?
+  stravaId     String  @unique @map("strava_id")
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("strava_activities")
+}
