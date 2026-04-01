@@ -12,8 +12,9 @@ interface GlobeProps {
   onPinClick?: (pin: GlobePin) => void;
 }
 
+// Low-res country boundaries (~300KB vs 23MB original)
 const GEOJSON_URL =
-  "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
+  "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson";
 
 export function Globe({
   pastPins,
