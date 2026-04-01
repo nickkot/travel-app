@@ -88,6 +88,11 @@ body {
   position: relative;
   overflow: hidden;
   background: var(--globe-bg);
+  z-index: 0;
+}
+
+.globe-container canvas {
+  z-index: 0;
 }
 
 /* Pin animations */

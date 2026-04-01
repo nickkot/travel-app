@@ -1,14 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import type { GlobePin, GlobeMode } from "@/types";
 import { GlobeToolbar } from "./GlobeToolbar";
-
-const ReactGlobe = dynamic(() => import("react-globe.gl"), { ssr: false });
-
-const GEOJSON_URL =
-  "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
 
 interface GlobeProps {
   pastPins: GlobePin[];
@@ -17,6 +11,9 @@ interface GlobeProps {
   visitedCountries: string[];
   onPinClick?: (pin: GlobePin) => void;
 }
+
+const GEOJSON_URL =
+  "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
 
 export function Globe({
   pastPins,
@@ -30,21 +27,38 @@ export function Globe({
   const [mode, setMode] = useState<GlobeMode>("pins");
   const [geoData, setGeoData] = useState<any>(null);
   const [hoverPin, setHoverPin] = useState<GlobePin | null>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [GlobeComponent, setGlobeComponent] = useState<any>(null);
+  const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+
+  // Manually import react-globe.gl on client only
+  useEffect(() => {
+    import("react-globe.gl")
+      .then((mod) => {
+        setGlobeComponent(() => mod.default);
+      })
+      .catch((err) => {
+        console.error("Failed to load globe:", err);
+      });
+  }, []);
 
   // Track container dimensions
   useEffect(() => {
     const updateSize = () => {
       if (containerRef.current) {
-        setDimensions({
-          width: containerRef.current.clientWidth,
-          height: containerRef.current.clientHeight,
-        });
+        const w = containerRef.current.clientWidth;
+        const h = containerRef.current.clientHeight;
+        if (w > 0 && h > 0) {
+          setDimensions({ width: w, height: h });
+        }
       }
     };
-    updateSize();
+    // Measure after a small delay to ensure layout is complete
+    const timer = setTimeout(updateSize, 100);
     window.addEventListener("resize", updateSize);
-    return () => window.removeEventListener("resize", updateSize);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateSize);
+    };
   }, []);
 
   // Load GeoJSON for political boundaries
@@ -57,6 +71,7 @@ export function Globe({
 
   // Auto-rotate — poll until globe controls are available
   useEffect(() => {
+    if (!GlobeComponent) return;
     const interval = setInterval(() => {
       if (globeRef.current) {
         const controls = globeRef.current.controls();
@@ -69,9 +84,9 @@ export function Globe({
           clearInterval(interval);
         }
       }
-    }, 200);
+    }, 300);
     return () => clearInterval(interval);
-  }, []);
+  }, [GlobeComponent]);
 
   const allPins = useMemo(
     () => [...pastPins, ...futurePins, ...wishlistPins],
@@ -88,15 +103,14 @@ export function Globe({
     [visitedCountries]
   );
 
-  // Aged Atlas pin colors
   const getPinColor = useCallback((pin: GlobePin) => {
     switch (pin.type) {
       case "past":
-        return "#c4623a"; // terracotta
+        return "#c4623a";
       case "future":
-        return "#1c2b4a"; // ink navy
+        return "#1c2b4a";
       case "wishlist":
-        return "#5c8a6e"; // sage green
+        return "#5c8a6e";
     }
   }, []);
 
@@ -122,7 +136,6 @@ export function Globe({
     }
   }, []);
 
-  // Country fill logic based on mode
   const getPolygonColor = useCallback(
     (feat: any) => {
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
@@ -135,14 +148,11 @@ export function Globe({
           ? "rgba(196, 98, 58, 0.2)"
           : "rgba(200, 191, 170, 0.55)";
       }
-
       if (mode === "heatmap") {
         return isVisited
           ? "rgba(196, 98, 58, 0.3)"
           : "rgba(13, 26, 46, 0.05)";
       }
-
-      // Pins mode — visited countries get a subtle terracotta tint
       return isVisited
         ? "rgba(196, 98, 58, 0.12)"
         : "rgba(30, 35, 50, 0.4)";
@@ -150,11 +160,13 @@ export function Globe({
     [mode, visitedSet]
   );
 
+  const ReactGlobe = GlobeComponent;
+
   return (
     <div ref={containerRef} className="globe-container relative">
       <GlobeToolbar mode={mode} onModeChange={setMode} />
 
-      {dimensions.width > 0 && (
+      {ReactGlobe && (
         <ReactGlobe
           ref={globeRef}
           globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
@@ -168,13 +180,11 @@ export function Globe({
               }
             }
           }}
-          // Political boundaries as the base map (always on)
           polygonsData={geoData ? geoData.features : []}
           polygonCapColor={getPolygonColor}
           polygonSideColor={() => "rgba(0,0,0,0)"}
           polygonStrokeColor={() => "rgba(120, 140, 170, 0.3)"}
           polygonAltitude={0.003}
-          // Pins (hidden in heatmap/blankspots modes for clarity)
           pointsData={mode === "pins" ? allPins : []}
           pointLat={(d: any) => d.lat}
           pointLng={(d: any) => d.lng}
@@ -191,16 +201,13 @@ export function Globe({
           }}
           onPointClick={(point: any) => onPinClick?.(point as GlobePin)}
           onPointHover={(point: any) => setHoverPin(point as GlobePin | null)}
-          // No arcs — clean design
           arcsData={[]}
-          // Heatmap hex overlay (only in heatmap mode)
           hexBinPointsData={mode === "heatmap" ? heatmapData : []}
           hexBinPointWeight="weight"
           hexBinResolution={3}
           hexTopColor={() => "rgba(196, 98, 58, 0.6)"}
           hexSideColor={() => "rgba(232, 184, 74, 0.25)"}
           hexAltitude={(d: any) => d.sumWeight * 0.015}
-          // Atmosphere
           animateIn={true}
           atmosphereColor="#2a4a7a"
           atmosphereAltitude={0.12}
@@ -210,7 +217,12 @@ export function Globe({
         />
       )}
 
-      {/* Hover tooltip */}
+      {!GlobeComponent && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-parchment/50 text-sm">Loading globe...</div>
+        </div>
+      )}
+
       {hoverPin && (
         <div className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-brand-bg/95 backdrop-blur-md rounded-xl border border-brand-border p-4 shadow-2xl min-w-[200px] pointer-events-none">
           <div className="flex items-center gap-2 mb-1">
