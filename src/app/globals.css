@@ -95,17 +95,6 @@ body {
   z-index: 0;
 }
 
-/* Passport stamp on feed cards */
-.passport-stamp {
-  animation: stamp-press 0.4s ease-out both;
-}
-
-@keyframes stamp-press {
-  0% { transform: scale(1.8) rotate(8deg); opacity: 0; }
-  60% { transform: scale(0.95) rotate(2deg); opacity: 1; }
-  100% { transform: scale(1) rotate(3deg); opacity: 1; }
-}
-
 /* Landmark icons on globe */
 .landmark-icon {
   font-size: 20px;

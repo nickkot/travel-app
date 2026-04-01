@@ -113,13 +113,11 @@ export function FeedItem({
           />
         </Link>
 
-        {/* Passport stamp overlay */}
+        {/* Country flag tag */}
         {countryFlag && countryCode && (
-          <div className="absolute top-3 right-3 passport-stamp">
-            <div className="bg-brand-bg/90 backdrop-blur-sm rounded-lg border-2 border-brand-pin-past/60 px-2.5 py-1.5 flex items-center gap-1.5 shadow-lg" style={{ transform: "rotate(3deg)" }}>
-              <span className="text-lg leading-none">{countryFlag}</span>
-              <span className="text-xs font-bold text-brand-pin-past tracking-widest uppercase">{countryCode}</span>
-            </div>
+          <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1.5">
+            <span className="text-sm leading-none">{countryFlag}</span>
+            <span className="text-[11px] font-medium text-white/90">{countryCode}</span>
           </div>
         )}
 
