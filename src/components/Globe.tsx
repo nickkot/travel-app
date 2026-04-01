@@ -211,14 +211,22 @@ export function Globe({
           backgroundColor="#0a1628"
           onGlobeReady={() => {
             if (globeRef.current) {
-              // Solid blue ocean
+              // Solid bright blue ocean
               const scene = globeRef.current.scene();
               if (scene) {
+                // Boost lighting so colors aren't darkened
                 scene.traverse((obj: any) => {
+                  if (obj.isAmbientLight) {
+                    obj.intensity = 1.8;
+                  }
+                  if (obj.isDirectionalLight) {
+                    obj.intensity = 1.2;
+                  }
                   if (obj.type === "Mesh" && obj.material && !obj.__customized) {
-                    // The globe sphere mesh
                     if (obj.geometry?.type === "SphereGeometry" || obj.geometry?.parameters?.radius) {
-                      obj.material.color?.set("#4A7FA5");
+                      obj.material.color?.set("#5BA3D9");
+                      obj.material.emissive?.set("#1a4060");
+                      obj.material.emissiveIntensity = 0.3;
                       obj.__customized = true;
                     }
                   }
