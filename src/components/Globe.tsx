@@ -252,6 +252,14 @@ export function Globe({
 
   const ReactGlobe = GlobeComponent;
 
+  const createLandmarkEl = useCallback((d: any) => {
+    const el = document.createElement("span");
+    el.textContent = d.icon;
+    el.title = d.name;
+    el.style.cssText = "font-size:18px;pointer-events:none;user-select:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));transform:translate(-50%,-50%)";
+    return el;
+  }, []);
+
   return (
     <div ref={containerRef} className="globe-container relative">
       <GlobeToolbar mode={mode} onModeChange={onModeChange} />
@@ -314,13 +322,7 @@ export function Globe({
           htmlLng={(d: any) => d.lng}
           htmlAltitude={0.015}
           htmlTransitionDuration={0}
-          htmlElement={useCallback((d: any) => {
-            const el = document.createElement("span");
-            el.textContent = d.icon;
-            el.title = d.name;
-            el.style.cssText = "font-size:18px;pointer-events:none;user-select:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));transform:translate(-50%,-50%)";
-            return el;
-          }, [])}
+          htmlElement={createLandmarkEl}
           // Atmosphere
           animateIn={true}
           atmosphereColor="#4a8abf"
