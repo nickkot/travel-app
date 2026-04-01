@@ -1,21 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 
-interface FeedItemProps {
+export interface FeedItemProps {
   type: "trip" | "review" | "journal";
   id: string;
   tripId?: string;
   authorName: string;
   authorUsername: string;
-  title: string;
-  preview: string;
-  coverUrl?: string | null;
-  destinations?: string[];
+  coAuthorName?: string;
+  coAuthorUsername?: string;
+  caption: string;
+  photoUrl: string;
+  location?: string;
   rating?: number;
-  upvoteCount: number;
-  commentCount: number;
+  likeCount: number;
+  comments: { username: string; text: string }[];
   createdAt: string;
 }
 
@@ -25,125 +27,157 @@ export function FeedItem({
   tripId,
   authorName,
   authorUsername,
-  title,
-  preview,
-  coverUrl,
-  destinations,
+  coAuthorName,
+  coAuthorUsername,
+  caption,
+  photoUrl,
+  location,
   rating,
-  upvoteCount,
-  commentCount,
+  likeCount,
+  comments,
   createdAt,
 }: FeedItemProps) {
-  const href =
-    type === "trip" ? `/trips/${id}` : `/trips/${tripId || id}`;
+  const [liked, setLiked] = useState(false);
+  const [showAllComments, setShowAllComments] = useState(false);
+  const [likes, setLikes] = useState(likeCount);
 
-  const typeLabel =
-    type === "trip"
-      ? "shared a trip"
-      : type === "review"
-        ? "wrote a review"
-        : "wrote in their journal";
+  const href = type === "trip" ? `/trips/${id}` : `/trips/${tripId || id}`;
+  const visibleComments = showAllComments ? comments : comments.slice(0, 2);
+
+  const handleLike = () => {
+    setLiked(!liked);
+    setLikes((prev) => (liked ? prev - 1 : prev + 1));
+  };
 
   return (
-    <div className="bg-brand-card rounded-[10px] border border-brand-border overflow-hidden card-hover">
-      {/* Header */}
-      <div className="px-4 pt-4 pb-2 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy font-bold text-sm">
+    <div className="border-b border-brand-border pb-4">
+      {/* Header — author + co-author + location */}
+      <div className="flex items-center gap-3 px-4 py-3">
+        <div className="w-8 h-8 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy font-bold text-xs">
           {authorName.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 text-sm">
             <Link
               href={`/profile/${authorUsername}`}
-              className="font-medium text-sm text-brand-text hover:text-brand-navy transition-colors"
+              className="font-semibold text-brand-text hover:text-brand-navy"
             >
               {authorName}
             </Link>
-            <span className="text-xs text-brand-text-muted">{typeLabel}</span>
+            {coAuthorName && coAuthorUsername && (
+              <>
+                <span className="text-brand-text-muted">with</span>
+                <Link
+                  href={`/profile/${coAuthorUsername}`}
+                  className="font-semibold text-brand-text hover:text-brand-navy"
+                >
+                  {coAuthorName}
+                </Link>
+              </>
+            )}
           </div>
-          <span className="text-xs text-brand-text-muted">
-            {formatDate(createdAt)}
-          </span>
+          {location && (
+            <div className="text-xs text-brand-text-muted">{location}</div>
+          )}
         </div>
+        <span className="text-[10px] text-brand-text-muted shrink-0">
+          {formatDate(createdAt)}
+        </span>
       </div>
 
-      {/* Cover */}
-      {coverUrl && (
-        <Link href={href}>
-          <div className="relative h-52">
-            <img
-              src={coverUrl}
-              alt={title}
-              className="w-full h-full object-cover"
-              loading="lazy"
+      {/* Photo — full width, tappable */}
+      <Link href={href} className="block">
+        <div className="relative aspect-[4/5] bg-brand-surface overflow-hidden">
+          <img
+            src={photoUrl}
+            alt={caption}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+          {/* Rating overlay for reviews */}
+          {type === "review" && rating && (
+            <div className="absolute bottom-3 left-3 flex gap-0.5">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`text-sm ${star <= rating ? "text-brand-pin-past" : "text-white/30"}`}
+                >
+                  {"\u{2605}"}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </Link>
+
+      {/* Action bar */}
+      <div className="flex items-center gap-4 px-4 pt-3">
+        <button onClick={handleLike} className="transition-transform active:scale-125">
+          <svg
+            className={`w-6 h-6 ${liked ? "text-red-500 fill-red-500" : "text-brand-text"}`}
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={liked ? 0 : 1.5}
+            fill={liked ? "currentColor" : "none"}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
             />
-          </div>
-        </Link>
-      )}
-
-      {/* Content */}
-      <div className="px-4 py-3">
-        <Link href={href}>
-          <h3 className="font-semibold font-serif text-brand-text mb-1 hover:text-brand-navy transition-colors">
-            {title}
-          </h3>
-        </Link>
-
-        {/* Destinations */}
-        {destinations && destinations.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-2">
-            {destinations.map((d, i) => (
-              <span
-                key={i}
-                className="text-xs px-2 py-0.5 rounded-full bg-brand-surface text-brand-text-secondary"
-              >
-                {d}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Rating — terracotta stars */}
-        {type === "review" && rating && (
-          <div className="flex gap-0.5 mb-2">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <svg
-                key={star}
-                className={`w-4 h-4 ${star <= rating ? "text-brand-pin-past fill-brand-pin-past" : "text-brand-text-muted/30"}`}
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-              </svg>
-            ))}
-          </div>
-        )}
-
-        <p className="text-sm text-brand-text-secondary line-clamp-2">{preview}</p>
-      </div>
-
-      {/* Footer */}
-      <div className="px-4 pb-3 flex items-center gap-4 text-xs text-brand-text-muted">
-        <button className="flex items-center gap-1 hover:text-brand-navy transition-colors">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
           </svg>
-          {upvoteCount}
         </button>
-        <button className="flex items-center gap-1 hover:text-brand-navy transition-colors">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <button>
+          <svg className="w-6 h-6 text-brand-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
           </svg>
-          {commentCount}
         </button>
-        <button className="flex items-center gap-1 hover:text-brand-navy transition-colors ml-auto">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+        <button className="ml-auto">
+          <svg className="w-6 h-6 text-brand-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
           </svg>
-          Share
         </button>
       </div>
+
+      {/* Likes */}
+      <div className="px-4 pt-1">
+        <span className="text-sm font-semibold text-brand-text">
+          {likes.toLocaleString()} likes
+        </span>
+      </div>
+
+      {/* Caption */}
+      <div className="px-4 pt-1">
+        <p className="text-sm text-brand-text">
+          <Link
+            href={`/profile/${authorUsername}`}
+            className="font-semibold hover:text-brand-navy"
+          >
+            {authorName}
+          </Link>{" "}
+          <span className="text-brand-text-secondary">{caption}</span>
+        </p>
+      </div>
+
+      {/* Comments */}
+      {comments.length > 0 && (
+        <div className="px-4 pt-1.5 space-y-0.5">
+          {comments.length > 2 && !showAllComments && (
+            <button
+              onClick={() => setShowAllComments(true)}
+              className="text-xs text-brand-text-muted hover:text-brand-text"
+            >
+              View all {comments.length} comments
+            </button>
+          )}
+          {visibleComments.map((c, i) => (
+            <p key={i} className="text-sm text-brand-text">
+              <span className="font-semibold">{c.username}</span>{" "}
+              <span className="text-brand-text-secondary">{c.text}</span>
+            </p>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
