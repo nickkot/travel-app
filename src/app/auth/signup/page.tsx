@@ -47,34 +47,34 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center px-4 pt-16 md:pt-24">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Start your journey</h1>
-          <p className="text-foreground/50">
+          <h1 className="text-3xl font-bold font-serif text-brand-text mb-2">Start your journey</h1>
+          <p className="text-brand-text-muted">
             Join a community of travelers, not tourists
           </p>
         </div>
 
-        <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="bg-brand-card rounded-[10px] border border-brand-border p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+              <div className="p-3 bg-brand-danger/10 border border-brand-danger/30 rounded-lg text-brand-danger text-sm">
                 {error}
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-1.5">Name</label>
+              <label className="block text-sm font-medium text-brand-text mb-1.5">Name</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
                 required
-                className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+                className="w-full px-4 py-2.5 bg-brand-bg border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1.5">
+              <label className="block text-sm font-medium text-brand-text mb-1.5">
                 Username
               </label>
               <input
@@ -83,24 +83,24 @@ export default function SignupPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="atlas_explorer"
                 required
-                className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+                className="w-full px-4 py-2.5 bg-brand-bg border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-brand-text mb-1.5">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+                className="w-full px-4 py-2.5 bg-brand-bg border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1.5">
+              <label className="block text-sm font-medium text-brand-text mb-1.5">
                 Password
               </label>
               <input
@@ -110,22 +110,22 @@ export default function SignupPage() {
                 placeholder="••••••••"
                 required
                 minLength={8}
-                className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+                className="w-full px-4 py-2.5 bg-brand-bg border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-accent text-black font-semibold rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
+              className="w-full py-3 bg-brand-navy text-parchment font-semibold rounded-lg hover:bg-brand-navy-hover transition-colors disabled:opacity-50"
             >
               {isLoading ? "Creating account..." : "Create Account"}
             </button>
           </form>
 
-          <p className="text-center text-sm text-foreground/50 mt-4">
+          <p className="text-center text-sm text-brand-text-muted mt-4">
             Already have an account?{" "}
-            <Link href="/auth/login" className="text-accent hover:underline">
+            <Link href="/auth/login" className="text-brand-navy hover:underline">
               Sign in
             </Link>
           </p>

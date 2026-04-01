@@ -64,14 +64,15 @@ export function Globe({
     [visitedCountries]
   );
 
+  // Aged Atlas pin colors
   const getPinColor = useCallback((pin: GlobePin) => {
     switch (pin.type) {
       case "past":
-        return "#f59e0b";
+        return "#c4623a"; // terracotta
       case "future":
-        return "#3b82f6";
+        return "#1c2b4a"; // ink navy
       case "wishlist":
-        return "#a78bfa";
+        return "#5c8a6e"; // sage green
     }
   }, []);
 
@@ -106,22 +107,22 @@ export function Globe({
         visitedSet.has(name.toUpperCase()) || visitedSet.has(iso.toUpperCase());
 
       if (mode === "blankspots") {
-        // Visited = subtle warm fill, unvisited = dark overlay
+        // Visited = subtle terracotta fill, unvisited = warm gray wash
         return isVisited
-          ? "rgba(245, 158, 11, 0.12)"
-          : "rgba(15, 15, 35, 0.55)";
+          ? "rgba(196, 98, 58, 0.2)"
+          : "rgba(200, 191, 170, 0.55)";
       }
 
       if (mode === "heatmap") {
         return isVisited
-          ? "rgba(245, 158, 11, 0.25)"
-          : "rgba(20, 20, 40, 0.03)";
+          ? "rgba(196, 98, 58, 0.3)"
+          : "rgba(13, 26, 46, 0.05)";
       }
 
-      // Pins mode — visited countries get a very subtle warm tint
+      // Pins mode — visited countries get a subtle terracotta tint
       return isVisited
-        ? "rgba(245, 158, 11, 0.08)"
-        : "rgba(30, 32, 48, 0.4)";
+        ? "rgba(196, 98, 58, 0.12)"
+        : "rgba(30, 35, 50, 0.4)";
     },
     [mode, visitedSet]
   );
@@ -132,14 +133,13 @@ export function Globe({
 
       <ReactGlobe
         ref={globeRef}
-        // Clean base: no texture, just a solid dark globe
         globeImageUrl=""
         backgroundColor="rgba(0,0,0,0)"
         // Political boundaries as the base map (always on)
         polygonsData={geoData ? geoData.features : []}
         polygonCapColor={getPolygonColor}
         polygonSideColor={() => "rgba(0,0,0,0)"}
-        polygonStrokeColor={() => "rgba(120, 130, 160, 0.25)"}
+        polygonStrokeColor={() => "rgba(120, 140, 170, 0.3)"}
         polygonAltitude={0.003}
         // Pins (hidden in heatmap/blankspots modes for clarity)
         pointsData={mode === "pins" ? allPins : []}
@@ -150,26 +150,26 @@ export function Globe({
         pointRadius={(d: any) => getPinRadius(d as GlobePin)}
         pointLabel={(d: any) => {
           const pin = d as GlobePin;
-          return `<div style="background:rgba(26,26,46,0.95);padding:8px 12px;border-radius:8px;font-size:13px;border:1px solid rgba(42,42,74,0.8);box-shadow:0 4px 12px rgba(0,0,0,0.3)">
+          return `<div style="background:rgba(250,247,242,0.96);padding:8px 12px;border-radius:8px;font-size:13px;border:1px solid rgba(44,31,15,0.15);box-shadow:0 4px 12px rgba(42,31,15,0.15);color:#2a1f0f">
             <div style="font-weight:600">${pin.city}</div>
-            <div style="color:rgba(255,255,255,0.5);font-size:11px">${pin.country}</div>
-            <div style="font-size:11px;margin-top:4px;color:${getPinColor(pin)}">${pin.type === "past" ? "Visited" : pin.type === "future" ? "Upcoming" : "Bucket List"}</div>
+            <div style="color:#6b5740;font-size:11px">${pin.country}</div>
+            <div style="font-size:11px;margin-top:4px;color:${getPinColor(pin)};font-weight:500">${pin.type === "past" ? "Visited" : pin.type === "future" ? "Upcoming" : "Bucket List"}</div>
           </div>`;
         }}
         onPointClick={(point: any) => onPinClick?.(point as GlobePin)}
         onPointHover={(point: any) => setHoverPin(point as GlobePin | null)}
         // No arcs — clean design
         arcsData={[]}
-        // Heatmap hex overlay (only in heatmap mode)
+        // Heatmap hex overlay (only in heatmap mode) — terracotta → amber
         hexBinPointsData={mode === "heatmap" ? heatmapData : []}
         hexBinPointWeight="weight"
         hexBinResolution={3}
-        hexTopColor={() => "rgba(245, 158, 11, 0.5)"}
-        hexSideColor={() => "rgba(245, 158, 11, 0.15)"}
+        hexTopColor={() => "rgba(196, 98, 58, 0.6)"}
+        hexSideColor={() => "rgba(232, 184, 74, 0.25)"}
         hexAltitude={(d: any) => d.sumWeight * 0.015}
-        // Subtle atmosphere
+        // Subtle atmosphere — navy glow
         animateIn={true}
-        atmosphereColor="rgba(80, 100, 140, 0.4)"
+        atmosphereColor="#2a4a7a"
         atmosphereAltitude={0.12}
         showGraticules={true}
         width={typeof window !== "undefined" ? window.innerWidth : 1200}
@@ -178,15 +178,15 @@ export function Globe({
 
       {/* Hover tooltip */}
       {hoverPin && (
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-surface/95 backdrop-blur-md rounded-xl border border-border p-4 shadow-2xl min-w-[200px] pointer-events-none">
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-brand-bg/95 backdrop-blur-md rounded-xl border border-brand-border p-4 shadow-2xl min-w-[200px] pointer-events-none">
           <div className="flex items-center gap-2 mb-1">
             <div
               className="w-2.5 h-2.5 rounded-full"
               style={{ backgroundColor: getPinColor(hoverPin) }}
             />
-            <span className="font-medium">{hoverPin.city}</span>
+            <span className="font-medium text-brand-text">{hoverPin.city}</span>
           </div>
-          <div className="text-foreground/60 text-sm">{hoverPin.country}</div>
+          <div className="text-brand-text-secondary text-sm">{hoverPin.country}</div>
         </div>
       )}
     </div>

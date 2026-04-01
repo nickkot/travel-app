@@ -77,7 +77,7 @@ const DEMO_FEED = [
 export default function FeedPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 pt-20 md:pt-24 pb-24">
-      <h1 className="text-2xl font-bold mb-6">Feed</h1>
+      <h1 className="text-2xl font-bold font-serif text-brand-text mb-6">Feed</h1>
       <div className="space-y-4">
         {DEMO_FEED.map((item) => (
           <FeedItem key={`${item.type}-${item.id}`} {...item} />

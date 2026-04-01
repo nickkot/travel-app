@@ -50,19 +50,19 @@ export function ReviewForm({ onSubmit, isLoading }: ReviewFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label className="block text-sm font-medium mb-1.5">Place Name</label>
+        <label className="block text-sm font-medium text-brand-text mb-1.5">Place Name</label>
         <input
           type="text"
           value={placeName}
           onChange={(e) => setPlaceName(e.target.value)}
           placeholder="Mercado Benito Juarez"
           required
-          className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+          className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1.5">Type</label>
+        <label className="block text-sm font-medium text-brand-text mb-1.5">Type</label>
         <div className="flex flex-wrap gap-2">
           {PLACE_TYPES.map((type) => (
             <button
@@ -72,8 +72,8 @@ export function ReviewForm({ onSubmit, isLoading }: ReviewFormProps) {
               className={cn(
                 "px-3 py-1 rounded-full text-sm border transition-colors",
                 placeType === type
-                  ? "bg-accent text-black border-accent"
-                  : "border-border text-foreground/60 hover:border-foreground/30"
+                  ? "bg-brand-navy text-parchment border-brand-navy"
+                  : "border-brand-border text-brand-text-secondary hover:border-brand-navy-muted"
               )}
             >
               {type}
@@ -84,57 +84,57 @@ export function ReviewForm({ onSubmit, isLoading }: ReviewFormProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1.5">City</label>
+          <label className="block text-sm font-medium text-brand-text mb-1.5">City</label>
           <input
             type="text"
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="Oaxaca"
             required
-            className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+            className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1.5">Country</label>
+          <label className="block text-sm font-medium text-brand-text mb-1.5">Country</label>
           <input
             type="text"
             value={country}
             onChange={(e) => setCountry(e.target.value)}
             placeholder="Mexico"
             required
-            className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+            className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1.5">Latitude</label>
+          <label className="block text-sm font-medium text-brand-text mb-1.5">Latitude</label>
           <input
             type="number"
             step="any"
             value={lat || ""}
             onChange={(e) => setLat(parseFloat(e.target.value) || 0)}
             placeholder="17.0654"
-            className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+            className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1.5">Longitude</label>
+          <label className="block text-sm font-medium text-brand-text mb-1.5">Longitude</label>
           <input
             type="number"
             step="any"
             value={lng || ""}
             onChange={(e) => setLng(parseFloat(e.target.value) || 0)}
             placeholder="-96.7236"
-            className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+            className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
           />
         </div>
       </div>
 
-      {/* Star Rating */}
+      {/* Star Rating — terracotta */}
       <div>
-        <label className="block text-sm font-medium mb-1.5">Rating</label>
+        <label className="block text-sm font-medium text-brand-text mb-1.5">Rating</label>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -146,7 +146,7 @@ export function ReviewForm({ onSubmit, isLoading }: ReviewFormProps) {
               <svg
                 className={cn(
                   "w-8 h-8",
-                  star <= rating ? "text-accent fill-accent" : "text-foreground/20"
+                  star <= rating ? "text-brand-pin-past fill-brand-pin-past" : "text-brand-text-muted/30"
                 )}
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -164,21 +164,21 @@ export function ReviewForm({ onSubmit, isLoading }: ReviewFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1.5">Review</label>
+        <label className="block text-sm font-medium text-brand-text mb-1.5">Review</label>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Share your experience as a traveler..."
           rows={4}
           required
-          className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors resize-none"
+          className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors resize-none text-brand-text"
         />
       </div>
 
       <button
         type="submit"
         disabled={isLoading || rating === 0}
-        className="w-full py-3 bg-accent text-black font-semibold rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
+        className="w-full py-3 bg-brand-navy text-parchment font-semibold rounded-lg hover:bg-brand-navy-hover transition-colors disabled:opacity-50"
       >
         {isLoading ? "Submitting..." : "Submit Review"}
       </button>

@@ -29,8 +29,8 @@ export default function NewTripPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 pt-20 md:pt-24 pb-24">
-      <h1 className="text-2xl font-bold mb-6">Create a New Trip</h1>
-      <div className="bg-surface rounded-xl border border-border p-6">
+      <h1 className="text-2xl font-bold font-serif text-brand-text mb-6">Create a New Trip</h1>
+      <div className="bg-brand-card rounded-[10px] border border-brand-border p-6">
         <TripForm onSubmit={handleSubmit} isLoading={isLoading} />
       </div>
     </div>

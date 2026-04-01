@@ -45,23 +45,23 @@ export function FeedItem({
         : "wrote in their journal";
 
   return (
-    <div className="bg-surface rounded-xl border border-border overflow-hidden card-hover">
+    <div className="bg-brand-card rounded-[10px] border border-brand-border overflow-hidden card-hover">
       {/* Header */}
       <div className="px-4 pt-4 pb-2 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-sm">
+        <div className="w-9 h-9 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy font-bold text-sm">
           {authorName.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <Link
               href={`/profile/${authorUsername}`}
-              className="font-medium text-sm hover:text-accent transition-colors"
+              className="font-medium text-sm text-brand-text hover:text-brand-navy transition-colors"
             >
               {authorName}
             </Link>
-            <span className="text-xs text-foreground/40">{typeLabel}</span>
+            <span className="text-xs text-brand-text-muted">{typeLabel}</span>
           </div>
-          <span className="text-xs text-foreground/40">
+          <span className="text-xs text-brand-text-muted">
             {formatDate(createdAt)}
           </span>
         </div>
@@ -84,7 +84,7 @@ export function FeedItem({
       {/* Content */}
       <div className="px-4 py-3">
         <Link href={href}>
-          <h3 className="font-semibold mb-1 hover:text-accent transition-colors">
+          <h3 className="font-semibold font-serif text-brand-text mb-1 hover:text-brand-navy transition-colors">
             {title}
           </h3>
         </Link>
@@ -95,7 +95,7 @@ export function FeedItem({
             {destinations.map((d, i) => (
               <span
                 key={i}
-                className="text-xs px-2 py-0.5 rounded-full bg-surface-hover text-foreground/60"
+                className="text-xs px-2 py-0.5 rounded-full bg-brand-surface text-brand-text-secondary"
               >
                 {d}
               </span>
@@ -103,13 +103,13 @@ export function FeedItem({
           </div>
         )}
 
-        {/* Rating */}
+        {/* Rating — terracotta stars */}
         {type === "review" && rating && (
           <div className="flex gap-0.5 mb-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <svg
                 key={star}
-                className={`w-4 h-4 ${star <= rating ? "text-accent fill-accent" : "text-foreground/20"}`}
+                className={`w-4 h-4 ${star <= rating ? "text-brand-pin-past fill-brand-pin-past" : "text-brand-text-muted/30"}`}
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={1.5}
@@ -120,24 +120,24 @@ export function FeedItem({
           </div>
         )}
 
-        <p className="text-sm text-foreground/60 line-clamp-2">{preview}</p>
+        <p className="text-sm text-brand-text-secondary line-clamp-2">{preview}</p>
       </div>
 
       {/* Footer */}
-      <div className="px-4 pb-3 flex items-center gap-4 text-xs text-foreground/40">
-        <button className="flex items-center gap-1 hover:text-accent transition-colors">
+      <div className="px-4 pb-3 flex items-center gap-4 text-xs text-brand-text-muted">
+        <button className="flex items-center gap-1 hover:text-brand-navy transition-colors">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
           </svg>
           {upvoteCount}
         </button>
-        <button className="flex items-center gap-1 hover:text-accent transition-colors">
+        <button className="flex items-center gap-1 hover:text-brand-navy transition-colors">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
           </svg>
           {commentCount}
         </button>
-        <button className="flex items-center gap-1 hover:text-accent transition-colors ml-auto">
+        <button className="flex items-center gap-1 hover:text-brand-navy transition-colors ml-auto">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
           </svg>

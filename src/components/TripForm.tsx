@@ -71,61 +71,61 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Title */}
       <div>
-        <label className="block text-sm font-medium mb-1.5">Trip Title</label>
+        <label className="block text-sm font-medium text-brand-text mb-1.5">Trip Title</label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Two weeks in Oaxaca"
           required
-          className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+          className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
         />
       </div>
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium mb-1.5">Description</label>
+        <label className="block text-sm font-medium text-brand-text mb-1.5">Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="What's this trip about?"
           rows={3}
-          className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors resize-none"
+          className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors resize-none text-brand-text"
         />
       </div>
 
       {/* Dates */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1.5">Start Date</label>
+          <label className="block text-sm font-medium text-brand-text mb-1.5">Start Date</label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+            className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1.5">End Date</label>
+          <label className="block text-sm font-medium text-brand-text mb-1.5">End Date</label>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+            className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
           />
         </div>
       </div>
 
       {/* Trip type toggle */}
       <div className="flex items-center gap-4">
-        <label className="text-sm font-medium">Trip type:</label>
-        <div className="flex rounded-lg border border-border overflow-hidden">
+        <label className="text-sm font-medium text-brand-text">Trip type:</label>
+        <div className="flex rounded-lg border border-brand-border overflow-hidden">
           <button
             type="button"
             onClick={() => setIsFuture(false)}
             className={cn(
               "px-4 py-1.5 text-sm transition-colors",
-              !isFuture ? "bg-accent text-black" : "bg-surface text-foreground/60"
+              !isFuture ? "bg-brand-pin-past text-white" : "bg-brand-surface text-brand-text-secondary"
             )}
           >
             Past
@@ -135,7 +135,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
             onClick={() => setIsFuture(true)}
             className={cn(
               "px-4 py-1.5 text-sm transition-colors",
-              isFuture ? "bg-accent-cool text-white" : "bg-surface text-foreground/60"
+              isFuture ? "bg-brand-navy text-parchment" : "bg-brand-surface text-brand-text-secondary"
             )}
           >
             Future
@@ -145,11 +145,11 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
 
       {/* Visibility */}
       <div>
-        <label className="block text-sm font-medium mb-1.5">Visibility</label>
+        <label className="block text-sm font-medium text-brand-text mb-1.5">Visibility</label>
         <select
           value={visibility}
           onChange={(e) => setVisibility(e.target.value)}
-          className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors"
+          className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
         >
           <option value="PUBLIC">Public</option>
           <option value="FRIENDS">Friends Only</option>
@@ -159,7 +159,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
 
       {/* Destinations */}
       <div>
-        <label className="block text-sm font-medium mb-3">Destinations</label>
+        <label className="block text-sm font-medium text-brand-text mb-3">Destinations</label>
         <div className="space-y-3">
           {destinations.map((dest, i) => (
             <div key={i} className="flex items-start gap-2">
@@ -169,14 +169,14 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
                   value={dest.city}
                   onChange={(e) => updateDestination(i, "city", e.target.value)}
                   placeholder="City"
-                  className="px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors text-sm"
+                  className="px-3 py-2 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-sm text-brand-text"
                 />
                 <input
                   type="text"
                   value={dest.country}
                   onChange={(e) => updateDestination(i, "country", e.target.value)}
                   placeholder="Country"
-                  className="px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors text-sm"
+                  className="px-3 py-2 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-sm text-brand-text"
                 />
               </div>
               <div className="grid grid-cols-2 gap-2 w-48">
@@ -186,7 +186,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
                   value={dest.lat || ""}
                   onChange={(e) => updateDestination(i, "lat", parseFloat(e.target.value) || 0)}
                   placeholder="Lat"
-                  className="px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors text-sm"
+                  className="px-3 py-2 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-sm text-brand-text"
                 />
                 <input
                   type="number"
@@ -194,14 +194,14 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
                   value={dest.lng || ""}
                   onChange={(e) => updateDestination(i, "lng", parseFloat(e.target.value) || 0)}
                   placeholder="Lng"
-                  className="px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors text-sm"
+                  className="px-3 py-2 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-sm text-brand-text"
                 />
               </div>
               {destinations.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeDestination(i)}
-                  className="p-2 text-foreground/40 hover:text-red-400 transition-colors"
+                  className="p-2 text-brand-text-muted hover:text-brand-danger transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -214,7 +214,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
         <button
           type="button"
           onClick={addDestination}
-          className="mt-2 text-sm text-accent hover:text-accent/80 transition-colors"
+          className="mt-2 text-sm text-brand-navy hover:text-brand-navy-muted transition-colors"
         >
           + Add another destination
         </button>
@@ -224,7 +224,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full py-3 bg-accent text-black font-semibold rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
+        className="w-full py-3 bg-brand-navy text-parchment font-semibold rounded-lg hover:bg-brand-navy-hover transition-colors disabled:opacity-50"
       >
         {isLoading ? "Creating..." : "Create Trip"}
       </button>

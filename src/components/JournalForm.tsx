@@ -35,22 +35,22 @@ export function JournalForm({ onSubmit, isLoading }: JournalFormProps) {
           placeholder="Write about your day..."
           rows={5}
           required
-          className="w-full px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent transition-colors resize-none text-sm"
+          className="w-full px-4 py-3 bg-brand-journal border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors resize-none text-sm font-serif text-brand-text"
         />
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
         <div>
-          <label className="block text-xs text-foreground/50 mb-1">Date</label>
+          <label className="block text-xs text-brand-text-muted mb-1">Date</label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="px-3 py-1.5 bg-surface border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors"
+            className="px-3 py-1.5 bg-brand-surface border border-brand-border rounded-lg text-sm focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
           />
         </div>
         <div>
-          <label className="block text-xs text-foreground/50 mb-1">
+          <label className="block text-xs text-brand-text-muted mb-1">
             Location (optional)
           </label>
           <input
@@ -58,17 +58,17 @@ export function JournalForm({ onSubmit, isLoading }: JournalFormProps) {
             value={locationCity}
             onChange={(e) => setLocationCity(e.target.value)}
             placeholder="City"
-            className="px-3 py-1.5 bg-surface border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors"
+            className="px-3 py-1.5 bg-brand-surface border border-brand-border rounded-lg text-sm focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
           />
         </div>
         <div>
-          <label className="block text-xs text-foreground/50 mb-1">
+          <label className="block text-xs text-brand-text-muted mb-1">
             Visibility
           </label>
           <select
             value={visibility}
             onChange={(e) => setVisibility(e.target.value)}
-            className="px-3 py-1.5 bg-surface border border-border rounded-lg text-sm focus:outline-none focus:border-accent transition-colors"
+            className="px-3 py-1.5 bg-brand-surface border border-brand-border rounded-lg text-sm focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
           >
             <option value="PUBLIC">Public</option>
             <option value="FRIENDS">Friends</option>
@@ -78,7 +78,7 @@ export function JournalForm({ onSubmit, isLoading }: JournalFormProps) {
         <button
           type="submit"
           disabled={isLoading || !content.trim()}
-          className="px-5 py-1.5 bg-accent text-black font-medium rounded-lg text-sm hover:bg-accent/90 transition-colors disabled:opacity-50"
+          className="px-5 py-1.5 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors disabled:opacity-50"
         >
           {isLoading ? "Saving..." : "Add Entry"}
         </button>

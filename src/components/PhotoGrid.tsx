@@ -43,11 +43,11 @@ export function PhotoGrid({ photos, onUpload, editable }: PhotoGridProps) {
 
         {/* Upload button */}
         {editable && (
-          <label className="aspect-square rounded-lg border-2 border-dashed border-border hover:border-accent/50 flex flex-col items-center justify-center cursor-pointer transition-colors">
-            <svg className="w-8 h-8 text-foreground/30 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <label className="aspect-square rounded-lg border-2 border-dashed border-brand-border hover:border-brand-navy/30 flex flex-col items-center justify-center cursor-pointer transition-colors">
+            <svg className="w-8 h-8 text-brand-text-muted/40 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            <span className="text-xs text-foreground/40">Add photos</span>
+            <span className="text-xs text-brand-text-muted">Add photos</span>
             <input
               type="file"
               multiple
@@ -113,7 +113,7 @@ export function PhotoGrid({ photos, onUpload, editable }: PhotoGridProps) {
 
           {/* Caption */}
           {photos[lightboxIdx].caption && (
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-surface/80 backdrop-blur px-4 py-2 rounded-lg text-sm">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-brand-bg/80 backdrop-blur px-4 py-2 rounded-lg text-sm text-brand-text">
               {photos[lightboxIdx].caption}
             </div>
           )}

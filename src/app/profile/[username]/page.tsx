@@ -35,23 +35,23 @@ export default function UserProfilePage() {
     <div className="max-w-4xl mx-auto px-4 pt-20 md:pt-24 pb-24">
       {/* Profile header */}
       <div className="flex items-start gap-5 mb-8">
-        <div className="w-20 h-20 rounded-full bg-accent-cool/20 flex items-center justify-center text-accent-cool text-2xl font-bold flex-shrink-0">
+        <div className="w-20 h-20 rounded-full bg-brand-pin-past/10 flex items-center justify-center text-brand-pin-past text-2xl font-bold flex-shrink-0">
           {username.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">{username}</h1>
-          <p className="text-foreground/50 mb-1">@{username}</p>
-          <p className="text-sm text-foreground/70 mb-3">
+          <h1 className="text-2xl font-bold font-serif text-brand-text">{username}</h1>
+          <p className="text-brand-text-muted mb-1">@{username}</p>
+          <p className="text-sm text-brand-text-secondary mb-3">
             Pathfinder tier traveler
           </p>
           <div className="flex items-center gap-4 text-sm">
             <span>
-              <strong>312</strong>{" "}
-              <span className="text-foreground/50">followers</span>
+              <strong className="text-brand-text">312</strong>{" "}
+              <span className="text-brand-text-muted">followers</span>
             </span>
             <span>
-              <strong>156</strong>{" "}
-              <span className="text-foreground/50">following</span>
+              <strong className="text-brand-text">156</strong>{" "}
+              <span className="text-brand-text-muted">following</span>
             </span>
             <CompassClub
               compassMiles={DEMO_STATS.compassMiles}
@@ -60,7 +60,7 @@ export default function UserProfilePage() {
             />
           </div>
         </div>
-        <button className="px-4 py-2 bg-accent text-black rounded-lg text-sm font-medium hover:bg-accent/90 transition-colors">
+        <button className="px-4 py-2 bg-brand-navy text-parchment rounded-lg text-sm font-medium hover:bg-brand-navy-hover transition-colors">
           Follow
         </button>
       </div>

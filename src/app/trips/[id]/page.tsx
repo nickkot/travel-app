@@ -133,22 +133,22 @@ export default function TripDetailPage() {
       {/* Trip header */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-accent">
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-pin-past/10 text-brand-pin-past">
             Visited
           </span>
-          <span className="text-sm text-foreground/50">
+          <span className="text-sm text-brand-text-muted">
             {DEMO_TRIP.visibility}
           </span>
         </div>
-        <h1 className="text-3xl font-bold mb-2">{DEMO_TRIP.title}</h1>
-        <p className="text-foreground/60 mb-3">{DEMO_TRIP.description}</p>
+        <h1 className="text-3xl font-bold font-serif text-brand-text mb-2">{DEMO_TRIP.title}</h1>
+        <p className="text-brand-text-secondary mb-3">{DEMO_TRIP.description}</p>
 
         {/* Destinations */}
         <div className="flex flex-wrap gap-2 mb-3">
           {DEMO_TRIP.destinations.map((d, i) => (
             <span
               key={i}
-              className="px-3 py-1 rounded-full bg-surface border border-border text-sm"
+              className="px-3 py-1 rounded-full bg-brand-surface border border-brand-border text-sm text-brand-text"
             >
               {d.city}, {d.country}
             </span>
@@ -156,12 +156,12 @@ export default function TripDetailPage() {
         </div>
 
         {/* Dates & author */}
-        <div className="flex items-center gap-4 text-sm text-foreground/50">
+        <div className="flex items-center gap-4 text-sm text-brand-text-muted">
           <span>
             {formatDate(DEMO_TRIP.startDate)} — {formatDate(DEMO_TRIP.endDate)}
           </span>
           <span className="flex items-center gap-1.5">
-            <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center text-accent text-[10px] font-bold">
+            <div className="w-5 h-5 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy text-[10px] font-bold">
               {DEMO_TRIP.authorName.charAt(0)}
             </div>
             @{DEMO_TRIP.authorUsername}
@@ -176,7 +176,7 @@ export default function TripDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-surface rounded-lg border border-border p-1">
+      <div className="flex gap-1 mb-6 bg-brand-surface rounded-lg border border-brand-border p-1">
         {tabs.map((tab) => (
           <button
             key={tab.key}
@@ -184,8 +184,8 @@ export default function TripDetailPage() {
             className={cn(
               "flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors",
               activeTab === tab.key
-                ? "bg-accent text-black"
-                : "text-foreground/50 hover:text-foreground/80"
+                ? "bg-brand-navy text-parchment"
+                : "text-brand-text-secondary hover:text-brand-text"
             )}
           >
             {tab.label} ({tab.count})
@@ -221,12 +221,12 @@ export default function TripDetailPage() {
             {DEMO_REVIEWS.map((review) => (
               <div
                 key={review.id}
-                className="bg-surface rounded-xl border border-border p-4"
+                className="bg-brand-card rounded-[10px] border border-brand-border p-4"
               >
                 <div className="flex items-center justify-between mb-2">
                   <div>
-                    <h4 className="font-medium">{review.placeName}</h4>
-                    <span className="text-xs text-foreground/50">
+                    <h4 className="font-medium text-brand-text">{review.placeName}</h4>
+                    <span className="text-xs text-brand-text-muted">
                       {review.placeType} in {review.city}
                     </span>
                   </div>
@@ -237,8 +237,8 @@ export default function TripDetailPage() {
                         className={cn(
                           "w-4 h-4",
                           star <= review.rating
-                            ? "text-accent fill-accent"
-                            : "text-foreground/20"
+                            ? "text-brand-pin-past fill-brand-pin-past"
+                            : "text-brand-text-muted/30"
                         )}
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -249,8 +249,8 @@ export default function TripDetailPage() {
                     ))}
                   </div>
                 </div>
-                <p className="text-sm text-foreground/70">{review.content}</p>
-                <div className="mt-2 text-xs text-foreground/40 flex items-center gap-1">
+                <p className="text-sm text-brand-text-secondary">{review.content}</p>
+                <div className="mt-2 text-xs text-brand-text-muted flex items-center gap-1">
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                   </svg>
@@ -261,8 +261,8 @@ export default function TripDetailPage() {
           </div>
 
           {/* Add review form */}
-          <div className="bg-surface rounded-xl border border-border p-5">
-            <h3 className="font-medium mb-4">Add a Review</h3>
+          <div className="bg-brand-card rounded-[10px] border border-brand-border p-5">
+            <h3 className="font-medium text-brand-text mb-4">Add a Review</h3>
             <ReviewForm
               tripId={params.id as string}
               onSubmit={(data) => console.log("New review:", data)}
@@ -272,7 +272,7 @@ export default function TripDetailPage() {
       )}
 
       {/* Comments section */}
-      <div className="mt-8 pt-6 border-t border-border">
+      <div className="mt-8 pt-6 border-t border-brand-border">
         <CommentThread
           comments={DEMO_COMMENTS}
           onSubmit={(content) => console.log("New comment:", content)}

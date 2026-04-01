@@ -39,7 +39,7 @@ export function BucketListForm({ onSubmit, isLoading }: BucketListFormProps) {
           onChange={(e) => setCity(e.target.value)}
           placeholder="City"
           required
-          className="px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent-wishlist transition-colors"
+          className="px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-pin-wishlist transition-colors text-brand-text"
         />
         <input
           type="text"
@@ -47,7 +47,7 @@ export function BucketListForm({ onSubmit, isLoading }: BucketListFormProps) {
           onChange={(e) => setCountry(e.target.value)}
           placeholder="Country"
           required
-          className="px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent-wishlist transition-colors"
+          className="px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-pin-wishlist transition-colors text-brand-text"
         />
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -57,7 +57,7 @@ export function BucketListForm({ onSubmit, isLoading }: BucketListFormProps) {
           value={lat || ""}
           onChange={(e) => setLat(parseFloat(e.target.value) || 0)}
           placeholder="Latitude"
-          className="px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent-wishlist transition-colors"
+          className="px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-pin-wishlist transition-colors text-brand-text"
         />
         <input
           type="number"
@@ -65,7 +65,7 @@ export function BucketListForm({ onSubmit, isLoading }: BucketListFormProps) {
           value={lng || ""}
           onChange={(e) => setLng(parseFloat(e.target.value) || 0)}
           placeholder="Longitude"
-          className="px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent-wishlist transition-colors"
+          className="px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-pin-wishlist transition-colors text-brand-text"
         />
       </div>
       <textarea
@@ -73,12 +73,12 @@ export function BucketListForm({ onSubmit, isLoading }: BucketListFormProps) {
         onChange={(e) => setNotes(e.target.value)}
         placeholder="Why do you want to go? (optional)"
         rows={2}
-        className="w-full px-4 py-2.5 bg-surface border border-border rounded-lg focus:outline-none focus:border-accent-wishlist transition-colors resize-none"
+        className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-pin-wishlist transition-colors resize-none text-brand-text"
       />
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full py-2.5 bg-accent-wishlist text-white font-medium rounded-lg hover:bg-accent-wishlist/80 transition-colors disabled:opacity-50"
+        className="w-full py-2.5 bg-brand-pin-wishlist text-white font-medium rounded-lg hover:bg-brand-pin-wishlist/80 transition-colors disabled:opacity-50"
       >
         {isLoading ? "Adding..." : "Add to Bucket List"}
       </button>

@@ -24,8 +24,8 @@ export function BadgeShowcase({ earnedBadges }: BadgeShowcaseProps) {
   const earnedSet = new Set(earnedBadges);
 
   return (
-    <div className="bg-surface rounded-xl border border-border p-5">
-      <h3 className="font-semibold text-lg mb-4">Badges</h3>
+    <div className="bg-brand-card rounded-[10px] border border-brand-border p-5">
+      <h3 className="font-semibold font-serif text-lg text-brand-text mb-4">Badges</h3>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {BADGE_DEFINITIONS.map((badge) => {
           const earned = earnedSet.has(badge.type);
@@ -35,8 +35,8 @@ export function BadgeShowcase({ earnedBadges }: BadgeShowcaseProps) {
               className={cn(
                 "rounded-lg p-3 border transition-all",
                 earned
-                  ? "bg-accent/10 border-accent/30"
-                  : "bg-surface-hover border-border opacity-40"
+                  ? "bg-brand-pin-past/10 border-brand-pin-past/30"
+                  : "bg-brand-surface border-brand-border opacity-40"
               )}
             >
               <div className="flex items-center gap-2 mb-1">
@@ -46,13 +46,13 @@ export function BadgeShowcase({ earnedBadges }: BadgeShowcaseProps) {
                 <span
                   className={cn(
                     "text-sm font-medium",
-                    earned ? "text-accent" : "text-foreground/50"
+                    earned ? "text-brand-pin-past" : "text-brand-text-muted"
                   )}
                 >
                   {badge.name}
                 </span>
               </div>
-              <p className="text-xs text-foreground/50">{badge.description}</p>
+              <p className="text-xs text-brand-text-muted">{badge.description}</p>
             </div>
           );
         })}

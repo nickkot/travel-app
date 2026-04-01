@@ -18,16 +18,16 @@ export function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-md border-t border-border md:top-0 md:bottom-auto md:border-t-0 md:border-b">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-brand-bg/95 backdrop-blur-md border-t border-brand-border md:top-0 md:bottom-auto md:border-t-0 md:border-b md:border-brand-border">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo — desktop only */}
           <Link
             href="/"
-            className="hidden md:flex items-center gap-2 font-bold text-lg"
+            className="hidden md:flex items-center gap-2 font-bold text-lg text-brand-navy"
           >
-            <span className="text-accent">&#9733;</span>
-            <span>Travel App</span>
+            <span className="text-brand-pin-past">&#9733;</span>
+            <span>Stampy</span>
           </Link>
 
           {/* Nav items */}
@@ -41,12 +41,12 @@ export function NavBar() {
                   className={cn(
                     "flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors text-xs md:flex-row md:gap-2 md:text-sm md:px-4 md:py-2",
                     isActive
-                      ? "text-accent"
-                      : "text-foreground/50 hover:text-foreground/80"
+                      ? "text-brand-navy"
+                      : "text-brand-text-secondary hover:text-brand-text"
                   )}
                 >
                   <item.icon
-                    className={cn("w-5 h-5", isActive && "text-accent")}
+                    className={cn("w-5 h-5", isActive && "text-brand-navy")}
                   />
                   <span>{item.label}</span>
                 </Link>
@@ -58,17 +58,17 @@ export function NavBar() {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-accent font-medium">
+                <span className="text-brand-pin-past font-medium">
                   {user.compassMiles} CM
                 </span>
-                <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xs">
+                <div className="w-8 h-8 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy font-bold text-xs">
                   {user.name.charAt(0)}
                 </div>
               </div>
             ) : (
               <Link
                 href="/auth/login"
-                className="px-4 py-2 bg-accent text-black rounded-lg font-medium text-sm hover:bg-accent/90 transition-colors"
+                className="px-4 py-2 bg-brand-navy text-parchment rounded-lg font-medium text-sm hover:bg-brand-navy-hover transition-colors"
               >
                 Sign In
               </Link>

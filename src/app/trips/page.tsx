@@ -79,17 +79,17 @@ export default function TripsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 pt-20 md:pt-24 pb-24">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">My Trips</h1>
+        <h1 className="text-2xl font-bold font-serif text-brand-text">My Trips</h1>
         <Link
           href="/trips/new"
-          className="px-4 py-2 bg-accent text-black font-medium rounded-lg text-sm hover:bg-accent/90 transition-colors"
+          className="px-4 py-2 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors"
         >
           + New Trip
         </Link>
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-1 mb-6 bg-surface rounded-lg border border-border p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-brand-surface rounded-lg border border-brand-border p-1 w-fit">
         {(["all", "past", "future"] as Filter[]).map((f) => (
           <button
             key={f}
@@ -97,8 +97,8 @@ export default function TripsPage() {
             className={cn(
               "px-4 py-1.5 rounded-md text-sm font-medium transition-colors capitalize",
               filter === f
-                ? "bg-accent text-black"
-                : "text-foreground/50 hover:text-foreground/80"
+                ? "bg-brand-navy text-parchment"
+                : "text-brand-text-secondary hover:text-brand-text"
             )}
           >
             {f}
@@ -114,7 +114,7 @@ export default function TripsPage() {
       </div>
 
       {filtered.length === 0 && (
-        <div className="text-center py-16 text-foreground/40">
+        <div className="text-center py-16 text-brand-text-muted">
           <p className="text-lg mb-2">No trips yet</p>
           <p className="text-sm">Start documenting your travels</p>
         </div>

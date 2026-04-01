@@ -64,23 +64,23 @@ export default function ProfilePage() {
     <div className="max-w-4xl mx-auto px-4 pt-20 md:pt-24 pb-24">
       {/* Profile header */}
       <div className="flex items-start gap-5 mb-8">
-        <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center text-accent text-2xl font-bold flex-shrink-0">
+        <div className="w-20 h-20 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy text-2xl font-bold flex-shrink-0">
           A
         </div>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">Atlas Explorer</h1>
-          <p className="text-foreground/50 mb-1">@atlas_explorer</p>
-          <p className="text-sm text-foreground/70 mb-3">
+          <h1 className="text-2xl font-bold font-serif text-brand-text">Atlas Explorer</h1>
+          <p className="text-brand-text-muted mb-1">@atlas_explorer</p>
+          <p className="text-sm text-brand-text-secondary mb-3">
             Slow traveler. 30+ countries. Always returning.
           </p>
           <div className="flex items-center gap-4 text-sm">
             <span>
-              <strong>142</strong>{" "}
-              <span className="text-foreground/50">followers</span>
+              <strong className="text-brand-text">142</strong>{" "}
+              <span className="text-brand-text-muted">followers</span>
             </span>
             <span>
-              <strong>89</strong>{" "}
-              <span className="text-foreground/50">following</span>
+              <strong className="text-brand-text">89</strong>{" "}
+              <span className="text-brand-text-muted">following</span>
             </span>
             <CompassClub
               compassMiles={DEMO_STATS.compassMiles}
@@ -89,7 +89,7 @@ export default function ProfilePage() {
             />
           </div>
         </div>
-        <button className="px-4 py-2 border border-border rounded-lg text-sm font-medium hover:bg-surface-hover transition-colors">
+        <button className="px-4 py-2 border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-surface transition-colors">
           Edit Profile
         </button>
       </div>
@@ -114,7 +114,7 @@ export default function ProfilePage() {
 
       {/* Recent trips */}
       <div>
-        <h2 className="text-xl font-bold mb-4">Recent Trips</h2>
+        <h2 className="text-xl font-bold font-serif text-brand-text mb-4">Recent Trips</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {DEMO_RECENT_TRIPS.map((trip) => (
             <TripCard key={trip.id} {...trip} />

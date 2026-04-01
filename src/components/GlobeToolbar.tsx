@@ -16,7 +16,7 @@ const MODES: { value: GlobeMode; label: string; icon: string }[] = [
 
 export function GlobeToolbar({ mode, onModeChange }: GlobeToolbarProps) {
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center bg-surface/90 backdrop-blur-md rounded-full border border-border px-1 py-1 shadow-lg">
+    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center bg-brand-bg/90 backdrop-blur-md rounded-full border border-brand-border px-1 py-1 shadow-lg">
       {MODES.map((m) => (
         <button
           key={m.value}
@@ -24,8 +24,8 @@ export function GlobeToolbar({ mode, onModeChange }: GlobeToolbarProps) {
           className={cn(
             "px-4 py-1.5 rounded-full text-sm font-medium transition-all",
             mode === m.value
-              ? "bg-accent text-black shadow-sm"
-              : "text-foreground/60 hover:text-foreground/90"
+              ? "bg-brand-navy text-parchment shadow-sm"
+              : "text-brand-text-secondary hover:text-brand-text"
           )}
         >
           {m.label}

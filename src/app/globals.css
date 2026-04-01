@@ -1,32 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --accent: #f59e0b;
-  --accent-cool: #3b82f6;
-  --accent-wishlist: #a78bfa;
-  --surface: #1a1a2e;
-  --surface-hover: #252542;
-  --border: #2a2a4a;
+  /* Aged Atlas — core palette */
+  --bg-primary: #faf7f2;
+  --bg-surface: #f0e8d5;
+  --bg-card: #e8dcc0;
+  --accent-navy: #1c2b4a;
+  --accent-navy-muted: #3a4f72;
+  --accent-navy-hover: #2e4470;
+  --pin-past: #c4623a;
+  --pin-future: #1c2b4a;
+  --pin-wishlist: #5c8a6e;
+  --text-primary: #2a1f0f;
+  --text-secondary: #6b5740;
+  --text-muted: #a08c72;
+  --border: rgba(44, 31, 15, 0.12);
+  --success: #5c8a6e;
+  --danger: #a83220;
+
+  /* Journal-specific warmth */
+  --bg-journal: #f5eedc;
+
+  /* Globe palette */
+  --globe-bg: #0d1a2e;
+  --globe-atmosphere: #2a4a7a;
+  --globe-blank: #c8bfaa;
+
+  /* Legacy semantic mappings (keeps existing Tailwind classes working) */
+  --background: var(--bg-primary);
+  --foreground: var(--text-primary);
+  --surface: var(--bg-surface);
+  --surface-hover: var(--bg-card);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-accent-cool: var(--accent-cool);
-  --color-accent-wishlist: var(--accent-wishlist);
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
   --color-border: var(--border);
+
+  /* Brand namespace */
+  --color-brand-bg: var(--bg-primary);
+  --color-brand-surface: var(--bg-surface);
+  --color-brand-card: var(--bg-card);
+  --color-brand-navy: var(--accent-navy);
+  --color-brand-navy-muted: var(--accent-navy-muted);
+  --color-brand-navy-hover: var(--accent-navy-hover);
+  --color-brand-pin-past: var(--pin-past);
+  --color-brand-pin-future: var(--pin-future);
+  --color-brand-pin-wishlist: var(--pin-wishlist);
+  --color-brand-text: var(--text-primary);
+  --color-brand-text-secondary: var(--text-secondary);
+  --color-brand-text-muted: var(--text-muted);
+  --color-brand-border: var(--border);
+  --color-brand-success: var(--success);
+  --color-brand-danger: var(--danger);
+  --color-brand-journal: var(--bg-journal);
+  --color-brand-globe-bg: var(--globe-bg);
+
+  /* Accent shortcuts (for buttons, nav, etc.) */
+  --color-accent: var(--accent-navy);
+  --color-accent-cool: var(--pin-future);
+  --color-accent-wishlist: var(--pin-wishlist);
+  --color-accent-terracotta: var(--pin-past);
+
+  /* Parchment text color for dark backgrounds */
+  --color-parchment: #f0e8d5;
+
+  /* Fonts */
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Lora', Georgia, 'Times New Roman', serif;
   --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -36,6 +87,7 @@ body {
   height: 100vh;
   position: relative;
   overflow: hidden;
+  background: var(--globe-bg);
 }
 
 /* Pin animations */
@@ -44,8 +96,18 @@ body {
   50% { transform: scale(1.3); opacity: 0.7; }
 }
 
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(28, 43, 74, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(28, 43, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(28, 43, 74, 0); }
+}
+
 .pin-future {
   animation: pulse-pin 2s ease-in-out infinite;
+}
+
+.pin-future-ring {
+  animation: pulse-ring 2s ease-in-out infinite;
 }
 
 /* Scrollbar styling */
@@ -53,18 +115,19 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--surface);
+  background: var(--bg-surface);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--text-muted);
   border-radius: 3px;
 }
 
 /* Card hover effect */
 .card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(42, 31, 15, 0.1);
+  border-color: rgba(28, 43, 74, 0.25);
 }

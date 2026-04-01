@@ -55,10 +55,10 @@ export default function HomePage() {
 
       {/* Selected pin slide-up card */}
       {selectedPin && (
-        <div className="absolute bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 bg-surface/95 backdrop-blur-md rounded-xl border border-border p-5 shadow-2xl w-[90vw] max-w-sm">
+        <div className="absolute bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 bg-brand-bg/95 backdrop-blur-md rounded-xl border border-brand-border p-5 shadow-2xl w-[90vw] max-w-sm">
           <button
             onClick={() => setSelectedPin(null)}
-            className="absolute top-3 right-3 text-foreground/40 hover:text-foreground"
+            className="absolute top-3 right-3 text-brand-text-muted hover:text-brand-text"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -71,13 +71,13 @@ export default function HomePage() {
               style={{
                 backgroundColor:
                   selectedPin.type === "past"
-                    ? "#f59e0b"
+                    ? "#c4623a"
                     : selectedPin.type === "future"
-                      ? "#3b82f6"
-                      : "#a78bfa",
+                      ? "#1c2b4a"
+                      : "#5c8a6e",
               }}
             />
-            <span className="text-xs uppercase tracking-wider text-foreground/50">
+            <span className="text-xs uppercase tracking-wider text-brand-text-muted">
               {selectedPin.type === "past"
                 ? "Visited"
                 : selectedPin.type === "future"
@@ -86,11 +86,11 @@ export default function HomePage() {
             </span>
           </div>
 
-          <h2 className="text-xl font-bold mb-1">{selectedPin.city}</h2>
-          <p className="text-foreground/60">{selectedPin.country}</p>
+          <h2 className="text-xl font-bold font-serif text-brand-text mb-1">{selectedPin.city}</h2>
+          <p className="text-brand-text-secondary">{selectedPin.country}</p>
 
           {selectedPin.type !== "wishlist" && (
-            <button className="mt-4 w-full py-2 bg-accent text-black font-medium rounded-lg text-sm hover:bg-accent/90 transition-colors">
+            <button className="mt-4 w-full py-2 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors">
               View Trip Details
             </button>
           )}
@@ -98,23 +98,23 @@ export default function HomePage() {
       )}
 
       {/* Stats overlay */}
-      <div className="absolute top-20 md:top-24 left-4 bg-surface/80 backdrop-blur-md rounded-xl border border-border p-4 shadow-lg hidden md:block">
-        <div className="text-xs text-foreground/50 mb-2">Your Journey</div>
+      <div className="absolute top-20 md:top-24 left-4 bg-brand-bg/80 backdrop-blur-md rounded-xl border border-brand-border p-4 shadow-lg hidden md:block">
+        <div className="text-xs text-brand-text-muted mb-2">Your Journey</div>
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-accent" />
-            <span className="text-sm">{DEMO_PAST_PINS.length} places visited</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-brand-pin-past" />
+            <span className="text-sm text-brand-text">{DEMO_PAST_PINS.length} places visited</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-accent-cool" />
-            <span className="text-sm">{DEMO_FUTURE_PINS.length} upcoming</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-brand-navy" />
+            <span className="text-sm text-brand-text">{DEMO_FUTURE_PINS.length} upcoming</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-accent-wishlist" />
-            <span className="text-sm">{DEMO_WISHLIST_PINS.length} bucket list</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-brand-pin-wishlist" />
+            <span className="text-sm text-brand-text">{DEMO_WISHLIST_PINS.length} bucket list</span>
           </div>
         </div>
-        <div className="mt-3 pt-3 border-t border-border text-xs text-foreground/40">
+        <div className="mt-3 pt-3 border-t border-brand-border text-xs text-brand-text-muted">
           {DEMO_VISITED_COUNTRIES.length} countries
         </div>
       </div>
