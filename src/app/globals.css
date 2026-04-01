@@ -12,9 +12,9 @@
   --pin-past: #c4623a;
   --pin-future: #1c2b4a;
   --pin-wishlist: #5c8a6e;
-  --text-primary: #2a1f0f;
-  --text-secondary: #6b5740;
-  --text-muted: #a08c72;
+  --text-primary: #1a1207;
+  --text-secondary: #4a3a28;
+  --text-muted: #7a6850;
   --border: rgba(44, 31, 15, 0.12);
   --success: #5c8a6e;
   --danger: #a83220;
@@ -79,6 +79,14 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  body {
+    font-size: 17px;
+  }
 }
 
 /* Globe container */
