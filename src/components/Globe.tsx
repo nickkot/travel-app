@@ -259,7 +259,7 @@ export function Globe({
       {ReactGlobe && (
         <ReactGlobe
           ref={globeRef}
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
           bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
           backgroundColor="#0d1a30"
           onGlobeReady={() => {
@@ -308,17 +308,19 @@ export function Globe({
           onPointHover={(point: any) => setHoverPin(point as GlobePin | null)}
           // No arcs
           arcsData={[]}
-          // Landmark emoji labels
-          labelsData={LANDMARKS}
-          labelLat="lat"
-          labelLng="lng"
-          labelText="icon"
-          labelSize={1.5}
-          labelDotRadius={0}
-          labelAltitude={0.015}
-          labelColor={() => "rgba(255,255,255,0.9)"}
-          labelResolution={2}
-          labelIncludeDot={false}
+          // Landmark emoji icons
+          htmlElementsData={LANDMARKS}
+          htmlLat={(d: any) => d.lat}
+          htmlLng={(d: any) => d.lng}
+          htmlAltitude={0.015}
+          htmlTransitionDuration={0}
+          htmlElement={useCallback((d: any) => {
+            const el = document.createElement("span");
+            el.textContent = d.icon;
+            el.title = d.name;
+            el.style.cssText = "font-size:18px;pointer-events:none;user-select:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));transform:translate(-50%,-50%)";
+            return el;
+          }, [])}
           // Atmosphere
           animateIn={true}
           atmosphereColor="#4a8abf"
