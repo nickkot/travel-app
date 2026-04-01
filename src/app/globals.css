@@ -95,6 +95,21 @@ body {
   z-index: 0;
 }
 
+/* Landmark icons on globe */
+.landmark-icon {
+  font-size: 20px;
+  cursor: default;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+  animation: landmark-float 3s ease-in-out infinite;
+  user-select: none;
+}
+
+@keyframes landmark-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
 /* Pin animations */
 @keyframes pulse-pin {
   0%, 100% { transform: scale(1); opacity: 1; }

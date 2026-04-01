@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GlobePin, GlobeMode, FriendData } from "@/types";
 import { GlobeToolbar } from "./GlobeToolbar";
 import { getAllFriendPins } from "@/data/demoFriends";
+import { LANDMARKS } from "@/data/landmarks";
 
 interface GlobeProps {
   pastPins: GlobePin[];
@@ -314,6 +315,29 @@ export function Globe({
           onPointHover={(point: any) => setHoverPin(point as GlobePin | null)}
           // No arcs
           arcsData={[]}
+          // Landmark icons
+          htmlElementsData={LANDMARKS}
+          htmlLat="lat"
+          htmlLng="lng"
+          htmlAltitude={0.02}
+          htmlTransitionDuration={0}
+          htmlElement={(d: any) => {
+            const el = document.createElement("div");
+            el.style.fontSize = "20px";
+            el.style.pointerEvents = "none";
+            el.style.userSelect = "none";
+            el.style.filter = "drop-shadow(0 1px 3px rgba(0,0,0,0.3))";
+            el.style.animation = "landmark-float 3s ease-in-out infinite";
+            el.style.width = "0";
+            el.style.height = "0";
+            el.style.display = "flex";
+            el.style.alignItems = "center";
+            el.style.justifyContent = "center";
+            el.style.overflow = "visible";
+            el.textContent = d.icon;
+            el.title = d.name;
+            return el;
+          }}
           // Atmosphere
           animateIn={true}
           atmosphereColor="#4a8abf"
