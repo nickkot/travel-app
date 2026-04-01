@@ -31,14 +31,6 @@ const DEMO_WISHLIST_PINS: GlobePin[] = [
   { id: "w4", lat: -33.9249, lng: 18.4241, city: "Cape Town", country: "South Africa", type: "wishlist" },
 ];
 
-const DEMO_ARCS = DEMO_PAST_PINS.slice(0, -1).map((pin, i) => ({
-  startLat: pin.lat,
-  startLng: pin.lng,
-  endLat: DEMO_PAST_PINS[i + 1].lat,
-  endLng: DEMO_PAST_PINS[i + 1].lng,
-  color: "rgba(245, 158, 11, 0.35)",
-}));
-
 const DEMO_VISITED_COUNTRIES = [
   "Mexico", "Japan", "Italy", "Australia", "France",
   "Thailand", "Peru", "India", "Russia", "Kenya",
@@ -57,7 +49,6 @@ export default function HomePage() {
         pastPins={DEMO_PAST_PINS}
         futurePins={DEMO_FUTURE_PINS}
         wishlistPins={DEMO_WISHLIST_PINS}
-        arcs={DEMO_ARCS}
         visitedCountries={DEMO_VISITED_COUNTRIES}
         onPinClick={handlePinClick}
       />

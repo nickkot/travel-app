@@ -13,14 +13,6 @@ export interface GlobePin {
   tripId?: string;
 }
 
-export interface GlobeArc {
-  startLat: number;
-  startLng: number;
-  endLat: number;
-  endLng: number;
-  color: string;
-}
-
 export type GlobeMode = "pins" | "heatmap" | "blankspots";
 
 export interface TravelStats {
