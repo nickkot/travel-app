@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
+import { RatingStrip, type RatingStripAspect } from "./RatingStrip";
 
 export interface TimelineDay {
   day: number;
@@ -28,6 +29,7 @@ export interface FeedItemProps {
   stats?: { days: number; cities: number; photos: number; km: number };
   timeline?: TimelineDay[];
   rating?: number;
+  destinationRating?: { overall: number; aspects: RatingStripAspect[] };
   likeCount: number;
   comments: { username: string; text: string }[];
   createdAt: string;
@@ -51,6 +53,7 @@ export function FeedItem({
   stats,
   timeline = [],
   rating,
+  destinationRating,
   likeCount,
   comments,
   createdAt,
@@ -162,6 +165,13 @@ export function FeedItem({
           <StatPill icon={"\u{1F4F8}"} value={String(stats.photos)} label="photos" />
           <div className="w-px h-5 bg-brand-border" />
           <StatPill icon={"\u{2708}\u{FE0F}"} value={`${(stats.km / 1000).toFixed(1)}k`} label="km" />
+        </div>
+      )}
+
+      {/* Destination rating strip */}
+      {destinationRating && (
+        <div className="px-4 mt-2.5">
+          <RatingStrip overall={destinationRating.overall} aspects={destinationRating.aspects} />
         </div>
       )}
 

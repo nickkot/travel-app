@@ -23,6 +23,15 @@ const DEMO_FEED: FeedItemProps[] = [
     countryCode: "PRT",
     route: ["Lisbon", "Sintra", "Porto", "Lagos"],
     stats: { days: 18, cities: 4, photos: 247, km: 14200 },
+    destinationRating: {
+      overall: 4.0,
+      aspects: [
+        { label: "Eat", icon: "\u{1F37D}\u{FE0F}", rating: 4.5 },
+        { label: "Explore", icon: "\u{1F9ED}", rating: 4.5 },
+        { label: "Connect", icon: "\u{1F91D}", rating: 4.0 },
+        { label: "Live", icon: "\u{1F3E0}", rating: 3.5 },
+      ],
+    },
     timeline: [
       { day: 1, highlight: "Landed in Lisbon, Alfama walking tour", emoji: "\u{2708}\u{FE0F}" },
       { day: 3, highlight: "Sintra palaces day trip", emoji: "\u{1F3F0}" },
@@ -56,6 +65,15 @@ const DEMO_FEED: FeedItemProps[] = [
     countryCode: "TZA",
     route: ["Moshi", "Machame Gate", "Shira Camp", "Barranco", "Summit"],
     stats: { days: 7, cities: 2, photos: 89, km: 3400 },
+    destinationRating: {
+      overall: 4.5,
+      aspects: [
+        { label: "Eat", icon: "\u{1F37D}\u{FE0F}", rating: 3.0 },
+        { label: "Explore", icon: "\u{1F9ED}", rating: 5.0 },
+        { label: "Connect", icon: "\u{1F91D}", rating: 4.5 },
+        { label: "Live", icon: "\u{1F3E0}", rating: 3.5 },
+      ],
+    },
     timeline: [
       { day: 1, highlight: "Machame Gate to Machame Camp", emoji: "\u{1F6B6}" },
       { day: 2, highlight: "Through the rainforest to Shira", emoji: "\u{1F332}" },
@@ -118,6 +136,15 @@ const DEMO_FEED: FeedItemProps[] = [
     countryCode: "COL",
     route: ["Bogota", "Medellin", "Guatape", "Cartagena"],
     stats: { days: 21, cities: 4, photos: 312, km: 8900 },
+    destinationRating: {
+      overall: 4.5,
+      aspects: [
+        { label: "Eat", icon: "\u{1F37D}\u{FE0F}", rating: 4.5 },
+        { label: "Explore", icon: "\u{1F9ED}", rating: 4.5 },
+        { label: "Connect", icon: "\u{1F91D}", rating: 5.0 },
+        { label: "Live", icon: "\u{1F3E0}", rating: 4.0 },
+      ],
+    },
     timeline: [
       { day: 1, highlight: "Bogota street food tour", emoji: "\u{1F32E}" },
       { day: 5, highlight: "Flew to Medellin, settled in El Poblado", emoji: "\u{2708}\u{FE0F}" },
@@ -151,6 +178,15 @@ const DEMO_FEED: FeedItemProps[] = [
     countryCode: "MAR",
     route: ["Marrakech", "Ait Benhaddou", "Todra Gorge", "Merzouga"],
     stats: { days: 10, cities: 4, photos: 178, km: 5600 },
+    destinationRating: {
+      overall: 4.0,
+      aspects: [
+        { label: "Eat", icon: "\u{1F37D}\u{FE0F}", rating: 4.0 },
+        { label: "Explore", icon: "\u{1F9ED}", rating: 5.0 },
+        { label: "Connect", icon: "\u{1F91D}", rating: 3.5 },
+        { label: "Live", icon: "\u{1F3E0}", rating: 3.5 },
+      ],
+    },
     timeline: [
       { day: 1, highlight: "Marrakech medina & Jemaa el-Fnaa", emoji: "\u{1F3EA}" },
       { day: 3, highlight: "Ait Benhaddou kasbah at sunrise", emoji: "\u{1F305}" },
