@@ -38,15 +38,21 @@ export function Globe({
       .catch(() => {});
   }, []);
 
-  // Gentle auto-rotate
+  // Gentle auto-rotate — poll until globe is ready (dynamic import delay)
   useEffect(() => {
-    if (globeRef.current) {
-      const controls = globeRef.current.controls();
-      if (controls) {
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.3;
+    const interval = setInterval(() => {
+      if (globeRef.current) {
+        const controls = globeRef.current.controls();
+        if (controls) {
+          controls.autoRotate = true;
+          controls.autoRotateSpeed = 0.3;
+          controls.enableZoom = true;
+          controls.enableRotate = true;
+          clearInterval(interval);
+        }
       }
-    }
+    }, 200);
+    return () => clearInterval(interval);
   }, []);
 
   const allPins = useMemo(
@@ -133,8 +139,17 @@ export function Globe({
 
       <ReactGlobe
         ref={globeRef}
-        globeImageUrl=""
+        globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
         backgroundColor="rgba(0,0,0,0)"
+        onGlobeReady={() => {
+          if (globeRef.current) {
+            const controls = globeRef.current.controls();
+            if (controls) {
+              controls.autoRotate = true;
+              controls.autoRotateSpeed = 0.3;
+            }
+          }
+        }}
         // Political boundaries as the base map (always on)
         polygonsData={geoData ? geoData.features : []}
         polygonCapColor={getPolygonColor}
