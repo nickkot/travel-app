@@ -218,7 +218,7 @@ export function Globe({
                   if (obj.type === "Mesh" && obj.material && !obj.__customized) {
                     // The globe sphere mesh
                     if (obj.geometry?.type === "SphereGeometry" || obj.geometry?.parameters?.radius) {
-                      obj.material.color?.set("#4a90c4");
+                      obj.material.color?.set("#4A7FA5");
                       obj.__customized = true;
                     }
                   }
