@@ -48,7 +48,7 @@ export function Globe({
         threeRef.current = threeMod;
         // Create bright blue ocean material (unlit — ignores scene lighting)
         setOceanMaterial(
-          new threeMod.MeshBasicMaterial({ color: "#6BB8E8" })
+          new threeMod.MeshBasicMaterial({ color: "#4A7FA5" })
         );
         setGlobeComponent(() => globeMod.default);
       })
