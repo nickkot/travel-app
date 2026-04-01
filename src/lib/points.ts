@@ -34,6 +34,19 @@ export interface BadgeDefinition {
   description: string;
 }
 
+export const BADGE_ICONS: Record<string, string> = {
+  slow_burner: "\u{1F54A}",
+  polyglot_path: "\u{1F30D}",
+  return_flight: "\u{1F504}",
+  deep_roots: "\u{1F333}",
+  off_the_grid: "\u{1F3D5}",
+  culinary_explorer: "\u{1F37D}",
+  hemisphere_hopper: "\u{1F30E}",
+  midnight_sun: "\u{2600}",
+  southern_cross: "\u{2728}",
+  time_traveler: "\u{23F0}",
+};
+
 export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     type: "slow_burner",

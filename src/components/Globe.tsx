@@ -123,11 +123,10 @@ export function Globe({
   );
 
   // Points to show based on mode
-  const visiblePins = useMemo(() => {
-    if (mode === "pins") return allPins;
-    if (mode === "friends") return friendsModePins;
-    return [];
-  }, [mode, allPins, friendsModePins]);
+  const visiblePins = useMemo(
+    () => (mode === "pins" ? allPins : friendsModePins),
+    [mode, allPins, friendsModePins]
+  );
 
   const visitedSet = useMemo(
     () => new Set(visitedCountries.map((c) => c.toUpperCase())),
@@ -205,11 +204,6 @@ export function Globe({
       const isVisited = visitedSet.has(nameUp) || visitedSet.has(isoUp);
       const isFriendVisited = friendCountrySet.has(nameUp) || friendCountrySet.has(isoUp);
 
-      if (mode === "blankspots") {
-        return isVisited
-          ? "rgba(210, 190, 155, 0.95)"
-          : "rgba(180, 175, 165, 0.95)";
-      }
       if (mode === "friends") {
         // Both you and friends visited
         if (isVisited && isFriendVisited)
@@ -254,9 +248,6 @@ export function Globe({
       const isVisited = visitedSet.has(nameUp) || visitedSet.has(isoUp);
       const isFriendVisited = friendCountrySet.has(nameUp) || friendCountrySet.has(isoUp);
 
-      if (mode === "blankspots") {
-        return isVisited ? 0.012 : 0.003;
-      }
       if (mode === "friends" && isFriendVisited) {
         return isVisited ? 0.012 : 0.008;
       }

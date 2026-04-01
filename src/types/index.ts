@@ -15,7 +15,7 @@ export interface GlobePin {
   friendName?: string;
 }
 
-export type GlobeMode = "pins" | "friends" | "blankspots";
+export type GlobeMode = "pins" | "friends";
 
 export interface FriendData {
   id: string;
@@ -24,6 +24,9 @@ export interface FriendData {
   color: string;
   pins: GlobePin[];
   visitedCountries: string[];
+  compassMiles: number;
+  tier: number;
+  earnedBadges: string[];
 }
 
 export interface TravelStats {

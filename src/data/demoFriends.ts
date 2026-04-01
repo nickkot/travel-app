@@ -14,6 +14,9 @@ export const DEMO_FRIENDS: FriendData[] = [
       { id: "fr1-5", lat: 25.2048, lng: 55.2708, city: "Dubai", country: "UAE", type: "past" },
     ],
     visitedCountries: ["France", "Germany", "Turkey", "Japan", "UAE"],
+    compassMiles: 7200,
+    tier: 3,
+    earnedBadges: ["hemisphere_hopper", "polyglot_path", "time_traveler"],
   },
   {
     id: "fr2",
@@ -27,6 +30,9 @@ export const DEMO_FRIENDS: FriendData[] = [
       { id: "fr2-4", lat: 1.3521, lng: 103.8198, city: "Singapore", country: "Singapore", type: "past" },
     ],
     visitedCountries: ["Thailand", "Indonesia", "Vietnam", "Singapore"],
+    compassMiles: 2800,
+    tier: 2,
+    earnedBadges: ["slow_burner", "culinary_explorer"],
   },
   {
     id: "fr3",
@@ -41,6 +47,9 @@ export const DEMO_FRIENDS: FriendData[] = [
       { id: "fr3-5", lat: -33.8688, lng: 151.2093, city: "Sydney", country: "Australia", type: "past" },
     ],
     visitedCountries: ["Italy", "Spain", "Portugal", "Norway", "Australia"],
+    compassMiles: 18500,
+    tier: 4,
+    earnedBadges: ["deep_roots", "return_flight", "midnight_sun", "southern_cross"],
   },
   {
     id: "fr4",
@@ -54,6 +63,9 @@ export const DEMO_FRIENDS: FriendData[] = [
       { id: "fr4-4", lat: -15.3875, lng: 28.3228, city: "Lusaka", country: "Zambia", type: "past" },
     ],
     visitedCountries: ["Brazil", "Kenya", "Egypt", "Zambia"],
+    compassMiles: 1500,
+    tier: 2,
+    earnedBadges: ["off_the_grid"],
   },
 ];
 

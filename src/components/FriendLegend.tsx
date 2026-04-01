@@ -1,6 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import type { FriendData } from "@/types";
+import { TIER_THRESHOLDS } from "@/lib/points";
+import { TIER_BADGE_STYLES, TIER_ICONS } from "@/lib/tierStyles";
+import { BadgeStrip } from "./BadgeStrip";
+import { cn } from "@/lib/utils";
 
 interface FriendLegendProps {
   friends: FriendData[];
@@ -14,6 +19,7 @@ export function FriendLegend({
   onToggleFriend,
 }: FriendLegendProps) {
   const selectedSet = new Set(selectedFriendIds);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
     <div className="space-y-3">
@@ -28,37 +34,73 @@ export function FriendLegend({
       {/* Friend toggles */}
       {friends.map((friend) => {
         const isSelected = selectedSet.has(friend.id);
+        const isExpanded = expandedId === friend.id;
+        const tierDef = TIER_THRESHOLDS.find((t) => t.tier === friend.tier);
+        const tierStyle = TIER_BADGE_STYLES[friend.tier] || TIER_BADGE_STYLES[1];
+
         return (
-          <button
-            key={friend.id}
-            onClick={() => onToggleFriend(friend.id)}
-            className="flex items-center gap-2.5 w-full text-left group"
-          >
-            <div
-              className="w-3 h-3 rounded-full border-2 transition-all flex items-center justify-center"
-              style={{
-                borderColor: friend.color,
-                backgroundColor: isSelected ? friend.color : "transparent",
-              }}
-            >
-              {isSelected && (
-                <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 12 12">
-                  <path d="M10.28 2.28a.75.75 0 0 1 0 1.06l-5.5 5.5a.75.75 0 0 1-1.06 0l-2.5-2.5a.75.75 0 0 1 1.06-1.06L4.25 7.22l4.97-4.94a.75.75 0 0 1 1.06 0Z" />
-                </svg>
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <span
-                className="text-sm font-medium transition-colors"
-                style={{ color: isSelected ? friend.color : undefined }}
+          <div key={friend.id}>
+            <div className="flex items-start gap-2.5 w-full">
+              {/* Toggle checkbox */}
+              <button
+                onClick={() => onToggleFriend(friend.id)}
+                className="mt-0.5 shrink-0"
               >
-                {friend.name}
-              </span>
-              <span className="text-xs text-brand-text-muted ml-1.5">
-                {friend.pins.length} places
-              </span>
+                <div
+                  className="w-3 h-3 rounded-full border-2 transition-all flex items-center justify-center"
+                  style={{
+                    borderColor: friend.color,
+                    backgroundColor: isSelected ? friend.color : "transparent",
+                  }}
+                >
+                  {isSelected && (
+                    <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 12 12">
+                      <path d="M10.28 2.28a.75.75 0 0 1 0 1.06l-5.5 5.5a.75.75 0 0 1-1.06 0l-2.5-2.5a.75.75 0 0 1 1.06-1.06L4.25 7.22l4.97-4.94a.75.75 0 0 1 1.06 0Z" />
+                    </svg>
+                  )}
+                </div>
+              </button>
+
+              {/* Name + tier + stats (clickable to expand badges) */}
+              <button
+                onClick={() => setExpandedId(isExpanded ? null : friend.id)}
+                className="flex-1 min-w-0 text-left"
+              >
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span
+                    className="text-sm font-medium transition-colors"
+                    style={{ color: isSelected ? friend.color : undefined }}
+                  >
+                    {friend.name}
+                  </span>
+                  {tierDef && (
+                    <span
+                      className={cn(
+                        "text-[10px] px-1.5 py-0.5 rounded-full font-medium leading-none",
+                        tierStyle.bg,
+                        tierStyle.text
+                      )}
+                    >
+                      {TIER_ICONS[tierDef.icon]} {tierDef.name}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs text-brand-text-muted mt-0.5">
+                  {friend.pins.length} places
+                  {friend.earnedBadges.length > 0 && (
+                    <> &middot; {friend.earnedBadges.length} badge{friend.earnedBadges.length !== 1 ? "s" : ""}</>
+                  )}
+                </div>
+              </button>
             </div>
-          </button>
+
+            {/* Expandable badge strip */}
+            {isExpanded && friend.earnedBadges.length > 0 && (
+              <div className="ml-5.5 mt-1.5 pl-2 border-l-2 border-brand-border">
+                <BadgeStrip earnedBadges={friend.earnedBadges} />
+              </div>
+            )}
+          </div>
         );
       })}
 

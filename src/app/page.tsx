@@ -3,6 +3,8 @@
 import { useState, useCallback } from "react";
 import { Globe } from "@/components/Globe";
 import { FriendLegend } from "@/components/FriendLegend";
+import { CompassClub } from "@/components/CompassClub";
+import { BadgeStrip } from "@/components/BadgeStrip";
 import { DEMO_FRIENDS } from "@/data/demoFriends";
 import type { GlobePin, GlobeMode } from "@/types";
 
@@ -37,6 +39,10 @@ const DEMO_VISITED_COUNTRIES = [
   "Mexico", "Japan", "Italy", "Australia", "France",
   "Thailand", "Peru", "India", "Russia", "Kenya",
 ];
+
+const USER_COMPASS_MILES = 3200;
+const USER_TIER = 2;
+const USER_BADGES = ["return_flight", "culinary_explorer", "time_traveler"];
 
 export default function HomePage() {
   const [selectedPin, setSelectedPin] = useState<GlobePin | null>(null);
@@ -154,6 +160,12 @@ export default function HomePage() {
             </div>
             <div className="mt-3 pt-3 border-t border-brand-border text-xs text-brand-text-muted">
               {DEMO_VISITED_COUNTRIES.length} countries
+            </div>
+            <div className="mt-3 pt-3 border-t border-brand-border">
+              <CompassClub compact compassMiles={USER_COMPASS_MILES} tier={USER_TIER} />
+            </div>
+            <div className="mt-2">
+              <BadgeStrip earnedBadges={USER_BADGES} />
             </div>
           </>
         )}
