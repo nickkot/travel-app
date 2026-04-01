@@ -317,13 +317,24 @@ export function Globe({
           arcsData={[]}
           // Landmark icons
           htmlElementsData={LANDMARKS}
-          htmlLat={(d: any) => d.lat}
-          htmlLng={(d: any) => d.lng}
+          htmlLat="lat"
+          htmlLng="lng"
           htmlAltitude={0.02}
+          htmlTransitionDuration={0}
           htmlElement={(d: any) => {
             const el = document.createElement("div");
-            el.className = "landmark-icon";
-            el.innerHTML = d.icon;
+            el.style.fontSize = "20px";
+            el.style.pointerEvents = "none";
+            el.style.userSelect = "none";
+            el.style.filter = "drop-shadow(0 1px 3px rgba(0,0,0,0.3))";
+            el.style.animation = "landmark-float 3s ease-in-out infinite";
+            el.style.width = "0";
+            el.style.height = "0";
+            el.style.display = "flex";
+            el.style.alignItems = "center";
+            el.style.justifyContent = "center";
+            el.style.overflow = "visible";
+            el.textContent = d.icon;
             el.title = d.name;
             return el;
           }}
