@@ -12,9 +12,9 @@
   --pin-past: #c4623a;
   --pin-future: #1c2b4a;
   --pin-wishlist: #5c8a6e;
-  --text-primary: #2a1f0f;
-  --text-secondary: #6b5740;
-  --text-muted: #a08c72;
+  --text-primary: #1a1207;
+  --text-secondary: #4a3a28;
+  --text-muted: #7a6850;
   --border: rgba(44, 31, 15, 0.12);
   --success: #5c8a6e;
   --danger: #a83220;
@@ -79,6 +79,14 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  body {
+    font-size: 17px;
+  }
 }
 
 /* Globe container */
@@ -93,21 +101,6 @@ body {
 
 .globe-container canvas {
   z-index: 0;
-}
-
-/* Landmark icons on globe */
-.landmark-icon {
-  font-size: 20px;
-  cursor: default;
-  pointer-events: none;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
-  animation: landmark-float 3s ease-in-out infinite;
-  user-select: none;
-}
-
-@keyframes landmark-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
 }
 
 /* Pin animations */

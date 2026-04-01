@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GlobePin, GlobeMode, FriendData } from "@/types";
 import { GlobeToolbar } from "./GlobeToolbar";
 import { getAllFriendPins } from "@/data/demoFriends";
-import { LANDMARKS } from "@/data/landmarks";
 
 interface GlobeProps {
   pastPins: GlobePin[];
@@ -35,23 +34,16 @@ export function Globe({
 }: GlobeProps) {
   const globeRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const threeRef = useRef<any>(null);
   const [geoData, setGeoData] = useState<any>(null);
   const [hoverPin, setHoverPin] = useState<GlobePin | null>(null);
   const [GlobeComponent, setGlobeComponent] = useState<any>(null);
-  const [oceanMaterial, setOceanMaterial] = useState<any>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
-  // Manually import react-globe.gl + three on client only
+  // Manually import react-globe.gl on client only
   useEffect(() => {
-    Promise.all([import("react-globe.gl"), import("three")])
-      .then(([globeMod, threeMod]) => {
-        threeRef.current = threeMod;
-        // Create bright blue ocean material (unlit — ignores scene lighting)
-        setOceanMaterial(
-          new threeMod.MeshBasicMaterial({ color: "#4A7FA5" })
-        );
-        setGlobeComponent(() => globeMod.default);
+    import("react-globe.gl")
+      .then((mod) => {
+        setGlobeComponent(() => mod.default);
       })
       .catch((err) => {
         console.error("Failed to load globe:", err);
@@ -208,18 +200,18 @@ export function Globe({
       if (mode === "friends") {
         // Both you and friends visited
         if (isVisited && isFriendVisited)
-          return "rgba(180, 150, 210, 0.85)";
+          return "rgba(180, 150, 210, 0.45)";
         // Only friends visited — soft lavender tint
-        if (isFriendVisited) return "rgba(160, 140, 200, 0.7)";
-        // Only you visited — warm tan
-        if (isVisited) return "rgba(220, 185, 140, 0.92)";
-        // Neither
-        return "rgba(215, 200, 175, 0.88)";
+        if (isFriendVisited) return "rgba(160, 140, 200, 0.35)";
+        // Only you visited — warm terracotta tint
+        if (isVisited) return "rgba(196, 98, 58, 0.3)";
+        // Neither — transparent to show texture
+        return "rgba(0, 0, 0, 0)";
       }
-      // Pins mode
+      // Pins mode — highlight visited, rest transparent
       return isVisited
-        ? "rgba(220, 185, 140, 0.92)"
-        : "rgba(215, 200, 175, 0.88)";
+        ? "rgba(196, 98, 58, 0.3)"
+        : "rgba(0, 0, 0, 0)";
     },
     [mode, visitedSet, friendCountrySet]
   );
@@ -233,8 +225,8 @@ export function Globe({
         visitedSet.has(name.toUpperCase()) || visitedSet.has(iso.toUpperCase());
 
       return isVisited
-        ? "rgba(180, 140, 90, 0.8)"
-        : "rgba(170, 160, 140, 0.6)";
+        ? "rgba(180, 140, 90, 0.5)"
+        : "rgba(0, 0, 0, 0)";
     },
     [visitedSet]
   );
@@ -266,8 +258,8 @@ export function Globe({
       {ReactGlobe && (
         <ReactGlobe
           ref={globeRef}
-          globeImageUrl=""
-          globeMaterial={oceanMaterial}
+          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+          bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
           backgroundColor="#0d1a30"
           onGlobeReady={() => {
             if (globeRef.current) {
@@ -282,7 +274,7 @@ export function Globe({
           polygonsData={geoData ? geoData.features : []}
           polygonCapColor={getPolygonColor}
           polygonSideColor={getPolygonSideColor}
-          polygonStrokeColor={() => "rgba(140, 125, 100, 0.5)"}
+          polygonStrokeColor={() => "rgba(255, 255, 255, 0.15)"}
           polygonAltitude={getPolygonAltitude}
           // 3D raised pins
           pointsData={visiblePins}
@@ -315,29 +307,6 @@ export function Globe({
           onPointHover={(point: any) => setHoverPin(point as GlobePin | null)}
           // No arcs
           arcsData={[]}
-          // Landmark icons
-          htmlElementsData={LANDMARKS}
-          htmlLat="lat"
-          htmlLng="lng"
-          htmlAltitude={0.02}
-          htmlTransitionDuration={0}
-          htmlElement={(d: any) => {
-            const el = document.createElement("div");
-            el.style.fontSize = "20px";
-            el.style.pointerEvents = "none";
-            el.style.userSelect = "none";
-            el.style.filter = "drop-shadow(0 1px 3px rgba(0,0,0,0.3))";
-            el.style.animation = "landmark-float 3s ease-in-out infinite";
-            el.style.width = "0";
-            el.style.height = "0";
-            el.style.display = "flex";
-            el.style.alignItems = "center";
-            el.style.justifyContent = "center";
-            el.style.overflow = "visible";
-            el.textContent = d.icon;
-            el.title = d.name;
-            return el;
-          }}
           // Atmosphere
           animateIn={true}
           atmosphereColor="#4a8abf"

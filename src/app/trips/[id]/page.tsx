@@ -7,8 +7,7 @@ import { JournalEntry } from "@/components/JournalEntry";
 import { JournalForm } from "@/components/JournalForm";
 import { ReviewForm } from "@/components/ReviewForm";
 import { CommentThread } from "@/components/CommentThread";
-import { formatDate } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
 
 type Tab = "photos" | "journal" | "reviews";
 
@@ -172,6 +171,42 @@ export default function TripDetailPage() {
             </svg>
             {DEMO_TRIP.upvoteCount}
           </span>
+        </div>
+      </div>
+
+      {/* Destination rating */}
+      <div className="mb-6 bg-brand-card rounded-[14px] border border-brand-border p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-serif font-semibold text-brand-text">Destination Rating</h3>
+          <div className="flex items-center gap-1.5">
+            <span className="text-2xl font-serif font-bold text-brand-pin-past">4.5</span>
+            <span className="text-brand-pin-past">{"\u{2605}"}</span>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {[
+            { label: "Eat", icon: "\u{1F37D}\u{FE0F}", rating: 5.0, desc: "Food, restaurants, markets, street food" },
+            { label: "Explore", icon: "\u{1F9ED}", rating: 4.5, desc: "Nature, architecture, culture, sightseeing" },
+            { label: "Connect", icon: "\u{1F91D}", rating: 4.0, desc: "People, nightlife, social vibe" },
+            { label: "Live", icon: "\u{1F3E0}", rating: 4.5, desc: "Value, transit, walkability, weather" },
+          ].map((a) => (
+            <div key={a.label} className="flex items-center gap-3">
+              <span className="text-lg w-7 text-center">{a.icon}</span>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-brand-text">{a.label}</span>
+                  <span className="text-sm font-bold text-brand-text">{a.rating.toFixed(1)}</span>
+                </div>
+                <div className="w-full h-2 bg-brand-surface rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-brand-pin-past rounded-full"
+                    style={{ width: `${(a.rating / 5) * 100}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-brand-text-muted mt-0.5">{a.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
