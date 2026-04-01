@@ -12,7 +12,7 @@ interface GlobeProps {
   onPinClick?: (pin: GlobePin) => void;
 }
 
-// Low-res country boundaries (~300KB vs 23MB original)
+// Low-res country boundaries (~300KB)
 const GEOJSON_URL =
   "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson";
 
@@ -53,7 +53,6 @@ export function Globe({
         }
       }
     };
-    // Measure after a small delay to ensure layout is complete
     const timer = setTimeout(updateSize, 100);
     window.addEventListener("resize", updateSize);
     return () => {
@@ -70,7 +69,7 @@ export function Globe({
       .catch(() => {});
   }, []);
 
-  // Auto-rotate — poll until globe controls are available
+  // Auto-rotate
   useEffect(() => {
     if (!GlobeComponent) return;
     const interval = setInterval(() => {
@@ -104,39 +103,43 @@ export function Globe({
     [visitedCountries]
   );
 
+  // Pin colors
   const getPinColor = useCallback((pin: GlobePin) => {
     switch (pin.type) {
       case "past":
         return "#c4623a";
       case "future":
-        return "#1c2b4a";
+        return "#4a90d9";
       case "wishlist":
         return "#5c8a6e";
     }
   }, []);
 
+  // 3D raised pin altitudes — tall enough to visibly stick out
   const getPinAltitude = useCallback((pin: GlobePin) => {
     switch (pin.type) {
       case "past":
-        return 0.01;
+        return 0.12;
       case "future":
-        return 0.02;
+        return 0.18;
       case "wishlist":
-        return 0.008;
+        return 0.08;
     }
   }, []);
 
+  // Pin thickness
   const getPinRadius = useCallback((pin: GlobePin) => {
     switch (pin.type) {
       case "past":
-        return 0.5;
+        return 0.4;
       case "future":
-        return 0.45;
+        return 0.35;
       case "wishlist":
-        return 0.3;
+        return 0.25;
     }
   }, []);
 
+  // High-contrast country fills
   const getPolygonColor = useCallback(
     (feat: any) => {
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
@@ -146,17 +149,52 @@ export function Globe({
 
       if (mode === "blankspots") {
         return isVisited
-          ? "rgba(196, 98, 58, 0.2)"
-          : "rgba(200, 191, 170, 0.55)";
+          ? "rgba(196, 98, 58, 0.5)"
+          : "rgba(200, 191, 170, 0.7)";
       }
       if (mode === "heatmap") {
         return isVisited
-          ? "rgba(196, 98, 58, 0.3)"
-          : "rgba(13, 26, 46, 0.05)";
+          ? "rgba(196, 98, 58, 0.5)"
+          : "rgba(25, 40, 65, 0.6)";
+      }
+      // Pins mode — high contrast
+      return isVisited
+        ? "rgba(196, 98, 58, 0.35)"
+        : "rgba(35, 55, 85, 0.75)";
+    },
+    [mode, visitedSet]
+  );
+
+  // High-contrast polygon side color (gives 3D depth to raised countries)
+  const getPolygonSideColor = useCallback(
+    (feat: any) => {
+      const name = feat.properties?.ADMIN || feat.properties?.name || "";
+      const iso = feat.properties?.ISO_A3 || "";
+      const isVisited =
+        visitedSet.has(name.toUpperCase()) || visitedSet.has(iso.toUpperCase());
+
+      if (mode === "blankspots") {
+        return isVisited ? "rgba(160, 70, 35, 0.6)" : "rgba(160, 150, 130, 0.4)";
       }
       return isVisited
-        ? "rgba(196, 98, 58, 0.12)"
-        : "rgba(30, 35, 50, 0.4)";
+        ? "rgba(160, 70, 35, 0.5)"
+        : "rgba(20, 35, 60, 0.5)";
+    },
+    [mode, visitedSet]
+  );
+
+  // Slightly raise visited countries for 3D effect
+  const getPolygonAltitude = useCallback(
+    (feat: any) => {
+      const name = feat.properties?.ADMIN || feat.properties?.name || "";
+      const iso = feat.properties?.ISO_A3 || "";
+      const isVisited =
+        visitedSet.has(name.toUpperCase()) || visitedSet.has(iso.toUpperCase());
+
+      if (mode === "blankspots") {
+        return isVisited ? 0.01 : 0.002;
+      }
+      return isVisited ? 0.008 : 0.002;
     },
     [mode, visitedSet]
   );
@@ -181,17 +219,20 @@ export function Globe({
               }
             }
           }}
+          // High-contrast political boundaries
           polygonsData={geoData ? geoData.features : []}
           polygonCapColor={getPolygonColor}
-          polygonSideColor={() => "rgba(0,0,0,0)"}
-          polygonStrokeColor={() => "rgba(120, 140, 170, 0.3)"}
-          polygonAltitude={0.003}
+          polygonSideColor={getPolygonSideColor}
+          polygonStrokeColor={() => "rgba(200, 210, 230, 0.5)"}
+          polygonAltitude={getPolygonAltitude}
+          // 3D raised pins
           pointsData={mode === "pins" ? allPins : []}
           pointLat={(d: any) => d.lat}
           pointLng={(d: any) => d.lng}
           pointColor={(d: any) => getPinColor(d as GlobePin)}
           pointAltitude={(d: any) => getPinAltitude(d as GlobePin)}
           pointRadius={(d: any) => getPinRadius(d as GlobePin)}
+          pointsMerge={false}
           pointLabel={(d: any) => {
             const pin = d as GlobePin;
             return `<div style="background:rgba(250,247,242,0.96);padding:8px 12px;border-radius:8px;font-size:13px;border:1px solid rgba(44,31,15,0.15);box-shadow:0 4px 12px rgba(42,31,15,0.15);color:#2a1f0f">
@@ -202,16 +243,19 @@ export function Globe({
           }}
           onPointClick={(point: any) => onPinClick?.(point as GlobePin)}
           onPointHover={(point: any) => setHoverPin(point as GlobePin | null)}
+          // No arcs
           arcsData={[]}
+          // Heatmap overlay
           hexBinPointsData={mode === "heatmap" ? heatmapData : []}
           hexBinPointWeight="weight"
           hexBinResolution={3}
-          hexTopColor={() => "rgba(196, 98, 58, 0.6)"}
-          hexSideColor={() => "rgba(232, 184, 74, 0.25)"}
-          hexAltitude={(d: any) => d.sumWeight * 0.015}
+          hexTopColor={() => "rgba(196, 98, 58, 0.7)"}
+          hexSideColor={() => "rgba(232, 184, 74, 0.4)"}
+          hexAltitude={(d: any) => d.sumWeight * 0.02}
+          // Atmosphere
           animateIn={true}
           atmosphereColor="#2a4a7a"
-          atmosphereAltitude={0.12}
+          atmosphereAltitude={0.15}
           showGraticules={true}
           width={dimensions.width}
           height={dimensions.height}
