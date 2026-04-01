@@ -95,6 +95,16 @@ body {
   z-index: 0;
 }
 
+/* Passport marquee ticker */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
 /* Pin animations */
 @keyframes pulse-pin {
   0%, 100% { transform: scale(1); opacity: 1; }

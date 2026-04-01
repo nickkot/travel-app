@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ProfileStats } from "@/components/ProfileStats";
 import { CompassClub } from "@/components/CompassClub";
 import { BadgeShowcase } from "@/components/BadgeShowcase";
@@ -89,9 +90,17 @@ export default function ProfilePage() {
             />
           </div>
         </div>
-        <button className="px-4 py-2 border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-surface transition-colors">
-          Edit Profile
-        </button>
+        <div className="flex flex-col gap-2">
+          <button className="px-4 py-2 border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-surface transition-colors">
+            Edit Profile
+          </button>
+          <Link
+            href="/passport"
+            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg text-sm font-medium text-center hover:from-purple-500 hover:to-indigo-500 transition-all"
+          >
+            My Passport
+          </Link>
+        </div>
       </div>
 
       {/* Stats */}
