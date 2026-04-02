@@ -11,7 +11,7 @@ export function BadgeShowcase({ earnedBadges }: BadgeShowcaseProps) {
   const earnedSet = new Set(earnedBadges);
 
   return (
-    <div className="bg-brand-card rounded-[10px] border border-brand-border p-5">
+    <div className="bg-brand-card rounded-2xl ring-1 ring-brand-border p-5 noise-texture">
       <h3 className="font-semibold font-serif text-lg text-brand-text mb-4">Badges</h3>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {BADGE_DEFINITIONS.map((badge) => {

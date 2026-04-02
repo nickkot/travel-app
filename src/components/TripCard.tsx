@@ -29,98 +29,93 @@ export function TripCard({
   status,
   isFuture,
   upvoteCount,
-  authorName,
-  authorUsername,
   photoCount,
   reviewCount,
 }: TripCardProps) {
-  const statusColors = {
-    PLANNED: "bg-brand-navy/10 text-brand-navy",
-    ACTIVE: "bg-brand-success/10 text-brand-success",
-    COMPLETED: "bg-brand-pin-past/10 text-brand-pin-past",
-  };
+  const statusLabel =
+    status === "COMPLETED"
+      ? "Visited"
+      : status === "ACTIVE"
+        ? "Traveling"
+        : isFuture
+          ? "Upcoming"
+          : "Planned";
 
   return (
     <Link href={`/trips/${id}`}>
-      <div className="card-hover bg-brand-card rounded-[10px] border border-brand-border overflow-hidden">
-        {/* Cover image */}
-        <div className="relative h-48 bg-brand-surface">
-          {coverPhotoUrl ? (
-            <img
-              src={coverPhotoUrl}
-              alt={title}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-brand-text-muted/40">
-              <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-              </svg>
-            </div>
-          )}
-          {/* Status badge */}
-          <span
-            className={`absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[status as keyof typeof statusColors] || statusColors.PLANNED}`}
-          >
-            {status === "COMPLETED"
-              ? "Visited"
-              : status === "ACTIVE"
-                ? "Traveling"
-                : isFuture
-                  ? "Upcoming"
-                  : "Planned"}
+      <div className="group relative overflow-hidden rounded-2xl aspect-[3/4] card-hover">
+        {/* Photo or gradient fallback */}
+        {coverPhotoUrl ? (
+          <img
+            src={coverPhotoUrl}
+            alt={title}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-navy via-brand-navy-muted to-brand-pin-past/60" />
+        )}
+
+        {/* Gradient scrim */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+        {/* Status badge — top right */}
+        <div className="absolute top-3 right-3">
+          <span className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/15 backdrop-blur-sm text-white/90">
+            {statusLabel}
           </span>
         </div>
 
-        {/* Content */}
-        <div className="p-4">
-          <h3 className="font-semibold font-serif text-lg text-brand-text mb-1">{title}</h3>
+        {/* Stats — top left */}
+        <div className="absolute top-3 left-3 flex items-center gap-2">
+          {photoCount > 0 && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/15 backdrop-blur-sm text-white/80 flex items-center gap-1">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
+              </svg>
+              {photoCount}
+            </span>
+          )}
+          {upvoteCount > 0 && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/15 backdrop-blur-sm text-white/80 flex items-center gap-1">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75" />
+              </svg>
+              {upvoteCount}
+            </span>
+          )}
+        </div>
 
-          {/* Destinations */}
-          <div className="flex flex-wrap gap-1.5 mb-2">
-            {destinations.slice(0, 3).map((d, i) => (
-              <span
-                key={i}
-                className="text-xs px-2 py-0.5 rounded-full bg-brand-surface text-brand-text-secondary"
-              >
-                {d.city}, {d.country}
-              </span>
-            ))}
-            {destinations.length > 3 && (
-              <span className="text-xs text-brand-text-muted">
-                +{destinations.length - 3} more
-              </span>
-            )}
-          </div>
-
+        {/* Bottom content — overlaid on scrim */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
           {/* Dates */}
           {startDate && (
-            <p className="text-sm text-brand-text-muted mb-3">
+            <p className="text-[11px] font-medium text-white/60 uppercase tracking-wider">
               {formatDate(startDate)}
               {endDate && ` — ${formatDate(endDate)}`}
             </p>
           )}
 
-          {/* Footer */}
-          <div className="flex items-center justify-between pt-3 border-t border-brand-border">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy text-xs font-bold">
-                {authorName.charAt(0)}
-              </div>
-              <span className="text-sm text-brand-text-secondary">
-                @{authorUsername}
+          {/* Title */}
+          <h3 className="font-serif font-bold text-lg text-white leading-tight">
+            {title}
+          </h3>
+
+          {/* Destination pills */}
+          <div className="flex flex-wrap gap-1.5">
+            {destinations.slice(0, 3).map((d, i) => (
+              <span
+                key={i}
+                className="px-2.5 py-0.5 rounded-full text-[11px] bg-white/15 backdrop-blur-sm text-white/80"
+              >
+                {d.city}, {d.country}
               </span>
-            </div>
-            <div className="flex items-center gap-3 text-xs text-brand-text-muted">
-              {photoCount > 0 && <span>{photoCount} photos</span>}
-              {reviewCount > 0 && <span>{reviewCount} reviews</span>}
-              <span className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                </svg>
-                {upvoteCount}
+            ))}
+            {destinations.length > 3 && (
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] bg-white/15 backdrop-blur-sm text-white/60">
+                +{destinations.length - 3}
               </span>
-            </div>
+            )}
           </div>
         </div>
       </div>

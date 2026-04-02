@@ -27,7 +27,14 @@
   --globe-atmosphere: #2a4a7a;
   --globe-blank: #c8bfaa;
 
-  /* Legacy semantic mappings (keeps existing Tailwind classes working) */
+  /* Motion — premium spring curve */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Fluid type scale */
+  --text-hero: clamp(1.75rem, 3.5vw, 2.5rem);
+  --text-section: clamp(1.25rem, 2.5vw, 1.75rem);
+
+  /* Legacy semantic mappings */
   --background: var(--bg-primary);
   --foreground: var(--text-primary);
   --surface: var(--bg-surface);
@@ -60,7 +67,7 @@
   --color-brand-journal: var(--bg-journal);
   --color-brand-globe-bg: var(--globe-bg);
 
-  /* Accent shortcuts (for buttons, nav, etc.) */
+  /* Accent shortcuts */
   --color-accent: var(--accent-navy);
   --color-accent-cool: var(--pin-future);
   --color-accent-wishlist: var(--pin-wishlist);
@@ -103,7 +110,64 @@ body {
   z-index: 0;
 }
 
-/* Pin animations */
+/* ── Motion & Interaction ── */
+
+/* Card hover — spring-feel lift with shadow escalation */
+.card-hover {
+  transition: transform 0.4s var(--ease-spring),
+              box-shadow 0.4s var(--ease-spring);
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(42, 31, 15, 0.12);
+}
+
+/* Button press — subtle scale-down on active */
+.btn-press {
+  transition: transform 0.15s var(--ease-spring),
+              box-shadow 0.15s ease;
+}
+.btn-press:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.btn-press:active {
+  transform: scale(0.97) translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Noise texture overlay — adds depth to flat surfaces */
+.noise-texture {
+  position: relative;
+}
+.noise-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  border-radius: inherit;
+}
+
+/* Shimmer skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--bg-surface) 25%,
+    var(--bg-card) 50%,
+    var(--bg-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+/* ── Pin animations ── */
 @keyframes pulse-pin {
   0%, 100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.3); opacity: 0.7; }
@@ -123,7 +187,7 @@ body {
   animation: pulse-ring 2s ease-in-out infinite;
 }
 
-/* Scrollbar styling */
+/* ── Scrollbar ── */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -135,12 +199,10 @@ body {
   border-radius: 3px;
 }
 
-/* Card hover effect */
-.card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
-.card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(42, 31, 15, 0.1);
-  border-color: rgba(28, 43, 74, 0.25);
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -28,7 +28,7 @@ export function CompassClub({ compassMiles, tier, compact }: CompassClubProps) {
   }
 
   return (
-    <div className="bg-brand-card rounded-[10px] border border-brand-border p-5">
+    <div className="bg-brand-card rounded-2xl ring-1 ring-brand-border p-5 noise-texture">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold font-serif text-lg text-brand-text">Compass Club</h3>
         <span className="text-sm text-brand-text-muted">

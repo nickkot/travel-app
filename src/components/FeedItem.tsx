@@ -70,7 +70,7 @@ export function FeedItem({
   };
 
   return (
-    <div className="bg-brand-card rounded-[14px] border border-brand-border overflow-hidden">
+    <div className="bg-brand-card rounded-2xl ring-1 ring-brand-border overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="w-8 h-8 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy font-bold text-xs">
@@ -241,7 +241,7 @@ export function FeedItem({
       {/* Action bar — upvote, reply, bookmark */}
       <div className="flex items-center gap-4 px-4 pt-2.5">
         {/* Upvote (compass arrow) */}
-        <button onClick={handleUpvote} className="flex items-center gap-1 transition-transform active:scale-110">
+        <button onClick={handleUpvote} className="flex items-center gap-1 transition-transform active:scale-95">
           <svg
             className={`w-5 h-5 ${upvoted ? "text-brand-pin-past" : "text-brand-text"}`}
             fill={upvoted ? "currentColor" : "none"}
@@ -265,7 +265,7 @@ export function FeedItem({
         </button>
 
         {/* Bookmark */}
-        <button onClick={() => setSaved(!saved)} className="ml-auto transition-transform active:scale-110">
+        <button onClick={() => setSaved(!saved)} className="ml-auto transition-transform active:scale-95">
           <svg
             className={`w-5 h-5 ${saved ? "text-brand-navy fill-brand-navy" : "text-brand-text"}`}
             fill={saved ? "currentColor" : "none"}

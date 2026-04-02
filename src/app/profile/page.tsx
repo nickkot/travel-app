@@ -25,7 +25,7 @@ const DEMO_PAST_TRIPS = [
   {
     id: "1",
     title: "Two Weeks in Oaxaca",
-    coverPhotoUrl: null,
+    coverPhotoUrl: "https://picsum.photos/seed/oaxaca-cover/600/800",
     destinations: [
       { city: "Oaxaca City", country: "Mexico" },
       { city: "Puerto Escondido", country: "Mexico" },
@@ -43,7 +43,7 @@ const DEMO_PAST_TRIPS = [
   {
     id: "2",
     title: "Japan Golden Route & Beyond",
-    coverPhotoUrl: null,
+    coverPhotoUrl: "https://picsum.photos/seed/japan-golden/600/800",
     destinations: [
       { city: "Tokyo", country: "Japan" },
       { city: "Kyoto", country: "Japan" },

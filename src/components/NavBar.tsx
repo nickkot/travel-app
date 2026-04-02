@@ -17,7 +17,7 @@ export function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-brand-bg/95 backdrop-blur-md border-t border-brand-border md:top-0 md:bottom-auto md:border-t-0 md:border-b md:border-brand-border">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-brand-bg/90 backdrop-blur-xl ring-1 ring-brand-border md:top-0 md:bottom-auto">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo — desktop only */}
@@ -38,16 +38,19 @@ export function NavBar() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-colors text-xs md:flex-row md:gap-2 md:text-sm md:px-4 md:py-2",
+                    "relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all duration-300 text-xs md:flex-row md:gap-2 md:text-sm md:px-4 md:py-2",
                     isActive
                       ? "text-brand-navy"
                       : "text-brand-text-secondary hover:text-brand-text"
                   )}
                 >
                   <item.icon
-                    className={cn("w-5 h-5", isActive && "text-brand-navy")}
+                    className={cn("w-5 h-5 transition-colors duration-300", isActive && "text-brand-navy")}
                   />
                   <span>{item.label}</span>
+                  {isActive && (
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-brand-navy md:hidden" />
+                  )}
                 </Link>
               );
             })}
