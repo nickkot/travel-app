@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 const CATEGORIES: LeaderboardCategory[] = [
   "explorerScore",
   "countries",
-  "influence",
+  "daysAbroad",
   "uniqueness",
 ];
 

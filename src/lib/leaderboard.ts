@@ -8,7 +8,7 @@ export interface LeaderboardEntry {
   color: string;
   tier: number;
   countries: number;     // unique countries visited
-  influence: number;     // friends recruited + friends inspired to visit a place
+  daysAbroad: number;    // total days spent traveling
   uniqueness: number;    // weighted score for off-beaten-path destinations
   explorerScore: number; // combined overall score
 }
@@ -16,14 +16,14 @@ export interface LeaderboardEntry {
 // Weights for computing the combined Explorer Score
 const WEIGHTS = {
   countries: 50,    // 50 pts per country
-  influence: 30,    // 30 pts per influence point
+  daysAbroad: 5,    // 5 pts per day abroad
   uniqueness: 1,    // already a weighted score, use as-is
 };
 
 export function computeExplorerScore(entry: Omit<LeaderboardEntry, "explorerScore">): number {
   return (
     entry.countries * WEIGHTS.countries +
-    entry.influence * WEIGHTS.influence +
+    entry.daysAbroad * WEIGHTS.daysAbroad +
     entry.uniqueness * WEIGHTS.uniqueness
   );
 }
@@ -44,10 +44,10 @@ export const CATEGORY_META: Record<
     icon: "\u{1F30D}",
     description: "Unique countries visited",
   },
-  influence: {
-    label: "Influence",
-    icon: "\u{1F91D}",
-    description: "Friends recruited & inspired",
+  daysAbroad: {
+    label: "Days Traveled",
+    icon: "\u{1F4C5}",
+    description: "Total days spent abroad",
   },
   uniqueness: {
     label: "Uniqueness",
