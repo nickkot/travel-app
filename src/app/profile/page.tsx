@@ -5,6 +5,7 @@ import { ProfileStats } from "@/components/ProfileStats";
 import { CompassClub } from "@/components/CompassClub";
 import { BadgeShowcase } from "@/components/BadgeShowcase";
 import { TripCard } from "@/components/TripCard";
+import { ShareButton } from "@/components/ShareButton";
 import type { TravelStats } from "@/types";
 
 const DEMO_STATS: TravelStats = {
@@ -129,9 +130,12 @@ export default function ProfilePage() {
             />
           </div>
         </div>
-        <button className="px-4 py-2 border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-surface transition-colors">
-          Edit Profile
-        </button>
+        <div className="flex items-center gap-2">
+          <button className="px-4 py-2 border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-surface transition-colors btn-press">
+            Edit Profile
+          </button>
+          <ShareButton username="atlas_explorer" />
+        </div>
       </div>
 
       {/* Stats */}
