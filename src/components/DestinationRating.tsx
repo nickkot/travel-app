@@ -97,7 +97,7 @@ export function DestinationRating({
   };
 
   return (
-    <div className="bg-brand-card rounded-[14px] border border-brand-border p-5">
+    <div className="bg-brand-card rounded-2xl ring-1 ring-brand-border p-5 noise-texture card-hover">
       {/* Header: destination + overall score */}
       <div className="flex items-start justify-between mb-3">
         <div>

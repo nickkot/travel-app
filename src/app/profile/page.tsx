@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ProfileStats } from "@/components/ProfileStats";
 import { CompassClub } from "@/components/CompassClub";
 import { BadgeShowcase } from "@/components/BadgeShowcase";
@@ -20,11 +21,11 @@ const DEMO_STATS: TravelStats = {
 
 const DEMO_BADGES = ["return_flight", "culinary_explorer", "time_traveler"];
 
-const DEMO_RECENT_TRIPS = [
+const DEMO_PAST_TRIPS = [
   {
     id: "1",
     title: "Two Weeks in Oaxaca",
-    coverPhotoUrl: null,
+    coverPhotoUrl: "https://picsum.photos/seed/oaxaca-cover/600/800",
     destinations: [
       { city: "Oaxaca City", country: "Mexico" },
       { city: "Puerto Escondido", country: "Mexico" },
@@ -42,7 +43,7 @@ const DEMO_RECENT_TRIPS = [
   {
     id: "2",
     title: "Japan Golden Route & Beyond",
-    coverPhotoUrl: null,
+    coverPhotoUrl: "https://picsum.photos/seed/japan-golden/600/800",
     destinations: [
       { city: "Tokyo", country: "Japan" },
       { city: "Kyoto", country: "Japan" },
@@ -56,6 +57,45 @@ const DEMO_RECENT_TRIPS = [
     authorUsername: "atlas_explorer",
     photoCount: 128,
     reviewCount: 15,
+  },
+];
+
+const DEMO_FUTURE_TRIPS = [
+  {
+    id: "f1",
+    title: "Iceland Ring Road",
+    coverPhotoUrl: null,
+    destinations: [
+      { city: "Reykjavik", country: "Iceland" },
+      { city: "Akureyri", country: "Iceland" },
+    ],
+    startDate: "2026-06-10",
+    endDate: "2026-06-24",
+    status: "PLANNED",
+    isFuture: true,
+    upvoteCount: 0,
+    authorName: "Atlas Explorer",
+    authorUsername: "atlas_explorer",
+    photoCount: 0,
+    reviewCount: 0,
+  },
+  {
+    id: "f2",
+    title: "Patagonia Trek",
+    coverPhotoUrl: null,
+    destinations: [
+      { city: "El Chalten", country: "Argentina" },
+      { city: "Torres del Paine", country: "Chile" },
+    ],
+    startDate: "2026-11-01",
+    endDate: "2026-11-18",
+    status: "PLANNED",
+    isFuture: true,
+    upvoteCount: 0,
+    authorName: "Atlas Explorer",
+    authorUsername: "atlas_explorer",
+    photoCount: 0,
+    reviewCount: 0,
   },
 ];
 
@@ -99,6 +139,50 @@ export default function ProfilePage() {
         <ProfileStats stats={DEMO_STATS} />
       </div>
 
+      {/* Trips — past + future with add button */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold font-serif text-brand-text">Trips</h2>
+          <Link
+            href="/trips/new"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-navy text-parchment rounded-lg text-sm font-medium hover:bg-brand-navy-hover transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Add Trip
+          </Link>
+        </div>
+
+        {/* Future trips */}
+        {DEMO_FUTURE_TRIPS.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-brand-text-secondary mb-3 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand-navy" />
+              Upcoming
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {DEMO_FUTURE_TRIPS.map((trip) => (
+                <TripCard key={trip.id} {...trip} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Past trips */}
+        <div>
+          <h3 className="text-sm font-semibold text-brand-text-secondary mb-3 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-brand-pin-past" />
+            Past
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {DEMO_PAST_TRIPS.map((trip) => (
+              <TripCard key={trip.id} {...trip} />
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Compass Club */}
       <div className="mb-6">
         <CompassClub
@@ -110,16 +194,6 @@ export default function ProfilePage() {
       {/* Badges */}
       <div className="mb-6">
         <BadgeShowcase earnedBadges={DEMO_BADGES} />
-      </div>
-
-      {/* Recent trips */}
-      <div>
-        <h2 className="text-xl font-bold font-serif text-brand-text mb-4">Recent Trips</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {DEMO_RECENT_TRIPS.map((trip) => (
-            <TripCard key={trip.id} {...trip} />
-          ))}
-        </div>
       </div>
     </div>
   );

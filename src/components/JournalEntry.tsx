@@ -20,7 +20,7 @@ export function JournalEntry({
   authorName,
 }: JournalEntryProps) {
   return (
-    <div className="bg-brand-journal rounded-[10px] border border-brand-border p-4">
+    <div className="bg-brand-journal rounded-2xl ring-1 ring-brand-border p-4">
       <div className="border-l-2 border-brand-pin-past/40 pl-4">
         <div className="flex items-center gap-2 mb-2">
           <time className="text-sm font-medium font-serif text-brand-pin-past">
