@@ -133,7 +133,45 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Side panel — stats overlay or friend legend */}
+      {/* Mobile legend — bottom of screen */}
+      <div className="absolute bottom-20 left-4 right-4 md:hidden">
+        <div className="bg-brand-bg/85 backdrop-blur-md rounded-xl ring-1 ring-brand-border px-3 py-2 shadow-lg flex items-center justify-between">
+          {mode === "pins" ? (
+            <>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-brand-pin-past" />
+                  <span className="text-[11px] text-brand-text">Visited</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-brand-navy" />
+                  <span className="text-[11px] text-brand-text">Upcoming</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-brand-pin-wishlist" />
+                  <span className="text-[11px] text-brand-text">Bucket List</span>
+                </div>
+              </div>
+              <span className="text-[10px] text-brand-text-muted">{DEMO_VISITED_COUNTRIES.length} countries</span>
+            </>
+          ) : (
+            <div className="flex items-center gap-3 overflow-x-auto">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <div className="w-2 h-2 rounded-full bg-brand-pin-past" />
+                <span className="text-[11px] text-brand-text">You</span>
+              </div>
+              {DEMO_FRIENDS.map((f) => (
+                <div key={f.id} className="flex items-center gap-1.5 shrink-0">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: f.color }} />
+                  <span className="text-[11px] text-brand-text">{f.name.split(" ")[0]}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Desktop side panel — stats overlay or friend legend */}
       <div className="absolute top-20 md:top-24 left-4 bg-brand-bg/80 backdrop-blur-md rounded-xl border border-brand-border p-4 shadow-lg hidden md:block min-w-[180px]">
         {mode === "friends" ? (
           <FriendLegend
