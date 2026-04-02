@@ -7,6 +7,7 @@ import { JournalEntry } from "@/components/JournalEntry";
 import { JournalForm } from "@/components/JournalForm";
 import { ReviewForm } from "@/components/ReviewForm";
 import { CommentThread } from "@/components/CommentThread";
+import { RatingForm } from "@/components/RatingForm";
 import { formatDate, cn } from "@/lib/utils";
 
 type Tab = "photos" | "journal" | "reviews";
@@ -120,6 +121,7 @@ const DEMO_COMMENTS = [
 export default function TripDetailPage() {
   const params = useParams();
   const [activeTab, setActiveTab] = useState<Tab>("photos");
+  const [showRatingForm, setShowRatingForm] = useState(false);
 
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: "photos", label: "Photos", count: DEMO_PHOTOS.length },
@@ -209,6 +211,33 @@ export default function TripDetailPage() {
           ))}
         </div>
       </div>
+
+      {/* Rate button */}
+      {!showRatingForm && (
+        <div className="mb-6">
+          <button
+            onClick={() => setShowRatingForm(true)}
+            className="w-full py-2.5 rounded-2xl ring-1 ring-brand-border text-sm font-medium text-brand-navy hover:bg-brand-surface transition-colors btn-press flex items-center justify-center gap-2"
+          >
+            <span>{"\u{2605}"}</span>
+            Rate this destination
+          </button>
+        </div>
+      )}
+
+      {/* Rating form */}
+      {showRatingForm && (
+        <div className="mb-6 bg-brand-card rounded-2xl ring-1 ring-brand-border p-5 noise-texture">
+          <RatingForm
+            city={DEMO_TRIP.destinations[0]?.city || ""}
+            country={DEMO_TRIP.destinations[0]?.country || ""}
+            onSubmit={(data) => {
+              setShowRatingForm(false);
+            }}
+            onClose={() => setShowRatingForm(false)}
+          />
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-1 mb-6 bg-brand-surface rounded-lg border border-brand-border p-1">

@@ -276,21 +276,29 @@ const DEMO_FEED: FeedItemProps[] = [
 const CURRENT_USERNAME = "atlas_explorer";
 
 type FeedFilter = "all" | "mine";
+type FeedSort = "recent" | "top-rated";
 
 export default function FeedPage() {
   const [filter, setFilter] = useState<FeedFilter>("all");
+  const [sort, setSort] = useState<FeedSort>("recent");
 
   const filteredFeed = useMemo(() => {
+    let feed = DEMO_FEED;
     if (filter === "mine") {
-      return DEMO_FEED.filter((item) => item.authorUsername === CURRENT_USERNAME);
+      feed = feed.filter((item) => item.authorUsername === CURRENT_USERNAME);
     }
-    return DEMO_FEED;
-  }, [filter]);
+    if (sort === "top-rated") {
+      feed = [...feed].sort(
+        (a, b) => (b.destinationRating?.overall ?? 0) - (a.destinationRating?.overall ?? 0)
+      );
+    }
+    return feed;
+  }, [filter, sort]);
 
   return (
     <div className="max-w-lg mx-auto pt-16 md:pt-20 pb-20 px-4">
       {/* Filter toggle */}
-      <div className="flex items-center gap-1 mb-4 bg-brand-surface rounded-full p-1 ring-1 ring-brand-border">
+      <div className="flex items-center gap-1 mb-3 bg-brand-surface rounded-full p-1 ring-1 ring-brand-border">
         {(["all", "mine"] as const).map((f) => (
           <button
             key={f}
@@ -303,6 +311,24 @@ export default function FeedPage() {
             )}
           >
             {f === "all" ? "All Trips" : "My Trips"}
+          </button>
+        ))}
+      </div>
+
+      {/* Sort */}
+      <div className="flex items-center gap-2 mb-4">
+        {(["recent", "top-rated"] as const).map((s) => (
+          <button
+            key={s}
+            onClick={() => setSort(s)}
+            className={cn(
+              "px-3 py-1 rounded-full text-xs font-medium transition-all",
+              sort === s
+                ? "bg-brand-pin-past/10 text-brand-pin-past ring-1 ring-brand-pin-past/30"
+                : "text-brand-text-muted hover:text-brand-text"
+            )}
+          >
+            {s === "recent" ? "Recent" : "Top Rated"}
           </button>
         ))}
       </div>
