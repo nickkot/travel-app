@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { searchCountries, searchCities, type CountryData } from "@/data/countries";
 
 interface Destination {
   city: string;
@@ -23,6 +25,135 @@ interface TripFormProps {
   isLoading?: boolean;
 }
 
+function CountryInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (country: string) => void;
+}) {
+  const [query, setQuery] = useState(value);
+  const [open, setOpen] = useState(false);
+  const [results, setResults] = useState<CountryData[]>([]);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setResults(searchCountries(query));
+  }, [query]);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setOpen(true);
+          if (!e.target.value) onChange("");
+        }}
+        onFocus={() => setOpen(true)}
+        placeholder="Country"
+        className="w-full px-3 py-2 bg-brand-surface ring-1 ring-brand-border rounded-lg focus:outline-none focus:ring-brand-navy transition-colors text-sm text-brand-text"
+      />
+      {open && results.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-brand-bg ring-1 ring-brand-border rounded-xl shadow-lg overflow-hidden z-20 max-h-48 overflow-y-auto">
+          {results.map((c) => (
+            <button
+              key={c.code}
+              type="button"
+              onClick={() => {
+                setQuery(c.name);
+                onChange(c.name);
+                setOpen(false);
+              }}
+              className="w-full px-3 py-2 text-left text-sm text-brand-text hover:bg-brand-surface transition-colors"
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CityInput({
+  country,
+  value,
+  onChange,
+}: {
+  country: string;
+  value: string;
+  onChange: (city: string, lat: number, lng: number) => void;
+}) {
+  const [query, setQuery] = useState(value);
+  const [open, setOpen] = useState(false);
+  const [results, setResults] = useState<CountryData["cities"]>([]);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (country) {
+      setResults(searchCities(country, query));
+    } else {
+      setResults([]);
+    }
+  }, [country, query]);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => {
+          setOpen(true);
+          if (country && !query) setResults(searchCities(country, ""));
+        }}
+        placeholder={country ? "City" : "Select country first"}
+        disabled={!country}
+        className="w-full px-3 py-2 bg-brand-surface ring-1 ring-brand-border rounded-lg focus:outline-none focus:ring-brand-navy transition-colors text-sm text-brand-text disabled:opacity-50"
+      />
+      {open && results.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-brand-bg ring-1 ring-brand-border rounded-xl shadow-lg overflow-hidden z-20 max-h-48 overflow-y-auto">
+          {results.map((c) => (
+            <button
+              key={c.name}
+              type="button"
+              onClick={() => {
+                setQuery(c.name);
+                onChange(c.name, c.lat, c.lng);
+                setOpen(false);
+              }}
+              className="w-full px-3 py-2 text-left text-sm text-brand-text hover:bg-brand-surface transition-colors"
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function TripForm({ onSubmit, isLoading }: TripFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -36,16 +167,6 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
 
   const addDestination = () => {
     setDestinations([...destinations, { city: "", country: "", lat: 0, lng: 0 }]);
-  };
-
-  const updateDestination = (
-    index: number,
-    field: keyof Destination,
-    value: string | number
-  ) => {
-    const updated = [...destinations];
-    (updated[index] as any)[field] = value;
-    setDestinations(updated);
   };
 
   const removeDestination = (index: number) => {
@@ -78,7 +199,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Two weeks in Oaxaca"
           required
-          className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
+          className="w-full px-4 py-2.5 bg-brand-surface ring-1 ring-brand-border rounded-lg focus:outline-none focus:ring-brand-navy transition-colors text-brand-text"
         />
       </div>
 
@@ -90,7 +211,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
           onChange={(e) => setDescription(e.target.value)}
           placeholder="What's this trip about?"
           rows={3}
-          className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors resize-none text-brand-text"
+          className="w-full px-4 py-2.5 bg-brand-surface ring-1 ring-brand-border rounded-lg focus:outline-none focus:ring-brand-navy transition-colors resize-none text-brand-text"
         />
       </div>
 
@@ -102,7 +223,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
+            className="w-full px-4 py-2.5 bg-brand-surface ring-1 ring-brand-border rounded-lg focus:outline-none focus:ring-brand-navy transition-colors text-brand-text"
           />
         </div>
         <div>
@@ -111,7 +232,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
+            className="w-full px-4 py-2.5 bg-brand-surface ring-1 ring-brand-border rounded-lg focus:outline-none focus:ring-brand-navy transition-colors text-brand-text"
           />
         </div>
       </div>
@@ -119,7 +240,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
       {/* Trip type toggle */}
       <div className="flex items-center gap-4">
         <label className="text-sm font-medium text-brand-text">Trip type:</label>
-        <div className="flex rounded-lg border border-brand-border overflow-hidden">
+        <div className="flex rounded-lg ring-1 ring-brand-border overflow-hidden">
           <button
             type="button"
             onClick={() => setIsFuture(false)}
@@ -149,7 +270,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
         <select
           value={visibility}
           onChange={(e) => setVisibility(e.target.value)}
-          className="w-full px-4 py-2.5 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-brand-text"
+          className="w-full px-4 py-2.5 bg-brand-surface ring-1 ring-brand-border rounded-lg focus:outline-none focus:ring-brand-navy transition-colors text-brand-text"
         >
           <option value="PUBLIC">Public</option>
           <option value="FRIENDS">Friends Only</option>
@@ -164,37 +285,22 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
           {destinations.map((dest, i) => (
             <div key={i} className="flex items-start gap-2">
               <div className="flex-1 grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  value={dest.city}
-                  onChange={(e) => updateDestination(i, "city", e.target.value)}
-                  placeholder="City"
-                  className="px-3 py-2 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-sm text-brand-text"
-                />
-                <input
-                  type="text"
+                <CountryInput
                   value={dest.country}
-                  onChange={(e) => updateDestination(i, "country", e.target.value)}
-                  placeholder="Country"
-                  className="px-3 py-2 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-sm text-brand-text"
+                  onChange={(country) => {
+                    const updated = [...destinations];
+                    updated[i] = { ...updated[i], country, city: "", lat: 0, lng: 0 };
+                    setDestinations(updated);
+                  }}
                 />
-              </div>
-              <div className="grid grid-cols-2 gap-2 w-48">
-                <input
-                  type="number"
-                  step="any"
-                  value={dest.lat || ""}
-                  onChange={(e) => updateDestination(i, "lat", parseFloat(e.target.value) || 0)}
-                  placeholder="Lat"
-                  className="px-3 py-2 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-sm text-brand-text"
-                />
-                <input
-                  type="number"
-                  step="any"
-                  value={dest.lng || ""}
-                  onChange={(e) => updateDestination(i, "lng", parseFloat(e.target.value) || 0)}
-                  placeholder="Lng"
-                  className="px-3 py-2 bg-brand-surface border border-brand-border rounded-lg focus:outline-none focus:border-brand-navy transition-colors text-sm text-brand-text"
+                <CityInput
+                  country={dest.country}
+                  value={dest.city}
+                  onChange={(city, lat, lng) => {
+                    const updated = [...destinations];
+                    updated[i] = { ...updated[i], city, lat, lng };
+                    setDestinations(updated);
+                  }}
                 />
               </div>
               {destinations.length > 1 && (
@@ -224,7 +330,7 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full py-3 bg-brand-navy text-parchment font-semibold rounded-lg hover:bg-brand-navy-hover transition-colors disabled:opacity-50"
+        className="w-full py-3 bg-brand-navy text-parchment font-semibold rounded-lg hover:bg-brand-navy-hover transition-colors disabled:opacity-50 btn-press"
       >
         {isLoading ? "Creating..." : "Create Trip"}
       </button>
