@@ -90,6 +90,11 @@ body {
   line-height: 1.6;
 }
 
+/* Fraunces optical sizing — larger text gets thinner, more elegant strokes */
+.font-serif {
+  font-variation-settings: 'opsz' 72;
+}
+
 @media (min-width: 768px) {
   body {
     font-size: 17px;

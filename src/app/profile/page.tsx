@@ -108,7 +108,7 @@ export default function ProfilePage() {
           A
         </div>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold font-serif text-brand-text">Atlas Explorer</h1>
+          <h1 className="text-3xl font-bold font-serif text-brand-text">Atlas Explorer</h1>
           <p className="text-brand-text-muted mb-1">@atlas_explorer</p>
           <p className="text-sm text-brand-text-secondary mb-3">
             Slow traveler. 30+ countries. Always returning.

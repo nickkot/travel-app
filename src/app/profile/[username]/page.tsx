@@ -39,7 +39,7 @@ export default function UserProfilePage() {
           {username.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold font-serif text-brand-text">{username}</h1>
+          <h1 className="text-3xl font-bold font-serif text-brand-text">{username}</h1>
           <p className="text-brand-text-muted mb-1">@{username}</p>
           <p className="text-sm text-brand-text-secondary mb-3">
             Pathfinder tier traveler

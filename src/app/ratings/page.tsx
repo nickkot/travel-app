@@ -109,10 +109,10 @@ export default function RatingsPage() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-16 md:pt-20 pb-20">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold font-serif text-brand-text">
+        <h1 className="text-3xl font-bold font-serif text-brand-text">
           Destination Ratings
         </h1>
-        <p className="text-sm text-brand-text-secondary mt-1">
+        <p className="text-sm text-brand-text-secondary mt-1 tracking-wide">
           How your friends rate the places they&apos;ve been
         </p>
       </div>
