@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { NotificationBell } from "./NotificationBell";
 
 const NAV_ITEMS = [
   { href: "/", label: "Globe", icon: GlobeIcon },
@@ -59,6 +60,7 @@ export function NavBar() {
 
           {/* Auth — desktop only */}
           <div className="hidden md:flex items-center gap-3">
+            <NotificationBell />
             {user ? (
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-brand-pin-past font-medium">
