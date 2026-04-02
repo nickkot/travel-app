@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { TIER_THRESHOLDS } from "@/lib/points";
@@ -25,6 +25,61 @@ const DEMO_USERS: SearchResult[] = [
   { id: "fr5", name: "Sunset Sage", username: "sunset_sage", avatarUrl: null, tier: 3, compassMiles: 5400 },
   { id: "fr6", name: "Route Runner", username: "route_runner", avatarUrl: null, tier: 1, compassMiles: 800 },
 ];
+
+function SearchResultRow({ user: u, isMe }: { user: SearchResult; isMe: boolean }) {
+  const [following, setFollowing] = useState(false);
+  const tierDef = TIER_THRESHOLDS.find((t) => t.tier === u.tier);
+  const tierStyle = TIER_BADGE_STYLES[u.tier] || TIER_BADGE_STYLES[1];
+
+  const handleFollow = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setFollowing((prev) => !prev);
+  }, []);
+
+  return (
+    <Link
+      href={isMe ? "/profile" : `/profile/${u.username}`}
+      className="flex items-center gap-3 p-3 rounded-2xl ring-1 ring-brand-border hover:bg-brand-surface transition-all"
+    >
+      <div className="w-10 h-10 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy font-bold text-sm shrink-0">
+        {u.name.charAt(0)}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm font-semibold text-brand-text truncate">
+            {u.name}
+          </span>
+          {tierDef && (
+            <span
+              className={cn(
+                "text-[10px] px-1.5 py-0.5 rounded-full font-medium leading-none shrink-0",
+                tierStyle.bg,
+                tierStyle.text
+              )}
+            >
+              {TIER_ICONS[tierDef.icon]}
+            </span>
+          )}
+        </div>
+        <span className="text-xs text-brand-text-muted">@{u.username}</span>
+      </div>
+      {!isMe && (
+        <button
+          onClick={handleFollow}
+          className={cn(
+            "px-3 py-1.5 rounded-lg text-xs font-medium transition-all btn-press shrink-0",
+            following
+              ? "border border-brand-border text-brand-text hover:bg-brand-surface"
+              : "bg-brand-navy text-parchment hover:bg-brand-navy-hover"
+          )}
+        >
+          {following ? "Following" : "Follow"}
+        </button>
+      )}
+    </Link>
+  );
+}
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -104,45 +159,9 @@ export default function SearchPage() {
       {/* Results */}
       {results.length > 0 && (
         <div className="space-y-2">
-          {results.map((u) => {
-            const tierDef = TIER_THRESHOLDS.find((t) => t.tier === u.tier);
-            const tierStyle = TIER_BADGE_STYLES[u.tier] || TIER_BADGE_STYLES[1];
-            const isMe = user?.username === u.username;
-
-            return (
-              <Link
-                key={u.id}
-                href={isMe ? "/profile" : `/profile/${u.username}`}
-                className="flex items-center gap-3 p-3 rounded-2xl ring-1 ring-brand-border hover:bg-brand-surface transition-all"
-              >
-                <div className="w-10 h-10 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy font-bold text-sm shrink-0">
-                  {u.name.charAt(0)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-semibold text-brand-text truncate">
-                      {u.name}
-                    </span>
-                    {tierDef && (
-                      <span
-                        className={cn(
-                          "text-[10px] px-1.5 py-0.5 rounded-full font-medium leading-none shrink-0",
-                          tierStyle.bg,
-                          tierStyle.text
-                        )}
-                      >
-                        {TIER_ICONS[tierDef.icon]}
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-xs text-brand-text-muted">@{u.username}</span>
-                </div>
-                <span className="text-xs text-brand-text-muted shrink-0">
-                  {u.compassMiles.toLocaleString()} CM
-                </span>
-              </Link>
-            );
-          })}
+          {results.map((u) => (
+            <SearchResultRow key={u.id} user={u} isMe={user?.username === u.username} />
+          ))}
         </div>
       )}
 
