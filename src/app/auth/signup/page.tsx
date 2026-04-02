@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
 
-export default function SignupPage() {
+function SignupForm() {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -14,6 +14,8 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useAuthStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const ref = searchParams.get("ref");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +32,7 @@ export default function SignupPage() {
           username,
           email,
           password,
+          ...(ref ? { referredBy: ref } : {}),
         }),
       });
       const data = await res.json();
@@ -132,5 +135,13 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
   );
 }

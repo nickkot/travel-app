@@ -16,7 +16,7 @@ export const DEMO_LEADERBOARD: LeaderboardEntry[] = [
     color: "#c4623a",
     tier: 2,
     countries: 10,
-    influence: 4,
+    daysAbroad: 187,
     uniqueness: 620,
   }),
   entry({
@@ -27,7 +27,7 @@ export const DEMO_LEADERBOARD: LeaderboardEntry[] = [
     color: "#8B5CF6",
     tier: 3,
     countries: 18,
-    influence: 11,
+    daysAbroad: 342,
     uniqueness: 890,
   }),
   entry({
@@ -38,7 +38,7 @@ export const DEMO_LEADERBOARD: LeaderboardEntry[] = [
     color: "#EC4899",
     tier: 2,
     countries: 8,
-    influence: 7,
+    daysAbroad: 156,
     uniqueness: 1240,
   }),
   entry({
@@ -49,7 +49,7 @@ export const DEMO_LEADERBOARD: LeaderboardEntry[] = [
     color: "#F59E0B",
     tier: 4,
     countries: 22,
-    influence: 16,
+    daysAbroad: 410,
     uniqueness: 480,
   }),
   entry({
@@ -60,7 +60,7 @@ export const DEMO_LEADERBOARD: LeaderboardEntry[] = [
     color: "#06B6D4",
     tier: 2,
     countries: 7,
-    influence: 2,
+    daysAbroad: 98,
     uniqueness: 1580,
   }),
   entry({
@@ -71,7 +71,7 @@ export const DEMO_LEADERBOARD: LeaderboardEntry[] = [
     color: "#EF4444",
     tier: 3,
     countries: 14,
-    influence: 9,
+    daysAbroad: 245,
     uniqueness: 720,
   }),
   entry({
@@ -82,7 +82,7 @@ export const DEMO_LEADERBOARD: LeaderboardEntry[] = [
     color: "#10B981",
     tier: 1,
     countries: 3,
-    influence: 1,
+    daysAbroad: 21,
     uniqueness: 340,
   }),
 ];

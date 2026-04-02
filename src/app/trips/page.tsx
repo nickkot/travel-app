@@ -79,7 +79,7 @@ export default function TripsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 pt-20 md:pt-24 pb-24">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold font-serif text-brand-text">My Trips</h1>
+        <h1 className="text-3xl font-bold font-serif text-brand-text">My Trips</h1>
         <Link
           href="/trips/new"
           className="px-4 py-2 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors"

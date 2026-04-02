@@ -80,7 +80,7 @@ export default function BucketListPage() {
     <div className="max-w-3xl mx-auto px-4 pt-20 md:pt-24 pb-24">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold font-serif text-brand-text">Still Want to Go</h1>
+          <h1 className="text-3xl font-bold font-serif text-brand-text">Still Want to Go</h1>
           <p className="text-sm text-brand-text-muted mt-1">
             {items.length} destinations on your list
           </p>

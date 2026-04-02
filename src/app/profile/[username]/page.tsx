@@ -1,9 +1,13 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { ProfileStats } from "@/components/ProfileStats";
 import { CompassClub } from "@/components/CompassClub";
 import { BadgeShowcase } from "@/components/BadgeShowcase";
+import { ShareButton } from "@/components/ShareButton";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { cn } from "@/lib/utils";
 import type { TravelStats } from "@/types";
 
 const DEMO_STATS: TravelStats = {
@@ -30,6 +34,57 @@ const DEMO_BADGES = [
 export default function UserProfilePage() {
   const params = useParams();
   const username = params.username as string;
+  const { user: authUser } = useAuthStore();
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(312);
+  const [followingCount, setFollowingCount] = useState(156);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch follow state
+  useEffect(() => {
+    if (!authUser || authUser.id === "demo-user") return;
+
+    fetch(`/api/users?username=${username}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data._count) {
+          setFollowerCount(data._count.followers);
+          setFollowingCount(data._count.following);
+        }
+      })
+      .catch(() => {});
+
+    fetch(`/api/follows?followerId=${authUser.id}&followingId=unknown`)
+      .catch(() => {});
+  }, [authUser, username]);
+
+  const handleFollow = async () => {
+    if (!authUser || authUser.id === "demo-user") return;
+    setLoading(true);
+    const action = isFollowing ? "unfollow" : "follow";
+
+    // Optimistic update
+    setIsFollowing(!isFollowing);
+    setFollowerCount((prev) => (isFollowing ? prev - 1 : prev + 1));
+
+    try {
+      await fetch("/api/follows", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action,
+          followerId: authUser.id,
+          followingId: "target-user-id",
+        }),
+      });
+    } catch {
+      // Revert on error
+      setIsFollowing(isFollowing);
+      setFollowerCount((prev) => (isFollowing ? prev + 1 : prev - 1));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 pt-20 md:pt-24 pb-24">
@@ -39,18 +94,18 @@ export default function UserProfilePage() {
           {username.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold font-serif text-brand-text">{username}</h1>
+          <h1 className="text-3xl font-bold font-serif text-brand-text">{username}</h1>
           <p className="text-brand-text-muted mb-1">@{username}</p>
           <p className="text-sm text-brand-text-secondary mb-3">
             Pathfinder tier traveler
           </p>
           <div className="flex items-center gap-4 text-sm">
             <span>
-              <strong className="text-brand-text">312</strong>{" "}
+              <strong className="text-brand-text">{followerCount}</strong>{" "}
               <span className="text-brand-text-muted">followers</span>
             </span>
             <span>
-              <strong className="text-brand-text">156</strong>{" "}
+              <strong className="text-brand-text">{followingCount}</strong>{" "}
               <span className="text-brand-text-muted">following</span>
             </span>
             <CompassClub
@@ -60,9 +115,21 @@ export default function UserProfilePage() {
             />
           </div>
         </div>
-        <button className="px-4 py-2 bg-brand-navy text-parchment rounded-lg text-sm font-medium hover:bg-brand-navy-hover transition-colors">
-          Follow
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleFollow}
+            disabled={loading}
+            className={cn(
+              "px-4 py-2 rounded-lg text-sm font-medium transition-all btn-press",
+              isFollowing
+                ? "border border-brand-border text-brand-text hover:bg-brand-surface"
+                : "bg-brand-navy text-parchment hover:bg-brand-navy-hover"
+            )}
+          >
+            {isFollowing ? "Following" : "Follow"}
+          </button>
+          <ShareButton username={username} />
+        </div>
       </div>
 
       <div className="mb-6">

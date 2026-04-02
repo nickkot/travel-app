@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 const CATEGORIES: LeaderboardCategory[] = [
   "explorerScore",
   "countries",
-  "influence",
+  "daysAbroad",
   "uniqueness",
 ];
 
@@ -34,10 +34,10 @@ export default function LeaderboardPage() {
       <div className="max-w-2xl mx-auto px-4">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold font-serif text-brand-text">
+          <h1 className="text-3xl font-bold font-serif text-brand-text">
             Leaderboard
           </h1>
-          <p className="text-sm text-brand-text-secondary mt-1">
+          <p className="text-sm text-brand-text-secondary mt-1 tracking-wide">
             See how you stack up against your friends
           </p>
         </div>

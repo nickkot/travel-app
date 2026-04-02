@@ -1,6 +1,8 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { FeedItem, type FeedItemProps } from "@/components/FeedItem";
+import { cn } from "@/lib/utils";
 
 const A = {
   eat: { label: "Eat", icon: "\u{1F37D}\u{FE0F}" },
@@ -206,14 +208,118 @@ const DEMO_FEED: FeedItemProps[] = [
     ],
     createdAt: "2026-03-22",
   },
+  // User's own posts
+  {
+    type: "trip",
+    id: "my1",
+    authorName: "Atlas Explorer",
+    authorUsername: "atlas_explorer",
+    caption: "two weeks in oaxaca changed everything. the mole negro, the mezcal villages, the sunsets at puerto escondido. already planning the return trip.",
+    photos: [
+      "https://picsum.photos/seed/oaxaca-me-1/800/600",
+      "https://picsum.photos/seed/oaxaca-me-2/800/600",
+      "https://picsum.photos/seed/oaxaca-me-3/800/600",
+    ],
+    location: "Oaxaca, Mexico",
+    countryFlag: "\u{1F1F2}\u{1F1FD}",
+    countryCode: "MEX",
+    route: ["Oaxaca City", "Monte Alban", "Puerto Escondido"],
+    stats: { days: 14, cities: 3, photos: 47, km: 4800 },
+    destinationRating: {
+      overall: 4.5,
+      aspects: [
+        { ...A.eat, rating: 5.0 },
+        { ...A.explore, rating: 4.5 },
+        { ...A.connect, rating: 4.0 },
+        { ...A.live, rating: 4.5 },
+      ],
+    },
+    timeline: [
+      { day: 1, highlight: "Landed in Oaxaca, Jalatlaco walking tour", emoji: "\u{2708}\u{FE0F}" },
+      { day: 5, highlight: "Monte Alban at sunrise", emoji: "\u{1F305}" },
+      { day: 8, highlight: "Bus to Puerto Escondido", emoji: "\u{1F68C}" },
+      { day: 14, highlight: "Last sunset at Playa Zicatela", emoji: "\u{1F305}" },
+    ],
+    likeCount: 24,
+    comments: [
+      { username: "nomad_nina", text: "the mezcal villages are unreal" },
+      { username: "drift_walker", text: "adding this to my list" },
+    ],
+    createdAt: "2026-03-20",
+  },
+  {
+    type: "rating",
+    id: "mydr1",
+    authorName: "Atlas Explorer",
+    authorUsername: "atlas_explorer",
+    caption: "nairobi is chaos and beauty. the safari access is unmatched but the city takes some adjusting. would go back in a heartbeat.",
+    location: "Nairobi, Kenya",
+    countryFlag: "\u{1F1F0}\u{1F1EA}",
+    countryCode: "KEN",
+    destinationRating: {
+      overall: 3.5,
+      aspects: [
+        { ...A.eat, rating: 3.5 },
+        { ...A.explore, rating: 5.0 },
+        { ...A.connect, rating: 4.5 },
+        { ...A.live, rating: 2.5 },
+      ],
+    },
+    likeCount: 38,
+    comments: [
+      { username: "sunset_sage", text: "the masai mara tho" },
+    ],
+    createdAt: "2026-03-15",
+  },
 ];
 
+const CURRENT_USERNAME = "atlas_explorer";
+
+type FeedFilter = "all" | "mine";
+
 export default function FeedPage() {
+  const [filter, setFilter] = useState<FeedFilter>("all");
+
+  const filteredFeed = useMemo(() => {
+    if (filter === "mine") {
+      return DEMO_FEED.filter((item) => item.authorUsername === CURRENT_USERNAME);
+    }
+    return DEMO_FEED;
+  }, [filter]);
+
   return (
-    <div className="max-w-lg mx-auto pt-16 md:pt-20 pb-20 px-4 space-y-4">
-      {DEMO_FEED.map((item) => (
-        <FeedItem key={`${item.type}-${item.id}`} {...item} />
-      ))}
+    <div className="max-w-lg mx-auto pt-16 md:pt-20 pb-20 px-4">
+      {/* Filter toggle */}
+      <div className="flex items-center gap-1 mb-4 bg-brand-surface rounded-full p-1 ring-1 ring-brand-border">
+        {(["all", "mine"] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={cn(
+              "flex-1 py-2 rounded-full text-sm font-medium transition-all duration-300",
+              filter === f
+                ? "bg-brand-navy text-parchment shadow-sm"
+                : "text-brand-text-secondary hover:text-brand-text"
+            )}
+          >
+            {f === "all" ? "All Trips" : "My Trips"}
+          </button>
+        ))}
+      </div>
+
+      {/* Feed */}
+      <div className="space-y-4">
+        {filteredFeed.map((item) => (
+          <FeedItem key={`${item.type}-${item.id}`} {...item} />
+        ))}
+      </div>
+
+      {filteredFeed.length === 0 && (
+        <div className="text-center py-16 text-brand-text-muted">
+          <p className="text-lg font-serif">No trips yet</p>
+          <p className="text-sm mt-1">Start logging your travels to see them here</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   const { action } = body;
 
   if (action === "signup") {
-    const { name, username, email, password } = body;
+    const { name, username, email, password, referredBy } = body;
 
     const existing = await prisma.user.findFirst({
       where: { OR: [{ email }, { username }] },
@@ -49,10 +49,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Look up referrer if provided
+    let referrerId: string | undefined;
+    if (referredBy) {
+      const referrer = await prisma.user.findUnique({
+        where: { username: referredBy },
+        select: { id: true },
+      });
+      if (referrer) referrerId = referrer.id;
+    }
+
     // Note: In production, hash password with bcrypt and use Supabase Auth
     const user = await prisma.user.create({
-      data: { name, username, email },
+      data: {
+        name,
+        username,
+        email,
+        referredBy: referrerId,
+      },
     });
+
+    // Auto-follow referrer
+    if (referrerId) {
+      try {
+        await prisma.follow.create({
+          data: { followerId: user.id, followingId: referrerId },
+        });
+      } catch {
+        // Ignore if follow already exists
+      }
+    }
 
     return Response.json({ user }, { status: 201 });
   }
