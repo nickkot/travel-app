@@ -4,14 +4,14 @@ import Link from "next/link";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { NotificationBell } from "./NotificationBell";
+
+const UNREAD_COUNT = 3; // Demo: number of unread notifications
 
 const NAV_ITEMS = [
   { href: "/", label: "Globe", icon: GlobeIcon },
   { href: "/feed", label: "Feed", icon: FeedIcon },
-  { href: "/search", label: "Search", icon: SearchIcon },
   { href: "/leaderboard", label: "Board", icon: TrophyIcon },
-  { href: "/profile", label: "Profile", icon: UserIcon },
+  { href: "/profile", label: "Profile", icon: UserIcon, badge: UNREAD_COUNT },
 ];
 
 export function NavBar() {
@@ -46,9 +46,16 @@ export function NavBar() {
                       : "text-brand-text-secondary hover:text-brand-text"
                   )}
                 >
-                  <item.icon
-                    className={cn("w-5 h-5 transition-colors duration-300", isActive && "text-brand-navy")}
-                  />
+                  <span className="relative">
+                    <item.icon
+                      className={cn("w-5 h-5 transition-colors duration-300", isActive && "text-brand-navy")}
+                    />
+                    {(item as any).badge > 0 && (
+                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-brand-pin-past text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                        {(item as any).badge}
+                      </span>
+                    )}
+                  </span>
                   <span>{item.label}</span>
                   {isActive && (
                     <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-brand-navy md:hidden" />
@@ -60,7 +67,6 @@ export function NavBar() {
 
           {/* Auth — desktop only */}
           <div className="hidden md:flex items-center gap-3">
-            <NotificationBell />
             {user ? (
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-brand-pin-past font-medium">

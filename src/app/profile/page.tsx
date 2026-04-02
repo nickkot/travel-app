@@ -6,6 +6,7 @@ import { CompassClub } from "@/components/CompassClub";
 import { BadgeShowcase } from "@/components/BadgeShowcase";
 import { TripCard } from "@/components/TripCard";
 import { ShareButton } from "@/components/ShareButton";
+import { NotificationBell } from "@/components/NotificationBell";
 import type { TravelStats } from "@/types";
 
 const DEMO_STATS: TravelStats = {
@@ -103,6 +104,19 @@ const DEMO_FUTURE_TRIPS = [
 export default function ProfilePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 pt-20 md:pt-24 pb-24">
+      {/* Action bar — search + notifications */}
+      <div className="flex items-center justify-end gap-2 mb-4">
+        <Link
+          href="/search"
+          className="p-2 rounded-lg text-brand-text-secondary hover:text-brand-text hover:bg-brand-surface transition-colors"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </svg>
+        </Link>
+        <NotificationBell />
+      </div>
+
       {/* Profile header */}
       <div className="flex items-start gap-5 mb-8">
         <div className="w-20 h-20 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy text-2xl font-bold flex-shrink-0">
