@@ -195,21 +195,21 @@ export function Globe({
 
   // Needle altitude (height of the thin spike)
   const getNeedleAltitude = useCallback((pin: GlobePin) => {
-    if (pin.friendId) return 0.06;
+    if (pin.friendId) return 0.03;
     switch (pin.type) {
-      case "past": return 0.08;
-      case "future": return 0.10;
-      case "wishlist": return 0.06;
+      case "past": return 0.04;
+      case "future": return 0.05;
+      case "wishlist": return 0.03;
     }
   }, []);
 
   // Ball sits at the top of the needle
   const getBallAltitude = useCallback((pin: GlobePin) => {
-    if (pin.friendId) return 0.06;
+    if (pin.friendId) return 0.03;
     switch (pin.type) {
-      case "past": return 0.08;
-      case "future": return 0.10;
-      case "wishlist": return 0.06;
+      case "past": return 0.04;
+      case "future": return 0.05;
+      case "wishlist": return 0.03;
     }
   }, []);
 
