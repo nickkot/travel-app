@@ -10,6 +10,7 @@ interface GlobeProps {
   futurePins: GlobePin[];
   wishlistPins: GlobePin[];
   visitedCountries: string[];
+  visitedStates?: string[];
   friends?: FriendData[];
   selectedFriendIds?: string[];
   mode: GlobeMode;
@@ -21,11 +22,16 @@ interface GlobeProps {
 const GEOJSON_URL =
   "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson";
 
+// US state boundaries
+const US_STATES_URL =
+  "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json";
+
 export function Globe({
   pastPins,
   futurePins,
   wishlistPins,
   visitedCountries,
+  visitedStates = [],
   friends = [],
   selectedFriendIds = [],
   mode,
@@ -69,12 +75,23 @@ export function Globe({
     };
   }, []);
 
-  // Load GeoJSON for political boundaries
+  // Load GeoJSON for political boundaries + US states
   useEffect(() => {
-    fetch(GEOJSON_URL)
-      .then((r) => r.json())
-      .then(setGeoData)
-      .catch(() => {});
+    Promise.all([
+      fetch(GEOJSON_URL).then((r) => r.json()),
+      fetch(US_STATES_URL).then((r) => r.json()).catch(() => null),
+    ]).then(([countries, states]) => {
+      const features = [...(countries?.features || [])];
+      if (states?.features) {
+        // Tag state features so we can identify them in color callbacks
+        const stateFeatures = states.features.map((f: any) => ({
+          ...f,
+          properties: { ...f.properties, _isState: true },
+        }));
+        features.push(...stateFeatures);
+      }
+      setGeoData({ features });
+    }).catch(() => {});
   }, []);
 
   // Auto-rotate
@@ -124,6 +141,11 @@ export function Globe({
   const visitedSet = useMemo(
     () => new Set(visitedCountries.map((c) => c.toUpperCase())),
     [visitedCountries]
+  );
+
+  const visitedStateSet = useMemo(
+    () => new Set(visitedStates.map((s) => s.toUpperCase())),
+    [visitedStates]
   );
 
   // Countries visited by selected friends
@@ -187,9 +209,18 @@ export function Globe({
     }
   }, []);
 
-  // Country polygon colors
+  // Country + state polygon colors
   const getPolygonColor = useCallback(
     (feat: any) => {
+      // US state polygons
+      if (feat.properties?._isState) {
+        const stateName = (feat.properties?.name || "").toUpperCase();
+        const isStateVisited = visitedStateSet.has(stateName);
+        return isStateVisited
+          ? "rgba(28, 43, 74, 0.35)"  // navy tint for visited states
+          : "rgba(255, 255, 255, 0.08)"; // subtle outline for unvisited
+      }
+
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
       const iso = feat.properties?.ISO_A3 || "";
       const nameUp = name.toUpperCase();
@@ -198,27 +229,28 @@ export function Globe({
       const isFriendVisited = friendCountrySet.has(nameUp) || friendCountrySet.has(isoUp);
 
       if (mode === "friends") {
-        // Both you and friends visited
         if (isVisited && isFriendVisited)
           return "rgba(180, 150, 210, 0.45)";
-        // Only friends visited — soft lavender tint
         if (isFriendVisited) return "rgba(160, 140, 200, 0.35)";
-        // Only you visited — warm terracotta tint
         if (isVisited) return "rgba(196, 98, 58, 0.3)";
-        // Neither — transparent to show texture
         return "rgba(0, 0, 0, 0)";
       }
-      // Pins mode — highlight visited, rest transparent
       return isVisited
         ? "rgba(196, 98, 58, 0.3)"
         : "rgba(0, 0, 0, 0)";
     },
-    [mode, visitedSet, friendCountrySet]
+    [mode, visitedSet, visitedStateSet, friendCountrySet]
   );
 
   // Side colors for 3D depth
   const getPolygonSideColor = useCallback(
     (feat: any) => {
+      if (feat.properties?._isState) {
+        const stateName = (feat.properties?.name || "").toUpperCase();
+        return visitedStateSet.has(stateName)
+          ? "rgba(28, 43, 74, 0.4)"
+          : "rgba(0, 0, 0, 0)";
+      }
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
       const iso = feat.properties?.ISO_A3 || "";
       const isVisited =
@@ -228,12 +260,16 @@ export function Globe({
         ? "rgba(180, 140, 90, 0.5)"
         : "rgba(0, 0, 0, 0)";
     },
-    [visitedSet]
+    [visitedSet, visitedStateSet]
   );
 
-  // Visited countries slightly raised
+  // Visited countries/states slightly raised
   const getPolygonAltitude = useCallback(
     (feat: any) => {
+      if (feat.properties?._isState) {
+        const stateName = (feat.properties?.name || "").toUpperCase();
+        return visitedStateSet.has(stateName) ? 0.008 : 0.002;
+      }
       const name = feat.properties?.ADMIN || feat.properties?.name || "";
       const iso = feat.properties?.ISO_A3 || "";
       const nameUp = name.toUpperCase();
@@ -246,7 +282,7 @@ export function Globe({
       }
       return isVisited ? 0.01 : 0.003;
     },
-    [mode, visitedSet, friendCountrySet]
+    [mode, visitedSet, visitedStateSet, friendCountrySet]
   );
 
   const ReactGlobe = GlobeComponent;

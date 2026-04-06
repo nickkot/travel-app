@@ -10,6 +10,14 @@ import type { GlobePin, GlobeMode } from "@/types";
 
 // Demo data for the globe
 const DEMO_PAST_PINS: GlobePin[] = [
+  // US domestic trips
+  { id: "us1", lat: 40.7128, lng: -74.006, city: "New York", country: "United States", type: "past" },
+  { id: "us2", lat: 34.0522, lng: -118.2437, city: "Los Angeles", country: "United States", type: "past" },
+  { id: "us3", lat: 41.8781, lng: -87.6298, city: "Chicago", country: "United States", type: "past" },
+  { id: "us4", lat: 29.9511, lng: -90.0715, city: "New Orleans", country: "United States", type: "past" },
+  { id: "us5", lat: 21.3069, lng: -157.8583, city: "Honolulu", country: "United States", type: "past" },
+  { id: "us6", lat: 30.2672, lng: -97.7431, city: "Austin", country: "United States", type: "past" },
+  // International trips
   { id: "1", lat: 17.0654, lng: -96.7236, city: "Oaxaca", country: "Mexico", type: "past" },
   { id: "2", lat: 35.6762, lng: 139.6503, city: "Tokyo", country: "Japan", type: "past" },
   { id: "3", lat: 41.9028, lng: 12.4964, city: "Rome", country: "Italy", type: "past" },
@@ -36,8 +44,13 @@ const DEMO_WISHLIST_PINS: GlobePin[] = [
 ];
 
 const DEMO_VISITED_COUNTRIES = [
-  "Mexico", "Japan", "Italy", "Australia", "France",
+  "United States", "Mexico", "Japan", "Italy", "Australia", "France",
   "Thailand", "Peru", "India", "Russia", "Kenya",
+];
+
+const DEMO_VISITED_STATES = [
+  "New York", "California", "Illinois", "Louisiana", "Hawaii", "Texas",
+  "Colorado", "Florida", "Oregon", "Nevada",
 ];
 
 const USER_COMPASS_MILES = 3200;
@@ -70,6 +83,7 @@ export default function HomePage() {
         futurePins={DEMO_FUTURE_PINS}
         wishlistPins={DEMO_WISHLIST_PINS}
         visitedCountries={DEMO_VISITED_COUNTRIES}
+        visitedStates={DEMO_VISITED_STATES}
         friends={DEMO_FRIENDS}
         selectedFriendIds={selectedFriendIds}
         mode={mode}
@@ -152,7 +166,7 @@ export default function HomePage() {
                   <span className="text-[11px] text-brand-text">Bucket List</span>
                 </div>
               </div>
-              <span className="text-[10px] text-brand-text-muted">{DEMO_VISITED_COUNTRIES.length} countries</span>
+              <span className="text-[10px] text-brand-text-muted">{DEMO_VISITED_COUNTRIES.length} countries {"\u{2022}"} {DEMO_VISITED_STATES.length} states</span>
             </>
           ) : (
             <div className="flex items-center gap-3 overflow-x-auto">
@@ -197,7 +211,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-brand-border text-xs text-brand-text-muted">
-              {DEMO_VISITED_COUNTRIES.length} countries
+              {DEMO_VISITED_COUNTRIES.length} countries {"\u{2022}"} {DEMO_VISITED_STATES.length} states
             </div>
             <div className="mt-3 pt-3 border-t border-brand-border">
               <CompassClub compact compassMiles={USER_COMPASS_MILES} tier={USER_TIER} />
