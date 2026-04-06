@@ -7,119 +7,47 @@ import { JournalEntry } from "@/components/JournalEntry";
 import { JournalForm } from "@/components/JournalForm";
 import { ReviewForm } from "@/components/ReviewForm";
 import { CommentThread } from "@/components/CommentThread";
+import { RatingForm } from "@/components/RatingForm";
+import { getTripById } from "@/data/demoTrips";
 import { formatDate, cn } from "@/lib/utils";
 
 type Tab = "photos" | "journal" | "reviews";
-
-// Demo data
-const DEMO_TRIP = {
-  id: "1",
-  title: "Two Weeks in Oaxaca",
-  description:
-    "Exploring the culinary capital of Mexico. Mezcal tours, market visits, traditional cooking classes, and remote beaches in Puerto Escondido.",
-  destinations: [
-    { city: "Oaxaca City", country: "Mexico" },
-    { city: "Puerto Escondido", country: "Mexico" },
-  ],
-  startDate: "2025-11-15",
-  endDate: "2025-11-29",
-  status: "COMPLETED",
-  visibility: "PUBLIC",
-  upvoteCount: 24,
-  authorName: "Atlas Explorer",
-  authorUsername: "atlas_explorer",
-};
-
-const DEMO_PHOTOS = [
-  { id: "p1", url: "https://picsum.photos/seed/oaxaca1/600/400", caption: "Monte Alban at sunrise" },
-  { id: "p2", url: "https://picsum.photos/seed/oaxaca2/600/400", caption: "Mercado Benito Juarez" },
-  { id: "p3", url: "https://picsum.photos/seed/oaxaca3/600/400", caption: "Mezcal tasting in Matatan" },
-  { id: "p4", url: "https://picsum.photos/seed/oaxaca4/600/400", caption: "Street art in Jalatlaco" },
-  { id: "p5", url: "https://picsum.photos/seed/oaxaca5/600/400", caption: "Sunset at Playa Zicatela" },
-  { id: "p6", url: "https://picsum.photos/seed/oaxaca6/600/400", caption: null },
-];
-
-const DEMO_JOURNAL = [
-  {
-    id: "j1",
-    content:
-      "Arrived in Oaxaca City late afternoon. The light here is incredible — golden hour lasts forever. Checked into a small guesthouse in Jalatlaco. The neighborhood is covered in murals. Had tlayudas from a street vendor for dinner. This is going to be a good trip.",
-    date: "2025-11-15",
-    locationCity: "Oaxaca City",
-    visibility: "PUBLIC",
-    upvoteCount: 8,
-    authorName: "Atlas Explorer",
-  },
-  {
-    id: "j2",
-    content:
-      "Spent the whole morning at Mercado Benito Juarez and the adjacent 20 de Noviembre market. The chapulines are better than expected — nutty, crunchy, with a lime-chile hit. Talked to a woman who's been selling mole negro from the same stall for 30 years. Bought a bag of her paste to bring home. In the afternoon, joined a mezcal tour in the surrounding villages. The difference between industrial and artisanal mezcal is night and day.",
-    date: "2025-11-17",
-    locationCity: "Oaxaca City",
-    visibility: "PUBLIC",
-    upvoteCount: 15,
-    authorName: "Atlas Explorer",
-  },
-  {
-    id: "j3",
-    content:
-      "Bus to Puerto Escondido. 7 hours through the mountains — winding roads, stunning views of the Sierra Madre del Sur. The coast is a completely different world from the highland. Humidity hit me like a wall. Checked the surf at Zicatela — massive barrels, way beyond my level. Settled for the calmer waters at Carrizalillo.",
-    date: "2025-11-21",
-    locationCity: "Puerto Escondido",
-    visibility: "PUBLIC",
-    upvoteCount: 6,
-    authorName: "Atlas Explorer",
-  },
-];
-
-const DEMO_REVIEWS = [
-  {
-    id: "r1",
-    placeName: "Mercado Benito Juarez",
-    placeType: "Market",
-    rating: 5,
-    content:
-      "The real heart of Oaxacan food culture. Skip the tourist restaurants — everything you need is here.",
-    city: "Oaxaca City",
-    upvoteCount: 12,
-  },
-  {
-    id: "r2",
-    placeName: "Mezcaloteca",
-    placeType: "Bar",
-    rating: 5,
-    content:
-      "Not a bar — an education. They guide you through curated flights of artisanal mezcals. Changed how I think about spirits.",
-    city: "Oaxaca City",
-    upvoteCount: 9,
-  },
-];
 
 const DEMO_COMMENTS = [
   {
     id: "c1",
     userId: "u2",
-    content: "The journal entries are amazing. Adding Oaxaca to my bucket list!",
+    content: "Amazing trip! Adding this to my bucket list.",
     createdAt: "2025-12-01",
     author: { name: "Nomad Nina", username: "nomad_nina", avatarUrl: null },
   },
   {
     id: "c2",
     userId: "u3",
-    content:
-      "Mezcaloteca is incredible. Did you make it to the villages around Matatan for the palenques?",
+    content: "Great journal entries. Looks like an incredible experience.",
     createdAt: "2025-12-02",
-    author: {
-      name: "Drift Walker",
-      username: "drift_walker",
-      avatarUrl: null,
-    },
+    author: { name: "Drift Walker", username: "drift_walker", avatarUrl: null },
   },
 ];
 
 export default function TripDetailPage() {
   const params = useParams();
+  const tripId = params.id as string;
+  const tripData = getTripById(tripId);
+
+  const DEMO_TRIP = tripData || {
+    id: tripId, title: "Trip Details", description: "A travel adventure.",
+    destinations: [{ city: "Unknown", country: "Unknown" }],
+    startDate: "2025-01-01", endDate: "2025-01-07", status: "COMPLETED",
+    visibility: "PUBLIC", upvoteCount: 0, authorName: "Atlas Explorer", authorUsername: "atlas_explorer",
+  };
+  const DEMO_PHOTOS = tripData?.photos || [];
+  const DEMO_JOURNAL = tripData?.journal || [];
+  const DEMO_REVIEWS = tripData?.reviews || [];
+  const tripRating = tripData?.rating || { overall: 0, eat: 0, explore: 0, connect: 0, live: 0 };
+
   const [activeTab, setActiveTab] = useState<Tab>("photos");
+  const [showRatingForm, setShowRatingForm] = useState(false);
 
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: "photos", label: "Photos", count: DEMO_PHOTOS.length },
@@ -179,16 +107,16 @@ export default function TripDetailPage() {
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-serif font-semibold text-brand-text">Destination Rating</h3>
           <div className="flex items-center gap-1.5">
-            <span className="text-2xl font-serif font-bold text-brand-pin-past">4.5</span>
+            <span className="text-2xl font-serif font-bold text-brand-pin-past">{tripRating.overall.toFixed(1)}</span>
             <span className="text-brand-pin-past">{"\u{2605}"}</span>
           </div>
         </div>
         <div className="space-y-3">
           {[
-            { label: "Eat", icon: "\u{1F37D}\u{FE0F}", rating: 5.0, desc: "Food, restaurants, markets, street food" },
-            { label: "Explore", icon: "\u{1F9ED}", rating: 4.5, desc: "Nature, architecture, culture, sightseeing" },
-            { label: "Connect", icon: "\u{1F91D}", rating: 4.0, desc: "People, nightlife, social vibe" },
-            { label: "Live", icon: "\u{1F3E0}", rating: 4.5, desc: "Value, transit, walkability, weather" },
+            { label: "Eat", icon: "\u{1F37D}\u{FE0F}", rating: tripRating.eat, desc: "Food, restaurants, markets, street food" },
+            { label: "Explore", icon: "\u{1F9ED}", rating: tripRating.explore, desc: "Nature, architecture, culture, sightseeing" },
+            { label: "Connect", icon: "\u{1F91D}", rating: tripRating.connect, desc: "People, nightlife, social vibe" },
+            { label: "Live", icon: "\u{1F3E0}", rating: tripRating.live, desc: "Value, transit, walkability, weather" },
           ].map((a) => (
             <div key={a.label} className="flex items-center gap-3">
               <span className="text-lg w-7 text-center">{a.icon}</span>
@@ -209,6 +137,33 @@ export default function TripDetailPage() {
           ))}
         </div>
       </div>
+
+      {/* Rate button */}
+      {!showRatingForm && (
+        <div className="mb-6">
+          <button
+            onClick={() => setShowRatingForm(true)}
+            className="w-full py-2.5 rounded-2xl ring-1 ring-brand-border text-sm font-medium text-brand-navy hover:bg-brand-surface transition-colors btn-press flex items-center justify-center gap-2"
+          >
+            <span>{"\u{2605}"}</span>
+            Rate this destination
+          </button>
+        </div>
+      )}
+
+      {/* Rating form */}
+      {showRatingForm && (
+        <div className="mb-6 bg-brand-card rounded-2xl ring-1 ring-brand-border p-5 noise-texture">
+          <RatingForm
+            city={DEMO_TRIP.destinations[0]?.city || ""}
+            country={DEMO_TRIP.destinations[0]?.country || ""}
+            onSubmit={(data) => {
+              setShowRatingForm(false);
+            }}
+            onClose={() => setShowRatingForm(false)}
+          />
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-1 mb-6 bg-brand-surface rounded-lg border border-brand-border p-1">

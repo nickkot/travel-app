@@ -10,6 +10,21 @@ import type { GlobePin, GlobeMode } from "@/types";
 
 // Demo data for the globe
 const DEMO_PAST_PINS: GlobePin[] = [
+  // US domestic trips
+  { id: "us1", lat: 40.7128, lng: -74.006, city: "New York", country: "United States", type: "past" },
+  { id: "us2", lat: 34.0522, lng: -118.2437, city: "Los Angeles", country: "United States", type: "past" },
+  { id: "us3", lat: 41.8781, lng: -87.6298, city: "Chicago", country: "United States", type: "past" },
+  { id: "us4", lat: 29.9511, lng: -90.0715, city: "New Orleans", country: "United States", type: "past" },
+  { id: "us5", lat: 21.3069, lng: -157.8583, city: "Honolulu", country: "United States", type: "past" },
+  { id: "us6", lat: 30.2672, lng: -97.7431, city: "Austin", country: "United States", type: "past" },
+  // Canada trips
+  { id: "ca1", lat: 49.2827, lng: -123.1207, city: "Vancouver", country: "Canada", type: "past" },
+  { id: "ca2", lat: 43.6532, lng: -79.3832, city: "Toronto", country: "Canada", type: "past" },
+  { id: "ca3", lat: 46.8139, lng: -71.2080, city: "Quebec City", country: "Canada", type: "past" },
+  // Mexico trips
+  { id: "mx1", lat: 20.6534, lng: -87.0753, city: "Tulum", country: "Mexico", type: "past" },
+  { id: "mx2", lat: 20.6769, lng: -103.3475, city: "Guadalajara", country: "Mexico", type: "past" },
+  // International trips
   { id: "1", lat: 17.0654, lng: -96.7236, city: "Oaxaca", country: "Mexico", type: "past" },
   { id: "2", lat: 35.6762, lng: 139.6503, city: "Tokyo", country: "Japan", type: "past" },
   { id: "3", lat: 41.9028, lng: 12.4964, city: "Rome", country: "Italy", type: "past" },
@@ -36,8 +51,18 @@ const DEMO_WISHLIST_PINS: GlobePin[] = [
 ];
 
 const DEMO_VISITED_COUNTRIES = [
-  "Mexico", "Japan", "Italy", "Australia", "France",
+  "United States", "Canada", "Mexico", "Japan", "Italy", "Australia", "France",
   "Thailand", "Peru", "India", "Russia", "Kenya",
+];
+
+const DEMO_VISITED_STATES = [
+  // US states
+  "New York", "California", "Illinois", "Louisiana", "Hawaii", "Texas",
+  "Colorado", "Florida", "Oregon", "Nevada",
+  // Canadian provinces
+  "British Columbia", "Ontario", "Quebec",
+  // Mexican states
+  "Oaxaca", "Quintana Roo", "Jalisco",
 ];
 
 const USER_COMPASS_MILES = 3200;
@@ -70,6 +95,7 @@ export default function HomePage() {
         futurePins={DEMO_FUTURE_PINS}
         wishlistPins={DEMO_WISHLIST_PINS}
         visitedCountries={DEMO_VISITED_COUNTRIES}
+        visitedStates={DEMO_VISITED_STATES}
         friends={DEMO_FRIENDS}
         selectedFriendIds={selectedFriendIds}
         mode={mode}
@@ -125,15 +151,56 @@ export default function HomePage() {
             </a>
           ) : (
             selectedPin.type !== "wishlist" && (
-              <button className="mt-4 w-full py-2 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors">
+              <a
+                href={`/trips/${selectedPin.id}`}
+                className="mt-4 w-full py-2 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors block text-center btn-press"
+              >
                 View Trip Details
-              </button>
+              </a>
             )
           )}
         </div>
       )}
 
-      {/* Side panel — stats overlay or friend legend */}
+      {/* Mobile legend — bottom of screen */}
+      <div className="absolute bottom-20 left-4 right-4 md:hidden">
+        <div className="bg-brand-bg/85 backdrop-blur-md rounded-xl ring-1 ring-brand-border px-3 py-2 shadow-lg flex items-center justify-between">
+          {mode === "pins" ? (
+            <>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-brand-pin-past" />
+                  <span className="text-[11px] text-brand-text">Visited</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-brand-navy" />
+                  <span className="text-[11px] text-brand-text">Upcoming</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-brand-pin-wishlist" />
+                  <span className="text-[11px] text-brand-text">Bucket List</span>
+                </div>
+              </div>
+              <span className="text-[10px] text-brand-text-muted">{DEMO_VISITED_COUNTRIES.length} countries {"\u{2022}"} {DEMO_VISITED_STATES.length} states</span>
+            </>
+          ) : (
+            <div className="flex items-center gap-3 overflow-x-auto">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <div className="w-2 h-2 rounded-full bg-brand-pin-past" />
+                <span className="text-[11px] text-brand-text">You</span>
+              </div>
+              {DEMO_FRIENDS.map((f) => (
+                <div key={f.id} className="flex items-center gap-1.5 shrink-0">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: f.color }} />
+                  <span className="text-[11px] text-brand-text">{f.name.split(" ")[0]}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Desktop side panel — stats overlay or friend legend */}
       <div className="absolute top-20 md:top-24 left-4 bg-brand-bg/80 backdrop-blur-md rounded-xl border border-brand-border p-4 shadow-lg hidden md:block min-w-[180px]">
         {mode === "friends" ? (
           <FriendLegend
@@ -159,7 +226,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-brand-border text-xs text-brand-text-muted">
-              {DEMO_VISITED_COUNTRIES.length} countries
+              {DEMO_VISITED_COUNTRIES.length} countries {"\u{2022}"} {DEMO_VISITED_STATES.length} states
             </div>
             <div className="mt-3 pt-3 border-t border-brand-border">
               <CompassClub compact compassMiles={USER_COMPASS_MILES} tier={USER_TIER} />

@@ -4,9 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { TripForm } from "@/components/TripForm";
+import { TripRewardScreen } from "@/components/TripRewardScreen";
+
+interface TripData {
+  tripId: string;
+  destinations: { city: string; country: string }[];
+  startDate: string;
+  endDate: string;
+}
 
 export default function NewTripPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [reward, setReward] = useState<TripData | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (data: any) => {
@@ -19,14 +28,48 @@ export default function NewTripPage() {
       });
       if (res.ok) {
         const trip = await res.json();
-        router.push(`/trips/${trip.id}`);
+        // Show reward screen instead of immediate redirect
+        setReward({
+          tripId: trip.id || "new",
+          destinations: data.destinations,
+          startDate: data.startDate,
+          endDate: data.endDate,
+        });
+      } else {
+        // API failed — show reward screen with demo ID anyway
+        setReward({
+          tripId: "new",
+          destinations: data.destinations,
+          startDate: data.startDate,
+          endDate: data.endDate,
+        });
       }
-    } catch (err) {
-      console.error("Failed to create trip:", err);
+    } catch {
+      // Network error — show reward screen with demo data
+      setReward({
+        tripId: "new",
+        destinations: data.destinations,
+        startDate: data.startDate,
+        endDate: data.endDate,
+      });
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Reward screen overlay
+  if (reward) {
+    return (
+      <TripRewardScreen
+        destinations={reward.destinations}
+        startDate={reward.startDate}
+        endDate={reward.endDate}
+        currentMiles={3200}
+        currentTier={2}
+        onContinue={() => router.push(`/trips/${reward.tripId}`)}
+      />
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 pt-20 md:pt-24 pb-24">
