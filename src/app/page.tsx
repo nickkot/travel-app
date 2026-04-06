@@ -17,6 +17,13 @@ const DEMO_PAST_PINS: GlobePin[] = [
   { id: "us4", lat: 29.9511, lng: -90.0715, city: "New Orleans", country: "United States", type: "past" },
   { id: "us5", lat: 21.3069, lng: -157.8583, city: "Honolulu", country: "United States", type: "past" },
   { id: "us6", lat: 30.2672, lng: -97.7431, city: "Austin", country: "United States", type: "past" },
+  // Canada trips
+  { id: "ca1", lat: 49.2827, lng: -123.1207, city: "Vancouver", country: "Canada", type: "past" },
+  { id: "ca2", lat: 43.6532, lng: -79.3832, city: "Toronto", country: "Canada", type: "past" },
+  { id: "ca3", lat: 46.8139, lng: -71.2080, city: "Quebec City", country: "Canada", type: "past" },
+  // Mexico trips
+  { id: "mx1", lat: 20.6534, lng: -87.0753, city: "Tulum", country: "Mexico", type: "past" },
+  { id: "mx2", lat: 20.6769, lng: -103.3475, city: "Guadalajara", country: "Mexico", type: "past" },
   // International trips
   { id: "1", lat: 17.0654, lng: -96.7236, city: "Oaxaca", country: "Mexico", type: "past" },
   { id: "2", lat: 35.6762, lng: 139.6503, city: "Tokyo", country: "Japan", type: "past" },
@@ -44,13 +51,18 @@ const DEMO_WISHLIST_PINS: GlobePin[] = [
 ];
 
 const DEMO_VISITED_COUNTRIES = [
-  "United States", "Mexico", "Japan", "Italy", "Australia", "France",
+  "United States", "Canada", "Mexico", "Japan", "Italy", "Australia", "France",
   "Thailand", "Peru", "India", "Russia", "Kenya",
 ];
 
 const DEMO_VISITED_STATES = [
+  // US states
   "New York", "California", "Illinois", "Louisiana", "Hawaii", "Texas",
   "Colorado", "Florida", "Oregon", "Nevada",
+  // Canadian provinces
+  "British Columbia", "Ontario", "Quebec",
+  // Mexican states
+  "Oaxaca", "Quintana Roo", "Jalisco",
 ];
 
 const USER_COMPASS_MILES = 3200;
@@ -139,9 +151,12 @@ export default function HomePage() {
             </a>
           ) : (
             selectedPin.type !== "wishlist" && (
-              <button className="mt-4 w-full py-2 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors">
+              <a
+                href={`/trips/${selectedPin.id}`}
+                className="mt-4 w-full py-2 bg-brand-navy text-parchment font-medium rounded-lg text-sm hover:bg-brand-navy-hover transition-colors block text-center btn-press"
+              >
                 View Trip Details
-              </button>
+              </a>
             )
           )}
         </div>

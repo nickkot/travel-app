@@ -22,9 +22,13 @@ interface GlobeProps {
 const GEOJSON_URL =
   "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_0_countries.geojson";
 
-// US state boundaries
+// Sub-national boundaries (US states, Canada provinces, Mexico states)
 const US_STATES_URL =
   "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json";
+const CANADA_PROVINCES_URL =
+  "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/canada.geojson";
+const MEXICO_STATES_URL =
+  "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/mexico.geojson";
 
 export function Globe({
   pastPins,
@@ -75,21 +79,27 @@ export function Globe({
     };
   }, []);
 
-  // Load GeoJSON for political boundaries + US states
+  // Load GeoJSON for political boundaries + sub-national regions
   useEffect(() => {
     Promise.all([
       fetch(GEOJSON_URL).then((r) => r.json()),
       fetch(US_STATES_URL).then((r) => r.json()).catch(() => null),
-    ]).then(([countries, states]) => {
+      fetch(CANADA_PROVINCES_URL).then((r) => r.json()).catch(() => null),
+      fetch(MEXICO_STATES_URL).then((r) => r.json()).catch(() => null),
+    ]).then(([countries, usStates, caProvinces, mxStates]) => {
       const features = [...(countries?.features || [])];
-      if (states?.features) {
-        // Tag state features so we can identify them in color callbacks
-        const stateFeatures = states.features.map((f: any) => ({
-          ...f,
-          properties: { ...f.properties, _isState: true },
-        }));
-        features.push(...stateFeatures);
-      }
+      const tagFeatures = (data: any) => {
+        if (!data?.features) return;
+        features.push(
+          ...data.features.map((f: any) => ({
+            ...f,
+            properties: { ...f.properties, _isState: true },
+          }))
+        );
+      };
+      tagFeatures(usStates);
+      tagFeatures(caProvinces);
+      tagFeatures(mxStates);
       setGeoData({ features });
     }).catch(() => {});
   }, []);
