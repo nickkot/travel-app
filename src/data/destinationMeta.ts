@@ -54,6 +54,10 @@ export const DESTINATIONS: DestinationMeta[] = [
   { city: "Tromso", country: "Norway", countryFlag: "\u{1F1F3}\u{1F1F4}", vibe: ["nature"], budget: "luxury", bestMonths: [1, 2, 3, 9, 10, 11], scores: { eat: 3, explore: 5, connect: 3, live: 2 }, tagline: "Northern lights and Arctic wilderness.", expertTip: "Chase the aurora with a local guide, not a bus tour. Clear nights in Kvaloya are best." },
   // East Asia
   { city: "Seoul", country: "South Korea", countryFlag: "\u{1F1F0}\u{1F1F7}", vibe: ["food", "city"], budget: "mid-range", bestMonths: [4, 5, 9, 10], scores: { eat: 5, explore: 4, connect: 4.5, live: 4 }, tagline: "K-BBQ, K-beauty, and a city that never sleeps.", expertTip: "Gwangjang Market for bindaetteok at midnight. Hongdae for the vibe." },
+  // Taiwan
+  { city: "Taipei", country: "Taiwan", countryFlag: "\u{1F1F9}\u{1F1FC}", vibe: ["food", "city"], budget: "backpacker", bestMonths: [3, 4, 5, 10, 11], scores: { eat: 5, explore: 4, connect: 4.5, live: 5 }, tagline: "Night markets, hot springs, and the best street food in Asia.", expertTip: "Shilin Night Market is classic but Raohe is better. Pepper bun line is worth the wait." },
+  { city: "Tainan", country: "Taiwan", countryFlag: "\u{1F1F9}\u{1F1FC}", vibe: ["food", "city"], budget: "backpacker", bestMonths: [10, 11, 12, 1, 2, 3], scores: { eat: 5, explore: 4.5, connect: 4, live: 5 }, tagline: "Taiwan's oldest city and undisputed food capital.", expertTip: "Eat your way through the West Central District. Every alley has a 50-year-old stall worth finding." },
+  { city: "Hualien", country: "Taiwan", countryFlag: "\u{1F1F9}\u{1F1FC}", vibe: ["nature"], budget: "backpacker", bestMonths: [4, 5, 6, 9, 10], scores: { eat: 3.5, explore: 5, connect: 3.5, live: 4.5 }, tagline: "Taroko Gorge and the Pacific coast.", expertTip: "Rent a scooter and ride the Suhua Highway. Bring a GoPro \u2014 the cliff-side views are insane." },
 ];
 
 // Friend reviews keyed by country name
@@ -74,4 +78,6 @@ export const FRIEND_REVIEWS: Record<string, { friendName: string; friendColor: s
   "Kenya": { friendName: "Atlas Explorer", friendColor: "#06B6D4", quote: "The Masai Mara at sunrise changed how I see the world. Not exaggerating." },
   "Egypt": { friendName: "Atlas Explorer", friendColor: "#06B6D4", quote: "The pyramids hit different in person. Photos don't capture the scale." },
   "South Africa": { friendName: "Atlas Explorer", friendColor: "#06B6D4", quote: "Cape Town is the most beautiful city I've ever seen. Full stop." },
+  "Taiwan": { friendName: "Drift Walker", friendColor: "#EC4899", quote: "Taipei night markets ruined street food everywhere else for me. Go hungry, stay late." },
+  "South Korea": { friendName: "Nomad Nina", friendColor: "#8B5CF6", quote: "Seoul is Tokyo's cooler younger sibling. The food scene is unmatched." },
 };

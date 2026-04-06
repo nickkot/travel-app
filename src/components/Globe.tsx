@@ -193,31 +193,67 @@ export function Globe({
     [friendColorMap]
   );
 
-  // Pin altitudes — friend pins slightly shorter
-  const getPinAltitude = useCallback((pin: GlobePin) => {
-    if (pin.friendId) return 0.08;
+  // HTML pin altitude
+  const getHtmlAltitude = useCallback((pin: GlobePin) => {
+    if (pin.friendId) return 0.04;
     switch (pin.type) {
-      case "past":
-        return 0.12;
-      case "future":
-        return 0.18;
-      case "wishlist":
-        return 0.08;
+      case "past": return 0.06;
+      case "future": return 0.08;
+      case "wishlist": return 0.04;
     }
   }, []);
 
-  // Pin thickness — friend pins slightly smaller
-  const getPinRadius = useCallback((pin: GlobePin) => {
-    if (pin.friendId) return 0.3;
-    switch (pin.type) {
-      case "past":
-        return 0.4;
-      case "future":
-        return 0.35;
-      case "wishlist":
-        return 0.25;
-    }
-  }, []);
+  // Create custom HTML pin element
+  const createPinElement = useCallback(
+    (d: any) => {
+      const pin = d as GlobePin;
+      const color = getPinColor(pin);
+
+      // Determine CSS class and icon
+      let typeClass = "globe-pin-past";
+      let icon = "\u{2713}"; // ✓
+      if (pin.friendId) {
+        typeClass = "globe-pin-friend";
+        icon = (pin.friendName || "?").charAt(0).toUpperCase();
+      } else if (pin.type === "future") {
+        typeClass = "globe-pin-future";
+        icon = "\u{2708}"; // ✈
+      } else if (pin.type === "wishlist") {
+        typeClass = "globe-pin-wishlist";
+        icon = "\u{2665}"; // ♥
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = `globe-pin ${typeClass}`;
+
+      const head = document.createElement("div");
+      head.className = "globe-pin-head";
+      head.textContent = icon;
+      if (pin.friendId) {
+        head.style.background = color;
+      }
+
+      const tail = document.createElement("div");
+      tail.className = "globe-pin-tail";
+      if (pin.friendId) {
+        tail.style.borderTopColor = color;
+      }
+
+      wrapper.appendChild(head);
+      wrapper.appendChild(tail);
+
+      // Events
+      wrapper.onclick = (e) => {
+        e.stopPropagation();
+        onPinClick?.(pin);
+      };
+      wrapper.onmouseenter = () => setHoverPin(pin);
+      wrapper.onmouseleave = () => setHoverPin(null);
+
+      return wrapper;
+    },
+    [getPinColor, onPinClick]
+  );
 
   // Country + state polygon colors
   const getPolygonColor = useCallback(
@@ -322,35 +358,12 @@ export function Globe({
           polygonSideColor={getPolygonSideColor}
           polygonStrokeColor={() => "rgba(255, 255, 255, 0.15)"}
           polygonAltitude={getPolygonAltitude}
-          // 3D raised pins
-          pointsData={visiblePins}
-          pointLat={(d: any) => d.lat}
-          pointLng={(d: any) => d.lng}
-          pointColor={(d: any) => getPinColor(d as GlobePin)}
-          pointAltitude={(d: any) => getPinAltitude(d as GlobePin)}
-          pointRadius={(d: any) => getPinRadius(d as GlobePin)}
-          pointsMerge={false}
-          pointLabel={(d: any) => {
-            const pin = d as GlobePin;
-            const friendLine = pin.friendName
-              ? `<div style="font-size:11px;margin-bottom:2px;color:${getPinColor(pin)};font-weight:600">${pin.friendName}</div>`
-              : "";
-            const statusLabel = pin.friendName
-              ? "Friend's trip"
-              : pin.type === "past"
-                ? "Visited"
-                : pin.type === "future"
-                  ? "Upcoming"
-                  : "Bucket List";
-            return `<div style="background:rgba(250,247,242,0.96);padding:8px 12px;border-radius:8px;font-size:13px;border:1px solid rgba(44,31,15,0.15);box-shadow:0 4px 12px rgba(42,31,15,0.15);color:#2a1f0f">
-              ${friendLine}
-              <div style="font-weight:600">${pin.city}</div>
-              <div style="color:#6b5740;font-size:11px">${pin.country}</div>
-              <div style="font-size:11px;margin-top:4px;color:${getPinColor(pin)};font-weight:500">${statusLabel}</div>
-            </div>`;
-          }}
-          onPointClick={(point: any) => onPinClick?.(point as GlobePin)}
-          onPointHover={(point: any) => setHoverPin(point as GlobePin | null)}
+          // Custom HTML pins
+          htmlElementsData={visiblePins}
+          htmlLat={(d: any) => d.lat}
+          htmlLng={(d: any) => d.lng}
+          htmlAltitude={(d: any) => getHtmlAltitude(d as GlobePin)}
+          htmlElement={createPinElement}
           // No arcs
           arcsData={[]}
           // Atmosphere

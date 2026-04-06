@@ -45,6 +45,24 @@ export const BADGE_ICONS: Record<string, string> = {
   midnight_sun: "\u{2600}",
   southern_cross: "\u{2728}",
   time_traveler: "\u{23F0}",
+  // Regional achievements
+  region_us_1: "\u{1F697}",
+  region_us_2: "\u{1F1FA}\u{1F1F8}",
+  region_us_3: "\u{1F985}",
+  region_us_4: "\u{2B50}",
+  region_canada: "\u{1F1E8}\u{1F1E6}",
+  region_mexico: "\u{1F1F2}\u{1F1FD}",
+  region_east_asia: "\u{1F409}",
+  region_southeast_asia: "\u{1F334}",
+  region_west_europe: "\u{1F5FC}",
+  region_south_europe: "\u{1F3DB}",
+  region_east_europe: "\u{1F3F0}",
+  region_middle_east: "\u{1F54C}",
+  region_central_asia: "\u{1F3D4}",
+  region_mongol_empire: "\u{1F3F9}",
+  region_roman_empire: "\u{1F43A}",
+  region_oceania: "\u{1F30A}",
+  region_africa: "\u{1F981}",
 };
 
 export const BADGE_DEFINITIONS: BadgeDefinition[] = [
@@ -97,6 +115,92 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     type: "time_traveler",
     name: "Time Traveler",
     description: "Been in 3+ time zones in a single week",
+  },
+  // Regional achievements
+  {
+    type: "region_us_1",
+    name: "Road Tripper",
+    description: "Visited 5+ US states",
+  },
+  {
+    type: "region_us_2",
+    name: "Coast to Coast",
+    description: "Visited 15+ US states",
+  },
+  {
+    type: "region_us_3",
+    name: "All-American",
+    description: "Visited 30+ US states",
+  },
+  {
+    type: "region_us_4",
+    name: "50 for 50",
+    description: "Visited all 50 US states",
+  },
+  {
+    type: "region_canada",
+    name: "True North",
+    description: "Visited 3+ Canadian provinces",
+  },
+  {
+    type: "region_mexico",
+    name: "Viva Mexico",
+    description: "Visited 3+ Mexican states",
+  },
+  {
+    type: "region_east_asia",
+    name: "Jade Dragon",
+    description: "Visited Japan, South Korea, China, or Taiwan",
+  },
+  {
+    type: "region_southeast_asia",
+    name: "Golden Triangle",
+    description: "Visited 3+ Southeast Asian countries",
+  },
+  {
+    type: "region_west_europe",
+    name: "Grand Tour",
+    description: "Visited France, UK, Netherlands, or Germany",
+  },
+  {
+    type: "region_south_europe",
+    name: "Mediterranean",
+    description: "Visited Italy, Spain, Greece, or Portugal",
+  },
+  {
+    type: "region_east_europe",
+    name: "Eastern Drift",
+    description: "Visited Russia, Czech Republic, Poland, or Croatia",
+  },
+  {
+    type: "region_middle_east",
+    name: "Silk Road",
+    description: "Visited Turkey, Jordan, UAE, or Israel",
+  },
+  {
+    type: "region_central_asia",
+    name: "Roof of the World",
+    description: "Visited Nepal, Georgia, or the Himalayan region",
+  },
+  {
+    type: "region_mongol_empire",
+    name: "Steppe Wanderer",
+    description: "Trace the Mongol Empire: Mongolia, China, South Korea, Russia, Turkey, Georgia, Iran, Iraq, Afghanistan, Kazakhstan, Uzbekistan, Turkmenistan, Kyrgyzstan, Tajikistan, Hungary, Poland, Ukraine, Armenia, Azerbaijan",
+  },
+  {
+    type: "region_roman_empire",
+    name: "All Roads Lead Here",
+    description: "Trace the Roman Empire: Italy, Spain, France, Portugal, Greece, Turkey, Egypt, Tunisia, Morocco, UK, Croatia, Israel, Jordan, Syria, Lebanon, Libya, Algeria, Romania, Bulgaria, Hungary, Austria",
+  },
+  {
+    type: "region_oceania",
+    name: "Down Under",
+    description: "Visited Australia or New Zealand",
+  },
+  {
+    type: "region_africa",
+    name: "Safari Spirit",
+    description: "Visited 2+ African countries",
   },
 ];
 

@@ -66,7 +66,7 @@ export default function NewTripPage() {
         endDate={reward.endDate}
         currentMiles={3200}
         currentTier={2}
-        onContinue={() => router.push(`/trips/${reward.tripId}`)}
+        onContinue={() => router.push("/")}
       />
     );
   }
