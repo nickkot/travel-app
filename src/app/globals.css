@@ -221,11 +221,11 @@ body {
 /* ── Globe HTML pins (pushpin style) ── */
 .globe-pin {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   align-items: center;
   cursor: pointer;
   transition: transform 0.2s var(--ease-spring);
-  transform-origin: center bottom;
+  transform-origin: center top;
   pointer-events: auto;
 }
 
@@ -235,34 +235,34 @@ body {
 }
 
 .globe-pin-ball {
-  width: 18px;
-  height: 18px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   position: relative;
   box-shadow:
-    inset -3px -3px 6px rgba(0,0,0,0.25),
-    inset 4px 4px 6px rgba(255,255,255,0.4),
-    0 2px 6px rgba(0,0,0,0.35);
+    inset -2px -2px 4px rgba(0,0,0,0.25),
+    inset 3px 3px 4px rgba(255,255,255,0.4),
+    0 2px 4px rgba(0,0,0,0.35);
 }
 
 /* Glossy highlight */
 .globe-pin-ball::after {
   content: '';
   position: absolute;
-  top: 3px;
-  left: 4px;
-  width: 6px;
-  height: 5px;
+  top: 2px;
+  left: 3px;
+  width: 4px;
+  height: 3px;
   border-radius: 50%;
   background: rgba(255,255,255,0.55);
 }
 
 .globe-pin-needle {
-  width: 2px;
-  height: 14px;
-  background: linear-gradient(to bottom, #b0b0b0, #888 40%, #666);
-  margin-top: -1px;
-  border-radius: 0 0 1px 1px;
+  width: 1.5px;
+  height: 10px;
+  background: linear-gradient(to top, #b0b0b0, #888 40%, #666);
+  margin-bottom: -1px;
+  border-radius: 1px 1px 0 0;
   box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
 
