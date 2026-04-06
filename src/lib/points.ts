@@ -60,6 +60,7 @@ export const BADGE_ICONS: Record<string, string> = {
   region_middle_east: "\u{1F54C}",
   region_central_asia: "\u{1F3D4}",
   region_mongol_empire: "\u{1F3F9}",
+  region_roman_empire: "\u{1F43A}",
   region_oceania: "\u{1F30A}",
   region_africa: "\u{1F981}",
 };
@@ -183,8 +184,13 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   },
   {
     type: "region_mongol_empire",
-    name: "Khan's Conquest",
-    description: "Visit all lands of the Mongol Empire: Mongolia, China, South Korea, Russia, Turkey, Georgia, Iran, Iraq, Afghanistan, Kazakhstan, Uzbekistan, Turkmenistan, Kyrgyzstan, Tajikistan, Hungary, Poland, Ukraine, Armenia, Azerbaijan",
+    name: "Steppe Wanderer",
+    description: "Trace the Mongol Empire: Mongolia, China, South Korea, Russia, Turkey, Georgia, Iran, Iraq, Afghanistan, Kazakhstan, Uzbekistan, Turkmenistan, Kyrgyzstan, Tajikistan, Hungary, Poland, Ukraine, Armenia, Azerbaijan",
+  },
+  {
+    type: "region_roman_empire",
+    name: "All Roads Lead Here",
+    description: "Trace the Roman Empire: Italy, Spain, France, Portugal, Greece, Turkey, Egypt, Tunisia, Morocco, UK, Croatia, Israel, Jordan, Syria, Lebanon, Libya, Algeria, Romania, Bulgaria, Hungary, Austria",
   },
   {
     type: "region_oceania",
