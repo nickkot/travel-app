@@ -52,13 +52,14 @@ export const BADGE_ICONS: Record<string, string> = {
   region_us_4: "\u{2B50}",
   region_canada: "\u{1F1E8}\u{1F1E6}",
   region_mexico: "\u{1F1F2}\u{1F1FD}",
-  region_east_asia: "\u{1F3EF}",
+  region_east_asia: "\u{1F409}",
   region_southeast_asia: "\u{1F334}",
   region_west_europe: "\u{1F5FC}",
   region_south_europe: "\u{1F3DB}",
   region_east_europe: "\u{1F3F0}",
   region_middle_east: "\u{1F54C}",
   region_central_asia: "\u{1F3D4}",
+  region_mongol_empire: "\u{1F3F9}",
   region_oceania: "\u{1F30A}",
   region_africa: "\u{1F981}",
 };
@@ -147,7 +148,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   },
   {
     type: "region_east_asia",
-    name: "Rising Sun",
+    name: "Jade Dragon",
     description: "Visited Japan, South Korea, China, or Taiwan",
   },
   {
@@ -179,6 +180,11 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     type: "region_central_asia",
     name: "Roof of the World",
     description: "Visited Nepal, Georgia, or the Himalayan region",
+  },
+  {
+    type: "region_mongol_empire",
+    name: "Khan's Conquest",
+    description: "Visit all lands of the Mongol Empire: Mongolia, China, South Korea, Russia, Turkey, Georgia, Iran, Iraq, Afghanistan, Kazakhstan, Uzbekistan, Turkmenistan, Kyrgyzstan, Tajikistan, Hungary, Poland, Ukraine, Armenia, Azerbaijan",
   },
   {
     type: "region_oceania",
