@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { FeedItem, type FeedItemProps } from "@/components/FeedItem";
+import { DiscoverQuiz } from "@/components/DiscoverQuiz";
 import { cn } from "@/lib/utils";
 
 const A = {
@@ -281,6 +282,7 @@ type FeedSort = "recent" | "top-rated";
 export default function FeedPage() {
   const [filter, setFilter] = useState<FeedFilter>("all");
   const [sort, setSort] = useState<FeedSort>("recent");
+  const [showQuiz, setShowQuiz] = useState(false);
 
   const filteredFeed = useMemo(() => {
     let feed = DEMO_FEED;
@@ -335,8 +337,33 @@ export default function FeedPage() {
 
       {/* Feed */}
       <div className="space-y-4">
-        {filteredFeed.map((item) => (
-          <FeedItem key={`${item.type}-${item.id}`} {...item} />
+        {filteredFeed.map((item, i) => (
+          <div key={`${item.type}-${item.id}`}>
+            <FeedItem {...item} />
+            {/* Insert quiz CTA after 2nd item */}
+            {i === 1 && !showQuiz && (
+              <button
+                onClick={() => setShowQuiz(true)}
+                className="mt-4 w-full bg-brand-card rounded-2xl ring-1 ring-brand-border p-5 noise-texture card-hover text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">{"\u{1F9ED}"}</span>
+                  <div className="flex-1">
+                    <h3 className="font-serif font-bold text-brand-text">Find Your Next Trip</h3>
+                    <p className="text-xs text-brand-text-muted mt-0.5">Take a 30-second quiz for personalized recommendations</p>
+                  </div>
+                  <svg className="w-5 h-5 text-brand-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                </div>
+              </button>
+            )}
+            {i === 1 && showQuiz && (
+              <div className="mt-4">
+                <DiscoverQuiz onClose={() => setShowQuiz(false)} />
+              </div>
+            )}
+          </div>
         ))}
       </div>
 

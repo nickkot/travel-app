@@ -9,7 +9,6 @@ const UNREAD_COUNT = 3; // Demo: number of unread notifications
 
 const NAV_ITEMS = [
   { href: "/", label: "Globe", icon: GlobeIcon },
-  { href: "/discover", label: "Discover", icon: CompassIcon },
   { href: "/feed", label: "Feed", icon: FeedIcon },
   { href: "/leaderboard", label: "Board", icon: TrophyIcon },
   { href: "/profile", label: "Profile", icon: UserIcon, badge: UNREAD_COUNT },
