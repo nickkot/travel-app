@@ -23,17 +23,18 @@ const DEMO_STATS: TravelStats = {
 
 const DEMO_BADGES = [
   "return_flight", "culinary_explorer", "time_traveler",
+  // Americana levels (6 states = level 1)
+  "region_us_1",
   // Regional achievements earned
-  "region_us",           // 6+ US states visited
-  "region_canada",       // 3 Canadian provinces
-  "region_mexico",       // 3 Mexican states
-  "region_east_asia",    // Japan
-  "region_southeast_asia", // Thailand
-  "region_south_europe", // Italy
-  "region_west_europe",  // France
-  "region_east_europe",  // Russia
-  "region_oceania",      // Australia
-  "region_africa",       // Kenya
+  "region_canada",
+  "region_mexico",
+  "region_east_asia",
+  "region_southeast_asia",
+  "region_south_europe",
+  "region_west_europe",
+  "region_east_europe",
+  "region_oceania",
+  "region_africa",
 ];
 
 const DEMO_PAST_TRIPS = [

@@ -69,7 +69,7 @@ const USER_COMPASS_MILES = 3200;
 const USER_TIER = 2;
 const USER_BADGES = [
   "return_flight", "culinary_explorer", "time_traveler",
-  "region_us", "region_canada", "region_mexico", "region_east_asia",
+  "region_us_1", "region_canada", "region_mexico", "region_east_asia",
   "region_southeast_asia", "region_south_europe", "region_west_europe",
   "region_east_europe", "region_oceania", "region_africa",
 ];

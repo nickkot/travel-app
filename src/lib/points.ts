@@ -46,7 +46,10 @@ export const BADGE_ICONS: Record<string, string> = {
   southern_cross: "\u{2728}",
   time_traveler: "\u{23F0}",
   // Regional achievements
-  region_us: "\u{1F1FA}\u{1F1F8}",
+  region_us_1: "\u{1F697}",
+  region_us_2: "\u{1F1FA}\u{1F1F8}",
+  region_us_3: "\u{1F985}",
+  region_us_4: "\u{2B50}",
   region_canada: "\u{1F1E8}\u{1F1E6}",
   region_mexico: "\u{1F1F2}\u{1F1FD}",
   region_east_asia: "\u{1F3EF}",
@@ -113,9 +116,24 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   },
   // Regional achievements
   {
-    type: "region_us",
-    name: "Americana",
+    type: "region_us_1",
+    name: "Road Tripper",
     description: "Visited 5+ US states",
+  },
+  {
+    type: "region_us_2",
+    name: "Coast to Coast",
+    description: "Visited 15+ US states",
+  },
+  {
+    type: "region_us_3",
+    name: "All-American",
+    description: "Visited 30+ US states",
+  },
+  {
+    type: "region_us_4",
+    name: "50 for 50",
+    description: "Visited all 50 US states",
   },
   {
     type: "region_canada",
@@ -129,7 +147,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   },
   {
     type: "region_east_asia",
-    name: "Far East",
+    name: "Rising Sun",
     description: "Visited Japan, South Korea, or China",
   },
   {
@@ -149,7 +167,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   },
   {
     type: "region_east_europe",
-    name: "Iron Curtain",
+    name: "Eastern Drift",
     description: "Visited Russia, Czech Republic, Poland, or Croatia",
   },
   {
