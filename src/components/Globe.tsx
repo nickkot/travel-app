@@ -193,17 +193,27 @@ export function Globe({
     [friendColorMap]
   );
 
-  // HTML pin altitude
-  const getHtmlAltitude = useCallback((pin: GlobePin) => {
-    if (pin.friendId) return 0.04;
+  // Needle altitude (height of the thin spike)
+  const getNeedleAltitude = useCallback((pin: GlobePin) => {
+    if (pin.friendId) return 0.06;
     switch (pin.type) {
-      case "past": return 0.06;
-      case "future": return 0.08;
-      case "wishlist": return 0.04;
+      case "past": return 0.08;
+      case "future": return 0.10;
+      case "wishlist": return 0.06;
     }
   }, []);
 
-  // Create pushpin HTML element (glossy ball + needle)
+  // Ball sits at the top of the needle
+  const getBallAltitude = useCallback((pin: GlobePin) => {
+    if (pin.friendId) return 0.06;
+    switch (pin.type) {
+      case "past": return 0.08;
+      case "future": return 0.10;
+      case "wishlist": return 0.06;
+    }
+  }, []);
+
+  // Create glossy ball HTML element (sits atop the 3D needle)
   const createPinElement = useCallback(
     (d: any) => {
       const pin = d as GlobePin;
@@ -228,11 +238,7 @@ export function Globe({
         ball.style.background = `radial-gradient(circle at 35% 35%, ${c}cc, ${c} 50%, ${c}aa)`;
       }
 
-      const needle = document.createElement("div");
-      needle.className = "globe-pin-needle";
-
       wrapper.appendChild(ball);
-      wrapper.appendChild(needle);
 
       wrapper.onclick = (e) => {
         e.stopPropagation();
@@ -349,11 +355,21 @@ export function Globe({
           polygonSideColor={getPolygonSideColor}
           polygonStrokeColor={() => "rgba(255, 255, 255, 0.15)"}
           polygonAltitude={getPolygonAltitude}
-          // Custom HTML pins
+          // 3D needle spikes (radially oriented toward Earth center)
+          pointsData={visiblePins}
+          pointLat={(d: any) => d.lat}
+          pointLng={(d: any) => d.lng}
+          pointColor={() => "#888888"}
+          pointAltitude={(d: any) => getNeedleAltitude(d as GlobePin)}
+          pointRadius={() => 0.08}
+          pointsMerge={false}
+          onPointClick={(point: any) => onPinClick?.(point as GlobePin)}
+          onPointHover={(point: any) => setHoverPin(point as GlobePin | null)}
+          // Glossy ball heads (HTML, floating at needle tips)
           htmlElementsData={visiblePins}
           htmlLat={(d: any) => d.lat}
           htmlLng={(d: any) => d.lng}
-          htmlAltitude={(d: any) => getHtmlAltitude(d as GlobePin)}
+          htmlAltitude={(d: any) => getBallAltitude(d as GlobePin)}
           htmlElement={createPinElement}
           // No arcs
           arcsData={[]}
