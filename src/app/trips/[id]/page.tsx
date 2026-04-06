@@ -8,10 +8,11 @@ import { JournalForm } from "@/components/JournalForm";
 import { ReviewForm } from "@/components/ReviewForm";
 import { CommentThread } from "@/components/CommentThread";
 import { RatingForm } from "@/components/RatingForm";
+import { TripMap } from "@/components/TripMap";
 import { getTripById } from "@/data/demoTrips";
 import { formatDate, cn } from "@/lib/utils";
 
-type Tab = "photos" | "journal" | "reviews";
+type Tab = "map" | "photos" | "journal" | "reviews";
 
 const DEMO_COMMENTS = [
   {
@@ -46,10 +47,11 @@ export default function TripDetailPage() {
   const DEMO_REVIEWS = tripData?.reviews || [];
   const tripRating = tripData?.rating || { overall: 0, eat: 0, explore: 0, connect: 0, live: 0 };
 
-  const [activeTab, setActiveTab] = useState<Tab>("photos");
+  const [activeTab, setActiveTab] = useState<Tab>("map");
   const [showRatingForm, setShowRatingForm] = useState(false);
 
-  const tabs: { key: Tab; label: string; count: number }[] = [
+  const tabs: { key: Tab; label: string; count?: number }[] = [
+    { key: "map", label: "Map" },
     { key: "photos", label: "Photos", count: DEMO_PHOTOS.length },
     { key: "journal", label: "Journal", count: DEMO_JOURNAL.length },
     { key: "reviews", label: "Reviews", count: DEMO_REVIEWS.length },
@@ -178,12 +180,16 @@ export default function TripDetailPage() {
                 : "text-brand-text-secondary hover:text-brand-text"
             )}
           >
-            {tab.label} ({tab.count})
+            {tab.label}{tab.count !== undefined ? ` (${tab.count})` : ""}
           </button>
         ))}
       </div>
 
       {/* Tab content */}
+      {activeTab === "map" && (
+        <TripMap destinations={DEMO_TRIP.destinations} />
+      )}
+
       {activeTab === "photos" && (
         <div>
           <PhotoGrid photos={DEMO_PHOTOS} editable />

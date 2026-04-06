@@ -90,7 +90,7 @@ export function NotificationBell() {
 
           {/* List */}
           <div className="max-h-80 overflow-y-auto">
-            {notifications.map((n) => (
+            {notifications.slice(0, 5).map((n) => (
               <Link
                 key={n.id}
                 href={n.fromUsername ? `/profile/${n.fromUsername}` : "/profile"}
@@ -125,6 +125,15 @@ export function NotificationBell() {
               </Link>
             ))}
           </div>
+
+          {/* View all link */}
+          <Link
+            href="/notifications"
+            onClick={() => setOpen(false)}
+            className="block text-center px-4 py-3 border-t border-brand-border text-xs font-medium text-brand-navy hover:bg-brand-surface transition-colors"
+          >
+            View all notifications
+          </Link>
         </div>
       )}
     </div>

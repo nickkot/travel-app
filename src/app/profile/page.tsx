@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { ProfileStats } from "@/components/ProfileStats";
 import { CompassClub } from "@/components/CompassClub";
@@ -7,6 +8,7 @@ import { BadgeShowcase } from "@/components/BadgeShowcase";
 import { TripCard } from "@/components/TripCard";
 import { ShareButton } from "@/components/ShareButton";
 import { NotificationBell } from "@/components/NotificationBell";
+import { EditProfileModal } from "@/components/EditProfileModal";
 import type { TravelStats } from "@/types";
 
 const DEMO_STATS: TravelStats = {
@@ -116,6 +118,14 @@ const DEMO_FUTURE_TRIPS = [
 ];
 
 export default function ProfilePage() {
+  const [editOpen, setEditOpen] = useState(false);
+  const [profile, setProfile] = useState({
+    name: "Atlas Explorer",
+    username: "atlas_explorer",
+    bio: "Slow traveler. 30+ countries. Always returning.",
+    avatarUrl: null as string | null,
+  });
+
   return (
     <div className="max-w-4xl mx-auto px-4 pt-20 md:pt-24 pb-24">
       {/* Action bar — search + notifications */}
@@ -134,13 +144,17 @@ export default function ProfilePage() {
       {/* Profile header */}
       <div className="flex items-start gap-5 mb-8">
         <div className="w-20 h-20 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy text-2xl font-bold flex-shrink-0">
-          A
+          {profile.avatarUrl ? (
+            <img src={profile.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" />
+          ) : (
+            profile.name.charAt(0).toUpperCase()
+          )}
         </div>
         <div className="flex-1">
-          <h1 className="text-3xl font-bold font-serif text-brand-text">Atlas Explorer</h1>
-          <p className="text-brand-text-muted mb-1">@atlas_explorer</p>
+          <h1 className="text-3xl font-bold font-serif text-brand-text">{profile.name}</h1>
+          <p className="text-brand-text-muted mb-1">@{profile.username}</p>
           <p className="text-sm text-brand-text-secondary mb-3">
-            Slow traveler. 30+ countries. Always returning.
+            {profile.bio}
           </p>
           <div className="flex items-center gap-4 text-sm">
             <span>
@@ -159,10 +173,13 @@ export default function ProfilePage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="px-4 py-2 border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-surface transition-colors btn-press">
+          <button
+            onClick={() => setEditOpen(true)}
+            className="px-4 py-2 border border-brand-border rounded-lg text-sm font-medium text-brand-text hover:bg-brand-surface transition-colors btn-press"
+          >
             Edit Profile
           </button>
-          <ShareButton username="atlas_explorer" />
+          <ShareButton username={profile.username} />
         </div>
       </div>
 
@@ -227,6 +244,17 @@ export default function ProfilePage() {
       <div className="mb-6">
         <BadgeShowcase earnedBadges={DEMO_BADGES} />
       </div>
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        initialData={profile}
+        onSave={(data) => {
+          setProfile(data);
+          setEditOpen(false);
+        }}
+      />
     </div>
   );
 }
