@@ -278,51 +278,74 @@ export function TripForm({ onSubmit, isLoading }: TripFormProps) {
         </select>
       </div>
 
-      {/* Destinations */}
+      {/* Destinations — journey timeline */}
       <div>
-        <label className="block text-sm font-medium text-brand-text mb-3">Destinations</label>
-        <div className="space-y-3">
+        <label className="block text-sm font-medium text-brand-text mb-3">Journey</label>
+        <div className="relative">
           {destinations.map((dest, i) => (
-            <div key={i} className="flex items-start gap-2">
-              <div className="flex-1 grid grid-cols-2 gap-2">
-                <CountryInput
-                  value={dest.country}
-                  onChange={(country) => {
-                    const updated = [...destinations];
-                    updated[i] = { ...updated[i], country, city: "", lat: 0, lng: 0 };
-                    setDestinations(updated);
-                  }}
-                />
-                <CityInput
-                  country={dest.country}
-                  value={dest.city}
-                  onChange={(city, lat, lng) => {
-                    const updated = [...destinations];
-                    updated[i] = { ...updated[i], city, lat, lng };
-                    setDestinations(updated);
-                  }}
-                />
+            <div key={i} className="flex gap-3">
+              {/* Timeline rail */}
+              <div className="flex flex-col items-center">
+                <div className="w-6 h-6 rounded-full bg-brand-pin-past text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                  {i + 1}
+                </div>
+                {i < destinations.length - 1 && (
+                  <div className="w-0.5 flex-1 min-h-6 bg-brand-pin-past/30" />
+                )}
               </div>
-              {destinations.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeDestination(i)}
-                  className="p-2 text-brand-text-muted hover:text-brand-danger transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              )}
+
+              {/* Inputs */}
+              <div className="flex-1 pb-4">
+                <div className="flex items-start gap-2">
+                  <div className="flex-1 grid grid-cols-2 gap-2">
+                    <CountryInput
+                      value={dest.country}
+                      onChange={(country) => {
+                        const updated = [...destinations];
+                        updated[i] = { ...updated[i], country, city: "", lat: 0, lng: 0 };
+                        setDestinations(updated);
+                      }}
+                    />
+                    <CityInput
+                      country={dest.country}
+                      value={dest.city}
+                      onChange={(city, lat, lng) => {
+                        const updated = [...destinations];
+                        updated[i] = { ...updated[i], city, lat, lng };
+                        setDestinations(updated);
+                      }}
+                    />
+                  </div>
+                  {destinations.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeDestination(i)}
+                      className="p-2 text-brand-text-muted hover:text-brand-danger transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+                {dest.city && dest.country && i < destinations.length - 1 && destinations[i + 1]?.city && (
+                  <div className="text-[10px] text-brand-text-muted mt-1 ml-1">
+                    Leg {i + 1}: {dest.city} → {destinations[i + 1].city}
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>
         <button
           type="button"
           onClick={addDestination}
-          className="mt-2 text-sm text-brand-navy hover:text-brand-navy-muted transition-colors"
+          className="mt-1 ml-9 text-sm text-brand-navy hover:text-brand-navy-muted transition-colors flex items-center gap-1"
         >
-          + Add another destination
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Add destination
         </button>
       </div>
 
