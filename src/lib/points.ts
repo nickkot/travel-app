@@ -148,7 +148,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     type: "region_east_asia",
     name: "Rising Sun",
-    description: "Visited Japan, South Korea, or China",
+    description: "Visited Japan, South Korea, China, or Taiwan",
   },
   {
     type: "region_southeast_asia",

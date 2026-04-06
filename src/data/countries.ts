@@ -236,6 +236,13 @@ export const COUNTRIES: CountryData[] = [
     { name: "Zanzibar", lat: -6.1659, lng: 39.1989 },
     { name: "Moshi", lat: -3.3353, lng: 37.3407 },
   ]},
+  { name: "Taiwan", code: "TW", cities: [
+    { name: "Taipei", lat: 25.0330, lng: 121.5654 },
+    { name: "Kaohsiung", lat: 22.6273, lng: 120.3014 },
+    { name: "Tainan", lat: 22.9998, lng: 120.2269 },
+    { name: "Hualien", lat: 23.9871, lng: 121.6016 },
+    { name: "Jiufen", lat: 25.1092, lng: 121.8443 },
+  ]},
   { name: "Thailand", code: "TH", cities: [
     { name: "Bangkok", lat: 13.7563, lng: 100.5018 },
     { name: "Chiang Mai", lat: 18.7883, lng: 98.9853 },
