@@ -203,46 +203,37 @@ export function Globe({
     }
   }, []);
 
-  // Create custom HTML pin element
+  // Create pushpin HTML element (glossy ball + needle)
   const createPinElement = useCallback(
     (d: any) => {
       const pin = d as GlobePin;
       const color = getPinColor(pin);
 
-      // Determine CSS class and icon
       let typeClass = "globe-pin-past";
-      let icon = "\u{2713}"; // ✓
       if (pin.friendId) {
         typeClass = "globe-pin-friend";
-        icon = (pin.friendName || "?").charAt(0).toUpperCase();
       } else if (pin.type === "future") {
         typeClass = "globe-pin-future";
-        icon = "\u{2708}"; // ✈
       } else if (pin.type === "wishlist") {
         typeClass = "globe-pin-wishlist";
-        icon = "\u{2665}"; // ♥
       }
 
       const wrapper = document.createElement("div");
       wrapper.className = `globe-pin ${typeClass}`;
 
-      const head = document.createElement("div");
-      head.className = "globe-pin-head";
-      head.textContent = icon;
+      const ball = document.createElement("div");
+      ball.className = "globe-pin-ball";
       if (pin.friendId) {
-        head.style.background = color;
+        const c = color;
+        ball.style.background = `radial-gradient(circle at 35% 35%, ${c}cc, ${c} 50%, ${c}aa)`;
       }
 
-      const tail = document.createElement("div");
-      tail.className = "globe-pin-tail";
-      if (pin.friendId) {
-        tail.style.borderTopColor = color;
-      }
+      const needle = document.createElement("div");
+      needle.className = "globe-pin-needle";
 
-      wrapper.appendChild(head);
-      wrapper.appendChild(tail);
+      wrapper.appendChild(ball);
+      wrapper.appendChild(needle);
 
-      // Events
       wrapper.onclick = (e) => {
         e.stopPropagation();
         onPinClick?.(pin);
