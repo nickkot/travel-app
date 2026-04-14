@@ -83,6 +83,46 @@ export async function POST(request: NextRequest) {
     return Response.json({ user }, { status: 201 });
   }
 
+  if (action === "update-profile") {
+    const {
+      userId,
+      name,
+      username,
+      bio,
+      avatarUrl,
+      baseCity,
+      baseCountry,
+      baseLat,
+      baseLng,
+    } = body;
+
+    if (!userId) {
+      return Response.json({ error: "userId is required" }, { status: 400 });
+    }
+
+    // Only include fields that were actually provided so callers can do
+    // partial updates (e.g. just saving a new home base).
+    const data: Record<string, unknown> = {};
+    if (name !== undefined) data.name = name;
+    if (username !== undefined) data.username = username;
+    if (bio !== undefined) data.bio = bio;
+    if (avatarUrl !== undefined) data.avatarUrl = avatarUrl;
+    if (baseCity !== undefined) data.baseCity = baseCity;
+    if (baseCountry !== undefined) data.baseCountry = baseCountry;
+    if (baseLat !== undefined) data.baseLat = baseLat;
+    if (baseLng !== undefined) data.baseLng = baseLng;
+
+    try {
+      const user = await prisma.user.update({ where: { id: userId }, data });
+      return Response.json({ user });
+    } catch {
+      return Response.json(
+        { error: "Failed to update profile" },
+        { status: 400 }
+      );
+    }
+  }
+
   if (action === "check-username") {
     const { username } = body;
     if (!username || username.length < 2) {

@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
   });
 }
 
-async function checkBadgeEligibility(userId: string): Promise<string[]> {
+export async function checkBadgeEligibility(userId: string): Promise<string[]> {
   const newBadges: string[] = [];
 
   // Get user's existing badges
@@ -155,6 +155,19 @@ async function checkBadgeEligibility(userId: string): Promise<string[]> {
         data: { userId, badgeType: "southern_cross" },
       });
       newBadges.push("southern_cross");
+    }
+  }
+
+  // Local Guide: 3+ recommendations posted as a local (isLocalGuide = true)
+  if (!earnedSet.has("local_guide")) {
+    const localRecCount = await prisma.review.count({
+      where: { userId, isLocalGuide: true },
+    });
+    if (localRecCount >= 3) {
+      await prisma.badge.create({
+        data: { userId, badgeType: "local_guide" },
+      });
+      newBadges.push("local_guide");
     }
   }
 

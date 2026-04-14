@@ -35,6 +35,10 @@ model User {
   compassMiles  Int      @default(0) @map("compass_miles")
   tier          Int      @default(1)
   referredBy    String?  @map("referred_by")
+  baseCity      String?  @map("base_city")
+  baseCountry   String?  @map("base_country")
+  baseLat       Float?   @map("base_lat")
+  baseLng       Float?   @map("base_lng")
   createdAt     DateTime @default(now()) @map("created_at")
 
   trips              Trip[]
@@ -136,9 +140,10 @@ model Review {
   country     String
   rating      Int
   content     String
-  upvoteCount Int        @default(0) @map("upvote_count")
-  visibility  Visibility @default(PUBLIC)
-  createdAt   DateTime   @default(now()) @map("created_at")
+  upvoteCount  Int        @default(0) @map("upvote_count")
+  visibility   Visibility @default(PUBLIC)
+  isLocalGuide Boolean    @default(false) @map("is_local_guide")
+  createdAt    DateTime   @default(now()) @map("created_at")
 
   user User  @relation(fields: [userId], references: [id])
   trip Trip? @relation(fields: [tripId], references: [id])

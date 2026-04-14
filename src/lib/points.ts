@@ -63,6 +63,8 @@ export const BADGE_ICONS: Record<string, string> = {
   region_roman_empire: "\u{1F43A}",
   region_oceania: "\u{1F30A}",
   region_africa: "\u{1F981}",
+  // Community / role badges
+  local_guide: "\u{1F5FA}\u{FE0F}",
 };
 
 export const BADGE_DEFINITIONS: BadgeDefinition[] = [
@@ -95,6 +97,11 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     type: "culinary_explorer",
     name: "Culinary Explorer",
     description: "Reviewed 50+ restaurants across 5+ countries",
+  },
+  {
+    type: "local_guide",
+    name: "Local Guide",
+    description: "Published 3+ recommendations in your home city",
   },
   {
     type: "hemisphere_hopper",

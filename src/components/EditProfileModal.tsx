@@ -2,17 +2,24 @@
 
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { CountryPicker, CityPicker } from "./LocationPicker";
+
+export interface EditProfileData {
+  name: string;
+  username: string;
+  bio: string;
+  avatarUrl: string | null;
+  baseCity: string | null;
+  baseCountry: string | null;
+  baseLat: number | null;
+  baseLng: number | null;
+}
 
 interface EditProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialData: {
-    name: string;
-    username: string;
-    bio: string;
-    avatarUrl: string | null;
-  };
-  onSave: (data: { name: string; username: string; bio: string; avatarUrl: string | null }) => void;
+  initialData: EditProfileData;
+  onSave: (data: EditProfileData) => void;
 }
 
 export function EditProfileModal({ isOpen, onClose, initialData, onSave }: EditProfileModalProps) {
@@ -20,6 +27,10 @@ export function EditProfileModal({ isOpen, onClose, initialData, onSave }: EditP
   const [username, setUsername] = useState(initialData.username);
   const [bio, setBio] = useState(initialData.bio);
   const [avatarUrl, setAvatarUrl] = useState(initialData.avatarUrl);
+  const [baseCountry, setBaseCountry] = useState(initialData.baseCountry ?? "");
+  const [baseCity, setBaseCity] = useState(initialData.baseCity ?? "");
+  const [baseLat, setBaseLat] = useState(initialData.baseLat ?? 0);
+  const [baseLng, setBaseLng] = useState(initialData.baseLng ?? 0);
   const [saving, setSaving] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -29,6 +40,10 @@ export function EditProfileModal({ isOpen, onClose, initialData, onSave }: EditP
       setUsername(initialData.username);
       setBio(initialData.bio);
       setAvatarUrl(initialData.avatarUrl);
+      setBaseCountry(initialData.baseCountry ?? "");
+      setBaseCity(initialData.baseCity ?? "");
+      setBaseLat(initialData.baseLat ?? 0);
+      setBaseLng(initialData.baseLng ?? 0);
     }
   }, [isOpen, initialData]);
 
@@ -51,10 +66,26 @@ export function EditProfileModal({ isOpen, onClose, initialData, onSave }: EditP
     e.preventDefault();
     setSaving(true);
     try {
-      onSave({ name, username, bio, avatarUrl });
+      onSave({
+        name,
+        username,
+        bio,
+        avatarUrl,
+        baseCity: baseCity || null,
+        baseCountry: baseCountry || null,
+        baseLat: baseCity ? baseLat : null,
+        baseLng: baseCity ? baseLng : null,
+      });
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleClearHomeBase = () => {
+    setBaseCity("");
+    setBaseCountry("");
+    setBaseLat(0);
+    setBaseLng(0);
   };
 
   const nameInitial = name.trim().charAt(0).toUpperCase() || "?";
@@ -150,6 +181,52 @@ export function EditProfileModal({ isOpen, onClose, initialData, onSave }: EditP
               className="w-full px-3 py-2 rounded-lg bg-brand-surface border border-brand-border text-sm text-brand-text placeholder:text-brand-text-muted/50 focus:outline-none focus:ring-2 focus:ring-brand-navy/30 resize-none"
             />
             <span className="text-[10px] text-brand-text-muted">{bio.length}/160</span>
+          </div>
+
+          {/* Home base — powers the Local Guide feature */}
+          <div className="pt-1 border-t border-brand-border/60">
+            <div className="flex items-center justify-between mb-2 mt-4">
+              <label className="block text-xs font-medium text-brand-text-muted">
+                Home base
+                <span className="ml-1.5 text-[10px] text-brand-text-muted/80">
+                  (unlocks Local Guide · earn 300 miles per recommendation)
+                </span>
+              </label>
+              {(baseCity || baseCountry) && (
+                <button
+                  type="button"
+                  onClick={handleClearHomeBase}
+                  className="text-[10px] text-brand-text-muted hover:text-brand-text transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <CountryPicker
+                value={baseCountry}
+                onChange={(c) => {
+                  setBaseCountry(c);
+                  // Reset city if user switches country so coords don't drift
+                  if (c !== baseCountry) {
+                    setBaseCity("");
+                    setBaseLat(0);
+                    setBaseLng(0);
+                  }
+                }}
+                placeholder="Country"
+              />
+              <CityPicker
+                country={baseCountry}
+                value={baseCity}
+                onChange={(c, lat, lng) => {
+                  setBaseCity(c);
+                  setBaseLat(lat);
+                  setBaseLng(lng);
+                }}
+                placeholder="City you live in"
+              />
+            </div>
           </div>
 
           {/* Actions */}

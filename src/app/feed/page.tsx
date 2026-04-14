@@ -57,6 +57,25 @@ const DEMO_FEED: FeedItemProps[] = [
     ],
     createdAt: "2026-03-30",
   },
+  // Local Guide insider tip — locals sharing insider knowledge
+  {
+    type: "review",
+    id: "lg1",
+    authorName: "Nomad Nina",
+    authorUsername: "nomad_nina",
+    caption:
+      "Manteigaria makes the best pasteis de nata in Lisbon — full stop. Order them straight from the oven, they ring a bell when a fresh batch drops. Skip the queue at Pasteis de Belem unless you want to wait an hour.",
+    location: "Manteigaria · Chiado, Lisbon",
+    countryFlag: "\u{1F1F5}\u{1F1F9}",
+    countryCode: "PRT",
+    likeCount: 67,
+    comments: [
+      { username: "drift_walker", text: "truth. the one in Time Out Market is just as good" },
+      { username: "atlas_explorer", text: "adding to my Lisbon list rn" },
+    ],
+    createdAt: "2026-03-30",
+    isLocalGuide: true,
+  },
   // Rating-only post (no photos)
   {
     type: "rating",

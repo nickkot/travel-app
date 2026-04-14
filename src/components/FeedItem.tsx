@@ -31,6 +31,8 @@ export interface FeedItemProps {
   likeCount: number;
   comments: { username: string; text: string }[];
   createdAt: string;
+  /** When true, decorate review-type items as a Local Guide insider tip. */
+  isLocalGuide?: boolean;
 }
 
 export function FeedItem({
@@ -53,6 +55,7 @@ export function FeedItem({
   likeCount,
   comments,
   createdAt,
+  isLocalGuide,
 }: FeedItemProps) {
   const [saved, setSaved] = useState(false);
   const [likes, setLikes] = useState(likeCount);
@@ -70,14 +73,20 @@ export function FeedItem({
   };
 
   return (
-    <div className="bg-brand-card rounded-2xl ring-1 ring-brand-border overflow-hidden">
+    <div
+      className={`rounded-2xl ring-1 overflow-hidden ${
+        isLocalGuide
+          ? "bg-brand-surface ring-brand-pin-past/30"
+          : "bg-brand-card ring-brand-border"
+      }`}
+    >
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="w-8 h-8 rounded-full bg-brand-navy/10 flex items-center justify-center text-brand-navy font-bold text-xs">
           {authorName.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1 text-sm">
+          <div className="flex items-center gap-1.5 text-sm flex-wrap">
             <Link
               href={`/profile/${authorUsername}`}
               className="font-semibold text-brand-text hover:text-brand-navy"
@@ -94,6 +103,15 @@ export function FeedItem({
                   {coAuthorName}
                 </Link>
               </>
+            )}
+            {isLocalGuide && (
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-brand-pin-past/15 ring-1 ring-brand-pin-past/30 text-[10px] font-semibold text-brand-pin-past uppercase tracking-wider">
+                <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z" />
+                </svg>
+                Local tip
+              </span>
             )}
           </div>
           {location && (
