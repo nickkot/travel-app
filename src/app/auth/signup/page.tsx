@@ -117,7 +117,7 @@ function SignupForm() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Signup failed");
       setUser(data.user);
-      router.push("/");
+      router.push("/onboarding");
     } catch (err: any) {
       setError(err.message);
     } finally {

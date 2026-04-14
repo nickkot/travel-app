@@ -83,6 +83,18 @@ export async function POST(request: NextRequest) {
     return Response.json({ user }, { status: 201 });
   }
 
+  if (action === "check-username") {
+    const { username } = body;
+    if (!username || username.length < 2) {
+      return Response.json({ available: false });
+    }
+    const existing = await prisma.user.findUnique({
+      where: { username },
+      select: { id: true },
+    });
+    return Response.json({ available: !existing });
+  }
+
   if (action === "login") {
     const { email } = body;
 
