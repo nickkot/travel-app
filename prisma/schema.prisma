@@ -39,6 +39,10 @@ model User {
   baseCountry   String?  @map("base_country")
   baseLat       Float?   @map("base_lat")
   baseLng       Float?   @map("base_lng")
+  baseCity2     String?  @map("base_city_2")
+  baseCountry2  String?  @map("base_country_2")
+  baseLat2      Float?   @map("base_lat_2")
+  baseLng2      Float?   @map("base_lng_2")
   createdAt     DateTime @default(now()) @map("created_at")
 
   trips              Trip[]

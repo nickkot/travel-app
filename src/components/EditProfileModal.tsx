@@ -13,6 +13,10 @@ export interface EditProfileData {
   baseCountry: string | null;
   baseLat: number | null;
   baseLng: number | null;
+  baseCity2: string | null;
+  baseCountry2: string | null;
+  baseLat2: number | null;
+  baseLng2: number | null;
 }
 
 interface EditProfileModalProps {
@@ -31,6 +35,13 @@ export function EditProfileModal({ isOpen, onClose, initialData, onSave }: EditP
   const [baseCity, setBaseCity] = useState(initialData.baseCity ?? "");
   const [baseLat, setBaseLat] = useState(initialData.baseLat ?? 0);
   const [baseLng, setBaseLng] = useState(initialData.baseLng ?? 0);
+  const [baseCountry2, setBaseCountry2] = useState(initialData.baseCountry2 ?? "");
+  const [baseCity2, setBaseCity2] = useState(initialData.baseCity2 ?? "");
+  const [baseLat2, setBaseLat2] = useState(initialData.baseLat2 ?? 0);
+  const [baseLng2, setBaseLng2] = useState(initialData.baseLng2 ?? 0);
+  const [showSecondBase, setShowSecondBase] = useState(
+    !!(initialData.baseCity2 || initialData.baseCountry2)
+  );
   const [saving, setSaving] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +55,11 @@ export function EditProfileModal({ isOpen, onClose, initialData, onSave }: EditP
       setBaseCity(initialData.baseCity ?? "");
       setBaseLat(initialData.baseLat ?? 0);
       setBaseLng(initialData.baseLng ?? 0);
+      setBaseCountry2(initialData.baseCountry2 ?? "");
+      setBaseCity2(initialData.baseCity2 ?? "");
+      setBaseLat2(initialData.baseLat2 ?? 0);
+      setBaseLng2(initialData.baseLng2 ?? 0);
+      setShowSecondBase(!!(initialData.baseCity2 || initialData.baseCountry2));
     }
   }, [isOpen, initialData]);
 
@@ -75,6 +91,10 @@ export function EditProfileModal({ isOpen, onClose, initialData, onSave }: EditP
         baseCountry: baseCountry || null,
         baseLat: baseCity ? baseLat : null,
         baseLng: baseCity ? baseLng : null,
+        baseCity2: showSecondBase && baseCity2 ? baseCity2 : null,
+        baseCountry2: showSecondBase && baseCountry2 ? baseCountry2 : null,
+        baseLat2: showSecondBase && baseCity2 ? baseLat2 : null,
+        baseLng2: showSecondBase && baseCity2 ? baseLng2 : null,
       });
     } finally {
       setSaving(false);
@@ -86,6 +106,14 @@ export function EditProfileModal({ isOpen, onClose, initialData, onSave }: EditP
     setBaseCountry("");
     setBaseLat(0);
     setBaseLng(0);
+  };
+
+  const handleClearSecondBase = () => {
+    setBaseCity2("");
+    setBaseCountry2("");
+    setBaseLat2(0);
+    setBaseLng2(0);
+    setShowSecondBase(false);
   };
 
   const nameInitial = name.trim().charAt(0).toUpperCase() || "?";
@@ -183,49 +211,116 @@ export function EditProfileModal({ isOpen, onClose, initialData, onSave }: EditP
             <span className="text-[10px] text-brand-text-muted">{bio.length}/160</span>
           </div>
 
-          {/* Home base — powers the Local Guide feature */}
+          {/* Home base(s) — power the Local Guide feature. Supports up to
+              two cities so people who split their life across two places
+              (a second home, a job-and-hometown split) can guide both. */}
           <div className="pt-1 border-t border-brand-border/60">
-            <div className="flex items-center justify-between mb-2 mt-4">
+            <div className="mb-2 mt-4">
               <label className="block text-xs font-medium text-brand-text-muted">
                 Home base
                 <span className="ml-1.5 text-[10px] text-brand-text-muted/80">
                   (unlocks Local Guide · earn 300 miles per recommendation)
                 </span>
               </label>
-              {(baseCity || baseCountry) && (
+            </div>
+            <div className="space-y-2">
+              {/* First home base */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-brand-text-muted">
+                    Primary
+                  </p>
+                  {(baseCity || baseCountry) && (
+                    <button
+                      type="button"
+                      onClick={handleClearHomeBase}
+                      className="text-[10px] text-brand-text-muted hover:text-brand-text transition-colors"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <CountryPicker
+                    value={baseCountry}
+                    onChange={(c) => {
+                      setBaseCountry(c);
+                      if (c !== baseCountry) {
+                        setBaseCity("");
+                        setBaseLat(0);
+                        setBaseLng(0);
+                      }
+                    }}
+                    placeholder="Country"
+                  />
+                  <CityPicker
+                    country={baseCountry}
+                    value={baseCity}
+                    onChange={(c, lat, lng) => {
+                      setBaseCity(c);
+                      setBaseLat(lat);
+                      setBaseLng(lng);
+                    }}
+                    placeholder="City you live in"
+                  />
+                </div>
+              </div>
+
+              {/* Second home base — collapsed behind a button until needed */}
+              {!showSecondBase ? (
                 <button
                   type="button"
-                  onClick={handleClearHomeBase}
-                  className="text-[10px] text-brand-text-muted hover:text-brand-text transition-colors"
+                  onClick={() => setShowSecondBase(true)}
+                  disabled={!baseCity}
+                  className={cn(
+                    "w-full mt-1 px-3 py-2 rounded-lg text-xs font-medium transition-colors border border-dashed",
+                    !baseCity
+                      ? "border-brand-border/50 text-brand-text-muted/50 cursor-not-allowed"
+                      : "border-brand-border text-brand-navy hover:bg-brand-surface"
+                  )}
                 >
-                  Clear
+                  + Add a second city
                 </button>
+              ) : (
+                <div className="pt-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-brand-text-muted">
+                      Second city
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleClearSecondBase}
+                      className="text-[10px] text-brand-text-muted hover:text-brand-text transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <CountryPicker
+                      value={baseCountry2}
+                      onChange={(c) => {
+                        setBaseCountry2(c);
+                        if (c !== baseCountry2) {
+                          setBaseCity2("");
+                          setBaseLat2(0);
+                          setBaseLng2(0);
+                        }
+                      }}
+                      placeholder="Country"
+                    />
+                    <CityPicker
+                      country={baseCountry2}
+                      value={baseCity2}
+                      onChange={(c, lat, lng) => {
+                        setBaseCity2(c);
+                        setBaseLat2(lat);
+                        setBaseLng2(lng);
+                      }}
+                      placeholder="Second city you know"
+                    />
+                  </div>
+                </div>
               )}
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <CountryPicker
-                value={baseCountry}
-                onChange={(c) => {
-                  setBaseCountry(c);
-                  // Reset city if user switches country so coords don't drift
-                  if (c !== baseCountry) {
-                    setBaseCity("");
-                    setBaseLat(0);
-                    setBaseLng(0);
-                  }
-                }}
-                placeholder="Country"
-              />
-              <CityPicker
-                country={baseCountry}
-                value={baseCity}
-                onChange={(c, lat, lng) => {
-                  setBaseCity(c);
-                  setBaseLat(lat);
-                  setBaseLng(lng);
-                }}
-                placeholder="City you live in"
-              />
             </div>
           </div>
 

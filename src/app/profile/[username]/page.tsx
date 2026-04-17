@@ -38,6 +38,7 @@ interface PublicLocalRec {
   rating: number;
   content: string;
   upvoteCount: number;
+  city: string;
 }
 
 // Demo content so visitors can see what a local's profile looks like.
@@ -51,6 +52,7 @@ const DEMO_PUBLIC_LOCAL_RECS: PublicLocalRec[] = [
     content:
       "Go for breakfast when it opens at 10am — empty tables, same food, half the wait. By 1pm it's a zoo.",
     upvoteCount: 52,
+    city: "Lisbon",
   },
   {
     id: "p-lr2",
@@ -60,12 +62,36 @@ const DEMO_PUBLIC_LOCAL_RECS: PublicLocalRec[] = [
     content:
       "The independent bookshop Ler Devagar has a bicycle flying from the ceiling. Sunday is the best day — live music in the courtyard.",
     upvoteCount: 31,
+    city: "Lisbon",
+  },
+  {
+    id: "p-lr3",
+    placeName: "Capela das Almas",
+    placeType: "Viewpoint",
+    rating: 5,
+    content:
+      "The blue azulejo chapel at the corner of Rua de Santa Catarina is prettiest at 7am when the sun hits the tiles and there isn't a single tourist in the frame.",
+    upvoteCount: 44,
+    city: "Porto",
+  },
+  {
+    id: "p-lr4",
+    placeName: "Drink vinho verde, not port",
+    placeType: "Tip",
+    rating: 5,
+    content:
+      "Port is for tourists and old men. In summer, order vinho verde — it's cold, fizzy, low-alcohol, and comes in big bottles for €5. Locals drink it with grilled fish.",
+    upvoteCount: 73,
+    city: "Porto",
   },
 ];
 
-// Placeholder base city so the feature is visible on any public profile.
+// Placeholder base cities so the feature is visible on any public profile.
 // When real data lands, pull from GET /api/users?username=X.
-const DEMO_PUBLIC_BASE = { city: "Lisbon", country: "Portugal" };
+const DEMO_PUBLIC_BASES = [
+  { city: "Lisbon", country: "Portugal" },
+  { city: "Porto", country: "Portugal" },
+];
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -75,8 +101,13 @@ export default function UserProfilePage() {
   const [followerCount, setFollowerCount] = useState(312);
   const [followingCount, setFollowingCount] = useState(156);
   const [loading, setLoading] = useState(false);
-  const baseCity = DEMO_PUBLIC_BASE.city;
+  const publicBases = DEMO_PUBLIC_BASES;
   const localRecs = DEMO_PUBLIC_LOCAL_RECS;
+  const [activePublicCity, setActivePublicCity] = useState<string | null>(null);
+  const visiblePublicRecs = activePublicCity
+    ? localRecs.filter((r) => r.city === activePublicCity)
+    : localRecs;
+  const hasLocalGuide = publicBases.length > 0;
 
   // Fetch follow state
   useEffect(() => {
@@ -134,13 +165,13 @@ export default function UserProfilePage() {
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-3xl font-bold font-serif text-brand-text">{username}</h1>
-            {baseCity && (
+            {hasLocalGuide && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-navy/10 ring-1 ring-brand-navy/20 text-[11px] font-semibold text-brand-navy">
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z" />
                 </svg>
-                Local Guide in {baseCity}
+                Local Guide in {publicBases.map((b) => b.city).join(" + ")}
               </span>
             )}
           </div>
@@ -186,18 +217,50 @@ export default function UserProfilePage() {
       </div>
 
       {/* Places I recommend — read-only on public profile */}
-      {baseCity && localRecs.length > 0 && (
+      {hasLocalGuide && localRecs.length > 0 && (
         <div className="mb-6">
           <div className="mb-4">
             <h2 className="text-xl font-bold font-serif text-brand-text">
               Places I recommend
             </h2>
             <p className="text-xs text-brand-text-muted mt-0.5">
-              Insider tips for visitors to {baseCity}
+              Insider tips for visitors to{" "}
+              {publicBases.map((b) => b.city).join(" & ")}
             </p>
           </div>
+
+          {publicBases.length > 1 && (
+            <div className="flex items-center gap-1 mb-3">
+              <button
+                onClick={() => setActivePublicCity(null)}
+                className={cn(
+                  "px-3 py-1 rounded-full text-xs font-semibold transition-colors",
+                  activePublicCity === null
+                    ? "bg-brand-navy text-parchment"
+                    : "bg-brand-surface text-brand-text hover:bg-brand-navy/10"
+                )}
+              >
+                All
+              </button>
+              {publicBases.map((b) => (
+                <button
+                  key={b.city}
+                  onClick={() => setActivePublicCity(b.city)}
+                  className={cn(
+                    "px-3 py-1 rounded-full text-xs font-semibold transition-colors",
+                    activePublicCity === b.city
+                      ? "bg-brand-navy text-parchment"
+                      : "bg-brand-surface text-brand-text hover:bg-brand-navy/10"
+                  )}
+                >
+                  {b.city}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {localRecs.map((rec) => (
+            {visiblePublicRecs.map((rec) => (
               <div
                 key={rec.id}
                 className="bg-brand-card rounded-xl ring-1 ring-brand-border p-4"
@@ -207,9 +270,19 @@ export default function UserProfilePage() {
                     <h3 className="font-semibold font-serif text-brand-text leading-tight truncate">
                       {rec.placeName}
                     </h3>
-                    <p className="text-[11px] text-brand-text-muted uppercase tracking-wider">
-                      {rec.placeType}
-                    </p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="text-[11px] text-brand-text-muted uppercase tracking-wider">
+                        {rec.placeType}
+                      </span>
+                      {publicBases.length > 1 && (
+                        <>
+                          <span className="text-brand-text-muted/50">·</span>
+                          <span className="text-[11px] text-brand-navy">
+                            {rec.city}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-0.5 shrink-0">
                     {[1, 2, 3, 4, 5].map((star) => (

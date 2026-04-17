@@ -20,6 +20,7 @@ interface LocalRec {
   rating: number;
   content: string;
   upvoteCount: number;
+  city: string;
 }
 
 const DEMO_STATS: TravelStats = {
@@ -137,15 +138,57 @@ const DEMO_LOCAL_RECS: LocalRec[] = [
     content:
       "Order the pastel de nata straight from the oven — they ring a bell when a fresh batch comes out. Skip Pasteis de Belem unless you want to queue for an hour.",
     upvoteCount: 38,
+    city: "Lisbon",
   },
   {
     id: "lr2",
-    placeName: "Miradouro da Graça",
-    placeType: "Neighborhood",
+    placeName: "Miradouro da Senhora do Monte",
+    placeType: "Viewpoint",
     rating: 5,
     content:
       "Best sunset view in Lisbon, minus the crowd at Miradouro de Santa Catarina. Grab a ginjinha from the kiosk and sit on the wall.",
     upvoteCount: 24,
+    city: "Lisbon",
+  },
+  {
+    id: "lr3",
+    placeName: "Bairro Alto after midnight",
+    placeType: "Vibe",
+    rating: 5,
+    content:
+      "The streets empty from locals by 2am and fill with tourists. Get there between 11 and 1 — live fado spilling from open doors, old men playing guitar on corners.",
+    upvoteCount: 52,
+    city: "Lisbon",
+  },
+  {
+    id: "lr4",
+    placeName: "Don't take Tram 28 — walk it",
+    placeType: "Tip",
+    rating: 5,
+    content:
+      "The tram is a pickpocket's paradise and you see nothing through the windows. The same route on foot takes 40 minutes and you'll actually experience Alfama.",
+    upvoteCount: 89,
+    city: "Lisbon",
+  },
+  {
+    id: "lr5",
+    placeName: "Livraria Lello",
+    placeType: "Attraction",
+    rating: 4,
+    content:
+      "Book the first 9:30am slot — the queue is gone, the light through the stained glass hits the red staircase, and the bookseller has time to point out the hidden Escher reference.",
+    upvoteCount: 41,
+    city: "Porto",
+  },
+  {
+    id: "lr6",
+    placeName: "Rua de Miguel Bombarda",
+    placeType: "Street",
+    rating: 4,
+    content:
+      "Every six weeks the galleries on this one block open together for a Saturday night — free wine, local artists, zero tourists. Check the Circuito das Artes schedule.",
+    upvoteCount: 17,
+    city: "Porto",
   },
 ];
 
@@ -161,10 +204,37 @@ export default function ProfilePage() {
     baseCountry: "Portugal" as string | null,
     baseLat: 38.7223 as number | null,
     baseLng: -9.1393 as number | null,
+    baseCity2: "Porto" as string | null,
+    baseCountry2: "Portugal" as string | null,
+    baseLat2: 41.1579 as number | null,
+    baseLng2: -8.6291 as number | null,
   });
   const [localRecs, setLocalRecs] = useState<LocalRec[]>(DEMO_LOCAL_RECS);
+  const [activeCity, setActiveCity] = useState<string | null>(null);
 
-  const isLocal = !!(profile.baseCity && profile.baseCountry);
+  const bases = [
+    profile.baseCity && profile.baseCountry
+      ? {
+          city: profile.baseCity,
+          country: profile.baseCountry,
+          lat: profile.baseLat ?? 0,
+          lng: profile.baseLng ?? 0,
+        }
+      : null,
+    profile.baseCity2 && profile.baseCountry2
+      ? {
+          city: profile.baseCity2,
+          country: profile.baseCountry2,
+          lat: profile.baseLat2 ?? 0,
+          lng: profile.baseLng2 ?? 0,
+        }
+      : null,
+  ].filter((b): b is { city: string; country: string; lat: number; lng: number } => b !== null);
+
+  const isLocal = bases.length > 0;
+  const visibleRecs = activeCity
+    ? localRecs.filter((r) => r.city === activeCity)
+    : localRecs;
 
   const handlePublishRec = (data: {
     placeName: string;
@@ -187,6 +257,7 @@ export default function ProfilePage() {
         rating: data.rating,
         content: data.content,
         upvoteCount: 0,
+        city: data.city,
       },
       ...prev,
     ]);
@@ -226,7 +297,7 @@ export default function ProfilePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z" />
                 </svg>
-                Local Guide in {profile.baseCity}
+                Local Guide in {bases.map((b) => b.city).join(" + ")}
               </span>
             )}
           </div>
@@ -319,7 +390,7 @@ export default function ProfilePage() {
             </h2>
             {isLocal && (
               <p className="text-xs text-brand-text-muted mt-0.5">
-                Insider tips for visitors to {profile.baseCity}
+                Insider tips for visitors to {bases.map((b) => b.city).join(" & ")}
               </p>
             )}
           </div>
@@ -354,14 +425,42 @@ export default function ProfilePage() {
           )}
         </div>
 
+        {/* City filter — only appears when the user has two home cities */}
+        {bases.length > 1 && !showLocalGuideForm && (
+          <div className="flex items-center gap-1 mb-3">
+            <button
+              onClick={() => setActiveCity(null)}
+              className={cn(
+                "px-3 py-1 rounded-full text-xs font-semibold transition-colors",
+                activeCity === null
+                  ? "bg-brand-navy text-parchment"
+                  : "bg-brand-surface text-brand-text hover:bg-brand-navy/10"
+              )}
+            >
+              All
+            </button>
+            {bases.map((b) => (
+              <button
+                key={b.city}
+                onClick={() => setActiveCity(b.city)}
+                className={cn(
+                  "px-3 py-1 rounded-full text-xs font-semibold transition-colors",
+                  activeCity === b.city
+                    ? "bg-brand-navy text-parchment"
+                    : "bg-brand-surface text-brand-text hover:bg-brand-navy/10"
+                )}
+              >
+                {b.city}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Inline add form */}
         {showLocalGuideForm && isLocal && (
           <div className="mb-4">
             <LocalGuideForm
-              baseCity={profile.baseCity!}
-              baseCountry={profile.baseCountry!}
-              baseLat={profile.baseLat ?? 0}
-              baseLng={profile.baseLng ?? 0}
+              bases={bases}
               onSubmit={handlePublishRec}
               onCancel={() => setShowLocalGuideForm(false)}
               onEditHomeBase={() => {
@@ -385,15 +484,17 @@ export default function ProfilePage() {
               per recommendation.
             </p>
           </div>
-        ) : localRecs.length === 0 ? (
+        ) : visibleRecs.length === 0 ? (
           <div className="rounded-2xl ring-1 ring-brand-border bg-brand-surface/40 p-6 text-center">
             <p className="text-sm text-brand-text-muted">
-              No recommendations yet — drop your first insider tip.
+              {activeCity
+                ? `No recommendations in ${activeCity} yet — drop the first one.`
+                : "No recommendations yet — drop your first insider tip."}
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {localRecs.map((rec) => (
+            {visibleRecs.map((rec) => (
               <div
                 key={rec.id}
                 className="bg-brand-card rounded-xl ring-1 ring-brand-border p-4"
@@ -403,9 +504,19 @@ export default function ProfilePage() {
                     <h3 className="font-semibold font-serif text-brand-text leading-tight truncate">
                       {rec.placeName}
                     </h3>
-                    <p className="text-[11px] text-brand-text-muted uppercase tracking-wider">
-                      {rec.placeType}
-                    </p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="text-[11px] text-brand-text-muted uppercase tracking-wider">
+                        {rec.placeType}
+                      </span>
+                      {bases.length > 1 && (
+                        <>
+                          <span className="text-brand-text-muted/50">·</span>
+                          <span className="text-[11px] text-brand-navy">
+                            {rec.city}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-0.5 shrink-0">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -481,6 +592,10 @@ export default function ProfilePage() {
           baseCountry: profile.baseCountry,
           baseLat: profile.baseLat,
           baseLng: profile.baseLng,
+          baseCity2: profile.baseCity2,
+          baseCountry2: profile.baseCountry2,
+          baseLat2: profile.baseLat2,
+          baseLng2: profile.baseLng2,
         }}
         onSave={(data) => {
           setProfile({
@@ -492,6 +607,10 @@ export default function ProfilePage() {
             baseCountry: data.baseCountry,
             baseLat: data.baseLat,
             baseLng: data.baseLng,
+            baseCity2: data.baseCity2,
+            baseCountry2: data.baseCountry2,
+            baseLat2: data.baseLat2,
+            baseLng2: data.baseLng2,
           });
           setEditOpen(false);
         }}

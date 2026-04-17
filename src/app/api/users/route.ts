@@ -94,6 +94,10 @@ export async function POST(request: NextRequest) {
       baseCountry,
       baseLat,
       baseLng,
+      baseCity2,
+      baseCountry2,
+      baseLat2,
+      baseLng2,
     } = body;
 
     if (!userId) {
@@ -111,6 +115,10 @@ export async function POST(request: NextRequest) {
     if (baseCountry !== undefined) data.baseCountry = baseCountry;
     if (baseLat !== undefined) data.baseLat = baseLat;
     if (baseLng !== undefined) data.baseLng = baseLng;
+    if (baseCity2 !== undefined) data.baseCity2 = baseCity2;
+    if (baseCountry2 !== undefined) data.baseCountry2 = baseCountry2;
+    if (baseLat2 !== undefined) data.baseLat2 = baseLat2;
+    if (baseLng2 !== undefined) data.baseLng2 = baseLng2;
 
     try {
       const user = await prisma.user.update({ where: { id: userId }, data });

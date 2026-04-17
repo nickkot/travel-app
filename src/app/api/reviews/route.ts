@@ -45,19 +45,30 @@ export async function POST(request: NextRequest) {
   } = body;
 
   // Snapshot whether this review counts as a Local Guide recommendation by
-  // comparing against the author's declared base city/country. Snapshotting
-  // at creation time means historical recs stay tagged even if the author
-  // later moves.
+  // comparing against either of the author's declared home cities.
+  // Snapshotting at creation time means historical recs stay tagged even
+  // if the author later moves.
   const author = await prisma.user.findUnique({
     where: { id: userId },
-    select: { baseCity: true, baseCountry: true },
+    select: {
+      baseCity: true,
+      baseCountry: true,
+      baseCity2: true,
+      baseCountry2: true,
+    },
   });
-  const isLocalGuide = !!(
-    author?.baseCity &&
-    author.baseCountry &&
-    author.baseCity.toLowerCase() === String(city || "").toLowerCase() &&
-    author.baseCountry.toLowerCase() === String(country || "").toLowerCase()
-  );
+  const reviewCity = String(city || "").toLowerCase();
+  const reviewCountry = String(country || "").toLowerCase();
+  const matches = (c?: string | null, co?: string | null) =>
+    !!(
+      c &&
+      co &&
+      c.toLowerCase() === reviewCity &&
+      co.toLowerCase() === reviewCountry
+    );
+  const isLocalGuide =
+    matches(author?.baseCity, author?.baseCountry) ||
+    matches(author?.baseCity2, author?.baseCountry2);
 
   const review = await prisma.review.create({
     data: {
